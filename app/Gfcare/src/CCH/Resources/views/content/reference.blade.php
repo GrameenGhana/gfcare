@@ -1,0 +1,38 @@
+<gfcare-cch-content-screen inline-template>
+
+    <!-- Roles -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Learning Center References
+            <button class="btn btn-default pull-right" @click.prevent="addReference()">
+                <i class="fa fa-btn fa-plus"></i>Add Reference
+            </button> 
+        </div>
+
+        <div class="panel-body" v-if="user && references.length > 0">
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Size</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="lcr in references">
+                        <td class="spark-table-pad">@{{ lcr.reference_desc}}</td>
+                        <td class="spark-table-pad">@{{ lcr.size }}</td>
+                        <td class="spark-table-pad"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div v-else class="panel-body">
+            No references found.
+        </div>
+    </div>
+    
+    @include('CCH::content.add-reference')
+
+</gfcare-cch-content-screen>
