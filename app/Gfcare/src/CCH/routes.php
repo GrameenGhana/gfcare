@@ -1,7 +1,8 @@
 <?php
 
+$cpath = 'App\Gfcare\src\CCH\Controllers';    
+
 Route::group(['middleware' => 'web', 'prefix'=>'chn-on-the-go'], function ($router) {
-    $cpath = 'App\Gfcare\src\CCH\Controllers';    
     
     $router->get('/', $cpath.'\HomeController@show');
     
@@ -34,4 +35,5 @@ Route::group(['middleware' => 'web', 'prefix'=>'chn-on-the-go'], function ($rout
 });
 
 Route::group(['middleware' => 'api', 'prefix'=>'chn-on-the-go'], function ($router) {
+    $router->get('content/lc/references/{id}', $cpath.'\ContentController@getLCReferences');
 });

@@ -1,4 +1,5 @@
 <?php
+    
 
 Route::group(['middleware' => 'web'], function ($router) {
     $router->get('/', 'WelcomeController@show');
@@ -109,4 +110,6 @@ Route::group(['middleware' => ['api']], function ($router) {
     if (count(Spark::plans()) > 0) {
         $router->post('stripe/webhook', 'Stripe\WebhookController@handleWebhook');
     }
+    
+    $router->post('api/users/login', 'API\LoginController@authenticate');
 });
