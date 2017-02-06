@@ -264,6 +264,15 @@ class AppServiceProvider extends ServiceProvider
                     include __DIR__.'/../Gfcare/src/'.$module->module_path.'/routes.php';
                 }
 
+                $models = scandir(__DIR__.'/../Gfcare/src/'.$module->module_path.'/Models');
+                foreach($models as $m) {
+                    if (!in_array($m,array('.','..')) && !is_dir($m)) {
+                        if(file_exists(__DIR__.'/../Gfcare/src/'.$module->module_path.'/Models/'.$m)) {
+                            include __DIR__.'/../Gfcare/src/'.$module->module_path.'/Models/'.$m;
+                        }
+                    }
+                }
+
                 // Load the views
                 if(is_dir(__DIR__.'/../Gfcare/src/'.$module->module_path.'/Resources/views')) {
                     $this->loadViewsFrom(__DIR__.'/../Gfcare/src/'.$module->module_path.'/Resources/views', $module->module_path);

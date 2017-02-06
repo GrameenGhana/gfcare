@@ -1,5 +1,5 @@
 <?php
-    
+
 
 Route::group(['middleware' => 'web'], function ($router) {
     $router->get('/', 'WelcomeController@show');
@@ -113,3 +113,4 @@ Route::group(['middleware' => ['api']], function ($router) {
     
     $router->post('api/users/login', 'API\LoginController@authenticate');
 });
+

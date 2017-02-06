@@ -33,6 +33,6 @@
         </div>
     </div>
     
-    @include('MobiHealth::content.add-visualaid'')
+    @include('MobiHealth::content.add-visualaid')
 
 </gfcare-mobi-content-screen>
