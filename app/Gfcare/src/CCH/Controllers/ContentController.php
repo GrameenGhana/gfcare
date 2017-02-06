@@ -17,11 +17,6 @@ use App\GfCare\src\CCH\Models\Reference;
 
 class ContentController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function getLCReferences(Request $request)
     {
         $items = Reference::all();

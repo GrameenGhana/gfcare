@@ -1,7 +1,7 @@
 <?php
 
 
-Route::group(['middleware' => 'web', 'prefix'=>'chn-on-the-go'], function ($router) {
+Route::group(['middleware' => ['web','auth'], 'prefix'=>'chn-on-the-go'], function ($router) {
     
     $cpath = 'App\Gfcare\src\CCH\Controllers';    
     $router->get('/', $cpath.'\HomeController@show');
@@ -34,12 +34,11 @@ Route::group(['middleware' => 'web', 'prefix'=>'chn-on-the-go'], function ($rout
         
 });
 
-Route::group(['middleware' => 'api', 'prefix'=>'chn-on-the-go'], function ($router) {
+Route::group(['middleware' => ['api','jwt.auth'], 'prefix'=>'api/chn-on-the-go'], function ($router) {
     $cpath = 'App\Gfcare\src\CCH\Controllers';    
-    $router->get('content/lc/references/{id}', $cpath.'\ContentController@getLCReferences'); 
-    //Camara-I put this here to test the app
-     $router->get('content/api/references', $cpath.'\ContentController@getLCReferences');
-     $router->get('content/api/poc/pages', $cpath.'\ContentController@getPOCPages');
-     $router->get('content/api/poc/sections', $cpath.'\ContentController@getPOCSections');
+
+    $router->get('content/references', $cpath.'\ContentController@getLCReferences');
+    $router->get('content/poc/pages', $cpath.'\ContentController@getPOCPages');
+    $router->get('content/poc/sections', $cpath.'\ContentController@getPOCSections');
 
 });

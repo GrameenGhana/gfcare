@@ -18,11 +18,6 @@ use App\GfCare\src\CCH\Models\UserFacility;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function show(Request $request, $teamId=null)
     {
         //\Illuminate\Support\Facades\DB::enableQueryLog();

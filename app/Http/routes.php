@@ -105,12 +105,6 @@ Route::group(['middleware' => 'web'], function ($router) {
 
 });
 
-Route::group(['middleware' => ['api']], function ($router) {
-    // Stripe Routes...
-    if (count(Spark::plans()) > 0) {
-        $router->post('stripe/webhook', 'Stripe\WebhookController@handleWebhook');
-    }
-    
+Route::group(['middleware' => ['api'],'prefix'=>'api'], function ($router) {
     $router->post('api/users/login', 'API\LoginController@authenticate');
 });
-

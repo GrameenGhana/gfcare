@@ -1,7 +1,7 @@
 <?php
 
 
-Route::group(['middleware' => 'web', 'prefix'=>'mobihealth'], function ($router) {
+Route::group(['middleware' => ['web','auth'], 'prefix'=>'mobihealth'], function ($router) {
     $cpath = 'App\Gfcare\src\MobiHealth\Controllers';    
     
     $router->get('/', $cpath.'\HomeController@show');
@@ -28,6 +28,6 @@ Route::group(['middleware' => 'web', 'prefix'=>'mobihealth'], function ($router)
 
 });
 
-Route::group(['middleware' => 'api', 'prefix'=>'mobihealth'], function ($router) {
+Route::group(['middleware' => ['api','jwt.auth'], 'prefix'=>'api/mobihealth'], function ($router) {
 
 });

@@ -13,17 +13,6 @@ use App\GfCare\src\CCH\Models\Role;
 class RoleController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @param  \App\Contracts\Repositories\RoleRepository  $roles
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
      * Show roles for current team and module.
      *
      * @return \Illuminate\Http\Response

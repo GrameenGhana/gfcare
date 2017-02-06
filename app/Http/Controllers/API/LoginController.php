@@ -7,8 +7,24 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Spark;
 
+use Tymon\JWTAuth\JWTAuth;
+
+
 class LoginController extends Controller
 {
+    private $jwtauth;
+
+    /**
+     * Create a new authentication controller instance.
+     *
+     * @return void
+     */
+    public function __construct(JWTAuth $jwtauth)
+    {
+        $this->jwtauth = $jwtauth;
+    }
+
+
 	/**
 	 * Get the current user of the application.
 	 *
@@ -20,11 +36,19 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
         $module = $request->module;
 
-        if (Auth::attempt($credentials)) {
-            // Authentication passed...
+        $credentials = $request->only('email', 'password');
+        $token = null;
+
+        try {
+            $token = $this->jwtauth->attempt($credentials);
+            if (!$token) {
+                return response()->json(['error'=>'invalid_email_or_password'], 422);
+            }
+        
+            Auth::attempt($credentials);
             $user = Spark::user();
             $user->currentTeam;
-            
+
             $user->projects = $this->getProjects($user, $module); 
 
             if ($user->projects==null) {
@@ -38,10 +62,11 @@ class LoginController extends Controller
             unset($user->updated_at);
             unset($user->created_at);
 
-            return response()->json($user);
+        } catch (JWTAuthException $e) {
+            return response()->json(['error'=>'failed_to_create_token'], 500);
         }
 
-        return response()->json(['error' => 'invalid_credentials'], 401);
+        return response()->json(['token'=>$token, 'user'=>$user]);
     }
 
 

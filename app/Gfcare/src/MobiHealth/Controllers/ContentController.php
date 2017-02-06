@@ -17,11 +17,6 @@ use App\GfCare\src\MobiHealth\Models\ContentVisualAid;
 
 class ContentController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function getVisualAids(Request $request)
     {
         $items = ContentVisualAid::all();

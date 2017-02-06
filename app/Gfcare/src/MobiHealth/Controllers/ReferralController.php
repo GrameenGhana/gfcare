@@ -12,11 +12,6 @@ use App\GfCare\src\MobiHealth\Models\Referral;
 
 class ReferralController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function show(Request $request, $teamId=null)
     {
         $referrals = Referral::all();

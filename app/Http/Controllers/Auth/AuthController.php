@@ -214,7 +214,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return response()->json(['path' => $this->redirectPath()]);
+        return response()->json(['path' => $this->redirectPath(), 'token' => $this->jwtauth->fromUser($user)]);
     }
 
     /**
