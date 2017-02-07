@@ -2,8 +2,9 @@ Vue.component('gfcare-cch-content-screen', {
 
     ready: function() {
         this.getReferences();
-        this.getPages();
         this.getSections();
+        this.getSubSections();
+        this.getTopics();
     },
 
     data: function() {
@@ -12,71 +13,55 @@ Vue.component('gfcare-cch-content-screen', {
             user: null,
             users: null,
  
-            pages: [],
+            topics: [],
             sections: [],
+            subsections: [],
             references: [],
          
-            editingPage: {'name':'none'},
-            editingSection: {'upload':[]},
+            editingSection: {'name':''},
+            editingSubSection: {'name':''},
+            editingTopic: {'upload':[]},
 
-            removingPageId: null,
             removingSectionId: null,
+            removingSubSectionId: null,
+            removingTopicId: null,
              
-            pageTypeOptions: [
-                {'text': 'Take Action Page', 'value':'Take Action Page'}, 
-                {'text': 'Take Action Classification Page', 'value':'Take Action Classification Page'}, 
-                {'text': 'Question Page', 'value':'Question Page'}, 
-                {'text': 'Info Page', 'value':'Info Page'}, 
-                {'text': 'Reference Page', 'value':'Reference Page'}, 
-                {'text': 'Calculator Page', 'value':'Calculator Page'}, 
-            ],
+            sectionOptions: [ ],
+            subSectionOptions: [],
             
-            subSectionOptions: [
-                {'text': 'ANC Diagnostic', 'value':'ANC Diagnostic'}, 
-                {'text': 'ANC Counselling', 'value':'ANC Counselling'}, 
-                {'text': 'ANC References', 'value':'ANC References'}, 
-                {'text': 'PNC Diagnostic Newborn', 'value':'PNC Diagnostic Newborn'}, 
-                {'text': 'PNC Diagnostic Mother', 'value':'PNC Diagnostic Mother'},                
-                {'text': 'PNC Counselling', 'value':'PNC Counselling'}, 
-                {'text': 'PNC References', 'value':'PNC References'},
-                {'text': 'CWC Diagnostic', 'value':'CWC Diagnostic'}, 
-                {'text': 'CWC Counselling', 'value':'CWC Counselling'}, 
-                {'text': 'CWC References', 'value':'CWC References'},
-                {'text': 'CWC Calculators', 'value':'CWC Calculators'},
-            ],
-            
-            sectionOptions: [],
-                        
             forms: {
-                addPage: new SparkForm({  
-                    type: '',
-                    section: '',
+                addTopic: new SparkForm({  
+                    sub_section_id: '',
                     name: '',
                     shortname: '',
-                    subtitle: '',
                     description: '',
+                    reference_file: '',
                 }),
-                updatePage: new SparkForm({ 
-                    type: '',
-                    section: '',
+                updateTopic: new SparkForm({ 
+                    sub_section_id: '',
                     name: '',
                     shortname: '',
-                    subtitle: '',
-                    description: '',  
+                    description: '',
+                    reference_file: '',
                 }),
                 
                 addSection: new SparkForm({  
                     name: '',  
-                    shortname: '', 
-                    sub_section: '',
-                    description: '',
                     reference_file: '',
                 }),
                 updateSection: new SparkForm({                    
                     name: '',  
-                    shortname: '', 
-                    sub_section: '',
-                    description: '',
+                    reference_file: '',
+                }),
+
+                addSubSection: new SparkForm({  
+                    name: '',  
+                    section_id: '',  
+                    reference_file: '',
+                }),
+                updateSubSection: new SparkForm({                    
+                    name: '',  
+                    section_id: '',  
                     reference_file: '',
                 }),
                 
@@ -90,12 +75,17 @@ Vue.component('gfcare-cch-content-screen', {
             this.getReferences();
             return true;
         },
-        updatePages: function () {
-            this.getPages();
+        updateTopics: function () {
+            this.getTopics();
             return true;
         },
         updateSections: function () {
             this.getSections();
+            return true;
+        },      
+
+        updateSubSections: function () {
+            this.getSubSections();
             return true;
         },      
 
@@ -117,24 +107,24 @@ Vue.component('gfcare-cch-content-screen', {
     },
 
     methods: {
-        addPage: function () {   
-            this.forms.addPage.type ='';
-            this.forms.addPage.section ='';
-            this.forms.addPage.name ='';
-            this.forms.addPage.shortname ='';
-            this.forms.addPage.subtitle ='';
-            this.forms.addPage.description ='';
-            $('#modal-add-page').modal('show');  
+        addTopic: function () {   
+            this.forms.addTopic.type ='';
+            this.forms.addTopic.section ='';
+            this.forms.addTopic.name ='';
+            this.forms.addTopic.shortname ='';
+            this.forms.addTopic.subtitle ='';
+            this.forms.addTopic.description ='';
+            $('#modal-add-topic').modal('show');  
         },
-        editPage: function (page) { 
-            this.editingPage = page;
-            this.forms.addPage.type = page.type;
-            this.forms.addPage.section = page.section;
-            this.forms.addPage.name = page.name;
-            this.forms.addPage.shortname = page.shortname;
-            this.forms.addPage.subtitle = page.subtitle;
-            this.forms.addPage.description = page.description;
-            $('#modal-edit-page').modal('show'); 
+        editTopic: function (topic) { 
+            this.editingTopic = topic;
+            this.forms.addTopic.type = topic.type;
+            this.forms.addTopic.section = topic.section;
+            this.forms.addTopic.name = topic.name;
+            this.forms.addTopic.shortname = topic.shortname;
+            this.forms.addTopic.subtitle = topic.subtitle;
+            this.forms.addTopic.description = topic.description;
+            $('#modal-edit-topic').modal('show'); 
         },
         
         addSection: function () {  
@@ -162,8 +152,9 @@ Vue.component('gfcare-cch-content-screen', {
         },
         
         
-        removingPage: function(id) { return (this.removingPageId == id); },
+        removingTopic: function(id) { return (this.removingTopicId == id); },
         removingSection: function(id) { return (this.removingSectionId == id); },
+        removingSubSection: function(id) { return (this.removingSubSectionId == id); },
 
         removeFromList: function (list, item) {
             return _.reject(list, function (i) {
@@ -172,46 +163,46 @@ Vue.component('gfcare-cch-content-screen', {
         },
         
         // Ajax calls
-        getPages: function () {
-            this.$http.get('/gfcare/chn-on-the-go/content/poc/pages')
+        getTopics: function () {
+            this.$http.get('/gfcare/chn-on-the-go/content/poc/topics')
                 .success(function (res) {
-                    this.pages = res;
-                    this.pages.sort(function(a,b) { 
-                        var x = a.section.toLowerCase() + a.type;
-                        var y = b.section.toLowerCase() + b.type;
+                    this.topics = res;
+                    this.topics.sort(function(a,b) { 
+                        var x = a.section.toLowerCase() + a.sub_section;
+                        var y = b.section.toLowerCase() + b.sub_section;
                         return (x < y) ? -1 : ((x > y) ? 1 : 0);
                     });
-                    this.$broadcast('updatePages', res);
+                    this.$broadcast('updateTopics', res);
                 });
         },
-        addNewPage: function () {
+        addNewTopic: function () {
             var self = this;
-            Spark.post('/gfcare/chn-on-the-go/content/poc/pages', this.forms.addPage)
+            Spark.post('/gfcare/chn-on-the-go/content/poc/topics', this.forms.addTopic)
                 .then(function () {
-                    $('#modal-add-page').modal('hide');
-                    self.$dispatch('updatePages');
+                    $('#modal-add-topic').modal('hide');
+                    self.$dispatch('updateTopics');
                 });
         }, 
-        updatePage: function () {
+        updateTopic: function () {
             var self = this;
-            Spark.put('/gfcare/chn-on-the-go/content/poc/pages/' + this.editingPage.id, this.forms.updatePage)
+            Spark.put('/gfcare/chn-on-the-go/content/poc/topics/' + this.editingTopic.id, this.forms.updateTopic)
                 .then(function () {
-                    $('#modal-edit-page').modal('hide');
-                    self.$dispatch('updatePages');
+                    $('#modal-edit-topic').modal('hide');
+                    self.$dispatch('updateTopics');
                 });
         },     
-        removePage: function (page) {
+        removeTopic: function (topic) {
             var self = this;
-            self.removingPageId = user.id;
+            self.removingTopicId = user.id;
             
-            this.$http.delete('/gfcare/chn-on-the-go/content/poc/pages/' + page.id)
+            this.$http.delete('/gfcare/chn-on-the-go/content/poc/topics/' + topic.id)
                 .success(function () {
-                    self.removingPageId = 0;
-                    self.pages = self.removeFromList(this.pages, page);
-                    self.$dispatch('updatePages');
+                    self.removingTopicId = 0;
+                    self.topics = self.removeFromList(this.topics, topic);
+                    self.$dispatch('updateTopics');
                 })
                 .error(function(resp) {
-                    self.removingPageId = 0;
+                    self.removingTopicId = 0;
                     NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000,});
                 });
         },
@@ -228,12 +219,10 @@ Vue.component('gfcare-cch-content-screen', {
                     });
                     self.sectionOptions = []; 
                     for(var i=0; i < self.sections.length; ++i) {
-                            self.sectionOptions.push({'text': self.sections[i].sub_section + ' > ' + self.sections[i].name, 
-                                                      'value':self.sections[i].name});
+                            self.sectionOptions.push({'text': self.sections[i].name, 'value':self.sections[i].id});
                     }
                     self.sectionOptions.sort(function(a,b) { 
-                        var x = a.text;
-                        var y = b.text;
+                        var x = a.text; var y = b.text;
                         return (x < y) ? -1 : ((x > y) ? 1 : 0);
                     });
                     this.$broadcast('updateSections', res);
@@ -267,6 +256,59 @@ Vue.component('gfcare-cch-content-screen', {
                 })
                 .error(function(resp) {
                     self.removingSectionId = 0;
+                    NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000,});
+                });
+        },
+
+        getSubSections: function () {
+            var self = this;
+            this.$http.get('/gfcare/chn-on-the-go/content/poc/subsections')
+                .success(function (res) {
+                    self.subsections = res;
+                    self.subsections.sort(function(a,b) { 
+                        var x = a.section + ' ' + a.name.toLowerCase();
+                        var y = a.section + ' ' + b.name.toLowerCase();
+                        return (x < y) ? -1 : ((x > y) ? 1 : 0);
+                    });
+                    self.subsectionOptions = []; 
+                    for(var i=0; i < self.subsections.length; ++i) {
+                            self.subsectionOptions.push({'text': self.subsections[i].section +' > '+self.subsections[i].name, 'value':self.subsections[i].id});
+                    }
+                    self.subsectionOptions.sort(function(a,b) { 
+                        var x = a.text; var y = b.text;
+                        return (x < y) ? -1 : ((x > y) ? 1 : 0);
+                    });
+                    this.$broadcast('updateSubSections', res);
+                });
+        },
+        addNewSubSection: function () {
+            var self = this;
+            Spark.post('/gfcare/chn-on-the-go/content/poc/subsections', this.forms.addSubSection)
+                .then(function () {
+                    $('#modal-add-subsection').modal('hide');
+                    self.$dispatch('updateSubSections');
+                });
+        }, 
+        updateSubSection: function () {
+            var self = this;
+            Spark.put('/gfcare/chn-on-the-go/content/poc/subsections/' + this.editingSubSection.id, this.forms.updateSubSection)
+                .then(function () {
+                    $('#modal-edit-subsection').modal('hide');
+                    self.$dispatch('updateSubSections');
+                });
+        },     
+        removeSubSection: function (sec) {
+            var self = this;
+            self.removingSubSectionId = sec.id;
+            
+            this.$http.delete('/gfcare/chn-on-the-go/content/poc/subsections/' + sec.id)
+                .success(function () {
+                    self.removingSubSectionId = 0;
+                    self.subsections = self.removeFromList(this.subsections, sec);
+                    self.$dispatch('updateSubSections');
+                })
+                .error(function(resp) {
+                    self.removingSubSectionId = 0;
                     NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000,});
                 });
         },

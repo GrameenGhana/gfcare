@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 
-use App\GfCare\src\CCH\Models\POCPage;
 use App\GfCare\src\CCH\Models\POCSection;
-use App\GfCare\src\CCH\Models\POCUpload;
+use App\GfCare\src\CCH\Models\POCSubSection;
+use App\GfCare\src\CCH\Models\POCTopic;
 use App\GfCare\src\CCH\Models\Reference;
 
 class ContentController extends Controller
@@ -23,24 +23,24 @@ class ContentController extends Controller
         return response()->json($items);
     }
     
-    public function getPOCPages(Request $request)
-    {
-        $items = POCPage::all();
-        return response()->json($items);
-    }
-    
     public function getPOCSections(Request $request)
     {
         $items = POCSection::all();
         return response()->json($items);
     }
     
-    public function getPOCUploads(Request $request)
+    public function getPOCSubSections(Request $request)
     {
-        $items = POCUpload::all();
+        $items = POCSubSection::all();
         return response()->json($items);
     }
     
+    public function getPOCTopics(Request $request)
+    {
+        $items = POCTopic::all();
+        return response()->json($items);
+    }
+
     public function storeLCReference(Request $request)
     {
         $user = $request->user();

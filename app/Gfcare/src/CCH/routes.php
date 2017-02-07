@@ -10,9 +10,9 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'chn-on-the-go'], functi
     $router->post('content/references',  $cpath.'\ContentController@storeLCReference');
 
     
-    $router->get('content/poc/pages', $cpath.'\ContentController@getPOCPages');
     $router->get('content/poc/sections', $cpath.'\ContentController@getPOCSections');
-    $router->get('content/poc/uploads', $cpath.'\ContentController@getPOCUploads');
+    $router->get('content/poc/subsections', $cpath.'\ContentController@getPOCSubSections');
+    $router->get('content/poc/topics', $cpath.'\ContentController@getPOCTopics');
 
 
     $router->get('system/users', $cpath.'\UserController@show');
@@ -38,7 +38,8 @@ Route::group(['middleware' => ['api','jwt.auth'], 'prefix'=>'api/chn-on-the-go']
     $cpath = 'App\Gfcare\src\CCH\Controllers';    
 
     $router->get('content/references', $cpath.'\ContentController@getLCReferences');
-    $router->get('content/poc/pages', $cpath.'\ContentController@getPOCPages');
     $router->get('content/poc/sections', $cpath.'\ContentController@getPOCSections');
+    $router->get('content/poc/subsections', $cpath.'\ContentController@getPOCSubSections');
+    $router->get('content/poc/topics', $cpath.'\ContentController@getPOCTopics');
 
 });

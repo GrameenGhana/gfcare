@@ -10,12 +10,10 @@ class POCSection extends Model {
 
 	protected $table = 'mod_cch_content_poc_sections';
 
-	protected $fillable = array('name_of_section','sub_section', 'shortname','section_url','section_desc');
+    protected $with = ['subsections'];
 
-    protected $with = ['upload'];
-
-    public function upload() 
+    public function subsections() 
     {
-        return $this->hasOne('App\Gfcare\src\CCH\Models\POCUpload','section_id');
+        return $this->hasMany('App\Gfcare\src\CCH\Models\POCSubSection','section_id');
     }
 }

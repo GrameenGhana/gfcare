@@ -13,26 +13,18 @@
             <table class="table table-responsive">
                 <thead>
                     <tr>
+                        <th>Icon</th>
                         <th>Name</th>
-                        <th>Sub Section</th>
-                        <th>Upload Status</th>
+                        <th># Sub Sections</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="section in sections">
 
+                        <td class="spark-table-pad">@{{ section.icon_url }}</td>
                         <td class="spark-table-pad">@{{ section.name }}</td>
-                        <td class="spark-table-pad">@{{ section.sub_section}}</td>
-                        <td class="spark-table-pad">
-                            <div v-if="section.upload_status=='Uploaded'">
-                                Uploaded
-                            </div>
-                            <div v-else>
-                                <button class="btn btn-success btn-circle" style="margin-right: 10px"      @click.prevent="editSection(section)"> <i class="fa fa-upload"></i> 
-                                </button>
-                            </div>
-                        </td>
+                        <td class="spark-table-pad">@{{ section.subsections.length}}</td>
                         <td class="spark-table-pad">
                             <button class="btn btn-danger btn-circle pull-right" @click.prevent="removeSection(section)" :disabled="removingSection(section.id)">
                                 <span v-if="removingSection(section.id)">
@@ -54,9 +46,6 @@
             No sections found.
         </div>
     </div>
-    
         
-    @include('CCH::content.add-section')
-    @include('CCH::content.edit-section')
     
 </gfcare-cch-content-screen>
