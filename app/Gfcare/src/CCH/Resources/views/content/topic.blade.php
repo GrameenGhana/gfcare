@@ -1,4 +1,4 @@
-<gfcare-cch-content-screen inline-template>
+<gfcare-cch-content-poc-topic-screen inline-template>
 
     <!-- Topics -->
     <div class="panel panel-default">
@@ -10,7 +10,7 @@
             </button> 
         </div>
 
-        <div class="panel-body" v-if="user && topics.length > 0">
+        <div class="panel-body" v-if="topics.length > 0">
             <table class="table table-responsive">
                 <thead>
                     <tr>
@@ -64,4 +64,4 @@
     </div>
          
     
-</gfcare-cch-content-screen>
+</gfcare-cch-content-poc-topic-screen>

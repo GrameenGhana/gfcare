@@ -1,4 +1,4 @@
-<gfcare-cch-content-screen inline-template>
+<gfcare-cch-content-references-screen inline-template>
 
     <!-- Roles -->
     <div class="panel panel-default">
@@ -9,7 +9,7 @@
             </button> 
         </div>
 
-        <div class="panel-body" v-if="user && references.length > 0">
+        <div class="panel-body" v-if="references.length > 0">
             <table class="table table-responsive">
                 <thead>
                     <tr>
@@ -22,7 +22,13 @@
                     <tr v-for="lcr in references">
                         <td class="spark-table-pad">@{{ lcr.reference_desc}}</td>
                         <td class="spark-table-pad">@{{ lcr.size }}</td>
-                        <td class="spark-table-pad"></td>
+                        <td class="spark-table-pad">
+                            <button class="btn btn-danger btn-circle pull-right" @click.prevent="removeReference(lcr)" :disabled="removingReference(lcr.id)">
+                                <span v-if="removingReference(lcr.id)">
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                </span>
+                                <span v-else> <i class="fa fa-trash-o"></i> </span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -35,4 +41,4 @@
     
     @include('CCH::content.add-reference')
 
-</gfcare-cch-content-screen>
+</gfcare-cch-content-references-screen>

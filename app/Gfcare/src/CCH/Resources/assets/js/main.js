@@ -2,13 +2,13 @@ Vue.component('gfcare-cch-screen', {
     props: ['teamId'],
 
     ready: function() {
-        this.getTeam();
         this.getUsers();
         this.getFacilities();
     },
 
     data: function() {
         return {
+            user: null,
             team: null,
             users: null,
             facilities: null,
@@ -16,45 +16,40 @@ Vue.component('gfcare-cch-screen', {
     },
     
     events: {
-        updateTeam: function () {
-            this.getTeam();
-            return true;
-        },
-        
         updateUsers: function() {
             this.getUsers();
             return true;
         },
+        userRetrieved: function(user) {
+            this.user = user;
+            return true;
+        },
+        currentTeamRetrieved: function(team) {
+            this.team = team;
+            return true;
+        },
     },
 
-    computed: {
-    },
+    computed: { },
 
     methods: {
-        getTeam: function () {
-            this.$http.get('/gfcare/api/teams/' + this.teamId)
-                .success(function (team) {
-                    this.team = team;
-                    this.$broadcast('teamRetrieved', team);
+        getUsers: function () {
+            var self = this;
+            this.$http.get('/gfcare/chn-on-the-go/system/users')
+                .success(function (users) {
+                    self.users = users;
+                    self.$broadcast('cchUsersRetrieved', self.users);
                 });
         },
         getFacilities: function () {
+            var self = this;
             this.$http.get('/gfcare/api/teams/' + this.teamId + '/facilities')
                 .success(function (facilities) {
-                    this.facilities = facilities;
-                    this.$broadcast('facilitiesRetrieved', facilities);
-                });
-        },
-        getUsers: function () {
-            this.$http.get('/gfcare/chn-on-the-go/system/users')
-                .success(function (users) {
-                    this.users = users;
-                    this.$broadcast('cchUsersRetrieved', users);
+                    self.facilities = facilities;
+                    self.$broadcast('facilitiesRetrieved', self.facilities);
                 });
         },
     },
     
-    filters: {
-
-    },
+    filters: { },
 });

@@ -1,4 +1,4 @@
-<gfcare-cch-content-screen inline-template>
+<gfcare-cch-content-poc-subsection-screen inline-template>
 
     <!-- Sub Sections -->
     <div class="panel panel-default">
@@ -9,13 +9,13 @@
             </button> 
         </div>
 
-        <div class="panel-body" v-if="user && subsections.length > 0">
+        <div class="panel-body" v-if="subsections.length > 0">
             <table class="table table-responsive">
                 <thead>
                     <tr>
                         <th>Icon</th>
-                        <th>Name</th>
                         <th>Section</th>
+                        <th>Sub Section</th>
                         <th># Topics</th>
                         <th></th>
                     </tr>
@@ -24,8 +24,8 @@
                     <tr v-for="subsection in subsections">
 
                         <td class="spark-table-pad">@{{ subsection.icon_url }}</td>
-                        <td class="spark-table-pad">@{{ subsection.name }}</td>
                         <td class="spark-table-pad">@{{ subsection.section }}</td>
+                        <td class="spark-table-pad">@{{ subsection.name }}</td>
                         <td class="spark-table-pad">@{{ subsection.topics.length}}</td>
                         <td class="spark-table-pad">
                             <button class="btn btn-danger btn-circle pull-right" @click.prevent="removeSubSection(subsection)" :disabled="removingSubSection(subsection.id)">
@@ -51,4 +51,4 @@
     
         
     
-</gfcare-cch-content-screen>
+</gfcare-cch-content-poc-subsection-screen>

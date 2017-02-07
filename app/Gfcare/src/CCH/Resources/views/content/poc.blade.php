@@ -1,5 +1,3 @@
-<gfcare-cch-content-screen inline-template>
-
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
@@ -42,13 +40,10 @@
                 </div>
 
                  <!-- Topics -->
-                <div role="tabpanel" class="tab-pane active" id="topics">
+                <div role="tabpanel" class="tab-pane" id="topics">
                     @include('CCH::content.topic')
                 </div>
 
             </div>
         </div>
     </div>
-            
-
-</gfcare-cch-content-screen>

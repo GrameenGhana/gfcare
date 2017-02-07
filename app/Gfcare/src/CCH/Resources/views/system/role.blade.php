@@ -1,4 +1,4 @@
-<gfcare-cch-system-screen inline-template>
+<gfcare-cch-system-role-screen inline-template>
 
     <!-- Roles -->
     <div class="panel panel-default">
@@ -9,7 +9,7 @@
             </button> 
         </div>
 
-        <div class="panel-body" v-if="user && roles.length > 0">
+        <div class="panel-body" v-if="roles.length > 0">
             <table class="table table-responsive">
                 <thead>
                     <tr>
@@ -57,4 +57,4 @@
     @include('CCH::system.add-role')
     @include('CCH::system.edit-role')
 
-</gfcare-cch-system-screen>
+</gfcare-cch-system-role-screen>
