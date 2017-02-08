@@ -1,7 +1,6 @@
 Vue.component('gfcare-cch-content-poc-section-screen', {
 
     ready: function() {
-        this.getSections();
     },
 
     data: function() {
@@ -13,27 +12,34 @@ Vue.component('gfcare-cch-content-poc-section-screen', {
             forms: {
                 addSection: new SparkForm({  
                     name: '',  
-                    reference_file: '',
+                    icon_file: '',
+                    file_name: '',
                 }),
                 updateSection: new SparkForm({                    
                     name: '',  
-                    reference_file: '',
+                    icon_file: '',
+                    file_name: '',
                 }),
             }
         };
     },
     
     events: {
-        updateSections: function () {
-            this.getSections();
+        sectionsRetrieved: function (sections) {
+            this.sections = sections;
             return true;
-        },      
+        },
     },
 
     computed: {
     },
 
     methods: {
+        
+        getImageUrl: function(section) {
+            return '/gfcare/chn-on-the-go/content/image/section/'+section.id;    
+        },
+        
         removingSection: function(id) { return (this.removingSectionId == id); },
 
         removeFromList: function (list, item) {
@@ -44,19 +50,13 @@ Vue.component('gfcare-cch-content-poc-section-screen', {
 
         addSection: function () {  
             this.forms.addSection.name = '';
-            this.forms.addSection.shortname = '';
-            this.forms.addSection.sub_section = '';
-            this.forms.addSection.description = '';
-            this.forms.addSection.reference_file = '';
+            this.forms.addSection.icon_file = '';
             $('#modal-add-section').modal('show');  
         },
 
         editSection: function (sec) { 
             this.editingSection = sec; 
             this.forms.updateSection.name = sec.name;
-            this.forms.updateSection.shortname = sec.shortname;
-            this.forms.updateSection.sub_section = sec.sub_section;
-            this.forms.updateSection.description = sec.description;
             $('#modal-edit-section').modal('show'); 
         },
         

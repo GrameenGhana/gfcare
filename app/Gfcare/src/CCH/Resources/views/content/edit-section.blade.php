@@ -11,44 +11,25 @@
 
                     <!-- Add Form -->
                     <form class="form-horizontal" role="form"> 
-                        <spark-text :display="'Name*'"
+                         <spark-text :display="'Name*'"
                             :form="forms.updateSection"
                             :name="'name'"
                             :input.sync="forms.updateSection.name">
                         </spark-text>
-                                   
-                        <spark-shortname :display="'Shortname*'"
-                            :form="forms.updateSection"
-                            :name="'shortname'"
-                            :source.sync="forms.updateSection.name"
-                            :input.sync="forms.updateSection.shortname">
-                        </spark-shortname>   
-                                                                      
-                         <spark-select :display="'Sub Section*'"
-                                       :form="forms.updateSection"
-                                       :name="'sub_section'"
-                                       :items="subSectionOptions"
-                                       :input.sync="forms.updateSection.sub_section">
-                        </spark-select>                 
-
-                        <spark-text :display="'Description*'"
-                            :form="forms.updateSection"
-                            :name="'description'"
-                            :input.sync="forms.updateSection.description">
-                        </spark-text>
                             
-                        <spark-file :display="'Upload file'"
+                        <spark-file :display="'Icon file'"
                             :form="forms.updateSection"
-                            :name="'reference_file'"
-                            :warning="'File must be less than 20MB. Must be in PDF format'"
-                            :input.sync="forms.updateSection.reference_file">
-                        </spark-file>           
+                            :name="'icon_file'"
+                            :warning="'File must be less than 20MB. Must be an image file'"
+                            :filename.sync="forms.updateSection.file_name"
+                            :input.sync="forms.updateSection.icon_file">
+                        </spark-file> 
                     </form>
 
                     <fieldset>
-                       <legend>Uploads</legend> 
-                        <div class="panel-body" v-if="editingSection.upload!=null">
-                            File name: @{{ editingSection.upload.file_url }}
+                       <legend>Icon</legend> 
+                        <div class="panel-body" v-if="editingSection.icon_url">
+                            <img v-bind:src="getImageUrl(editingSection)"/>
                         </div>
                         <div v-else class="panel-body">
                             No uploads found.

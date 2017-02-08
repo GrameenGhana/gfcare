@@ -4,6 +4,8 @@ Vue.component('gfcare-cch-screen', {
     ready: function() {
         this.getUsers();
         this.getFacilities();
+        this.getSections();
+        this.getSubSections();
     },
 
     data: function() {
@@ -18,6 +20,14 @@ Vue.component('gfcare-cch-screen', {
     events: {
         updateUsers: function() {
             this.getUsers();
+            return true;
+        },
+        updateSections: function() {
+            this.getSections();
+            return true;
+        },
+        updateSubsections: function() {
+            this.getSubSections();
             return true;
         },
         userRetrieved: function(user) {
@@ -47,6 +57,32 @@ Vue.component('gfcare-cch-screen', {
                 .success(function (facilities) {
                     self.facilities = facilities;
                     self.$broadcast('facilitiesRetrieved', self.facilities);
+                });
+        },
+        getSections: function () {
+            var self = this;
+            this.$http.get('/gfcare/chn-on-the-go/content/poc/sections')
+                .success(function (res) {
+                    var sections = res;
+                    sections.sort(function(a,b) { 
+                        var x = a.name.toLowerCase();
+                        var y = b.name.toLowerCase();
+                        return (x < y) ? -1 : ((x > y) ? 1 : 0);
+                    });
+                    self.$broadcast('sectionsRetrieved', sections);
+                });
+        },
+        getSubSections: function () {
+            var self = this;
+            this.$http.get('/gfcare/chn-on-the-go/content/poc/subsections')
+                .success(function (res) {
+                    var subsections = res;
+                    subsections.sort(function(a,b) { 
+                        var x = a.section.toLowerCase() + ' ' + a.name.toLowerCase();
+                        var y = b.section.toLowerCase() + ' ' + b.name.toLowerCase();
+                        return (x < y) ? -1 : ((x > y) ? 1 : 0);
+                    });
+                    self.$broadcast('subsectionsRetrieved', subsections);
                 });
         },
     },

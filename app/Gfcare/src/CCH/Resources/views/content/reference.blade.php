@@ -28,6 +28,10 @@
                                     <i class="fa fa-spinner fa-spin"></i>
                                 </span>
                                 <span v-else> <i class="fa fa-trash-o"></i> </span>
+                            </button>
+                            
+                             <button class="btn btn-warning btn-circle pull-right" style="margin-right: 10px"  @click.prevent="editReference(lcr)"> <i class="fa fa-pencil"></i> 
+                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -40,5 +44,7 @@
     </div>
     
     @include('CCH::content.add-reference')
+    @include('CCH::content.edit-reference')
+
 
 </gfcare-cch-content-references-screen>

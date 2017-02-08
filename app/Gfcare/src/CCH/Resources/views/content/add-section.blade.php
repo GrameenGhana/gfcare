@@ -16,33 +16,14 @@
                             :name="'name'"
                             :input.sync="forms.addSection.name">
                         </spark-text>
-                                   
-                        <spark-shortname :display="'Shortname*'"
-                            :form="forms.addSection"
-                            :name="'shortname'"
-                            :source.sync="forms.addSection.name"
-                            :input.sync="forms.addSection.shortname">
-                        </spark-shortname>   
-                                                                      
-                         <spark-select :display="'Sub Section*'"
-                                       :form="forms.addSection"
-                                       :name="'sub_section'"
-                                       :items="subSectionOptions"
-                                       :input.sync="forms.addSection.sub_section">
-                        </spark-select>                 
-
-                        <spark-text :display="'Description*'"
-                            :form="forms.addSection"
-                            :name="'description'"
-                            :input.sync="forms.addSection.description">
-                        </spark-text>
                             
-                        <spark-file :display="'Upload file'"
+                        <spark-file :display="'Icon file'"
                             :form="forms.addSection"
-                            :name="'reference_file'"
-                            :warning="'File must be less than 20MB. Must be in PDF format'"
-                            :input.sync="forms.addSection.reference_file">
-                        </spark-file>           
+                            :name="'icon_file'"
+                            :warning="'File must be less than 20MB. Must be an image file'"
+                            :filename.sync="forms.addSection.file_name"
+                            :input.sync="forms.addSection.icon_file">
+                        </spark-file>       
                     </form>
                 </div>
 

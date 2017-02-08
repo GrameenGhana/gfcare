@@ -41,53 +41,25 @@ class ContentController extends Controller
         return response()->json($items);
     }
 
+    
     public function storeLCReference(Request $request)
     {
         $user = $request->user();
-        
-        function formatSizeUnits($bytes)  {
-            if ($bytes >= 1073741824)
-            {
-                $bytes = number_format($bytes / 1073741824, 2) . ' GB';
-            }
-            elseif ($bytes >= 1048576)
-            {
-                $bytes = number_format($bytes / 1048576, 2) . ' MB';
-            }
-            elseif ($bytes >= 1024)
-            {
-                $bytes = number_format($bytes / 1024, 2) . ' KB';
-            }
-            elseif ($bytes > 1)
-            {
-                $bytes = $bytes . ' bytes';
-            }
-            elseif ($bytes == 1)
-            {
-                $bytes = $bytes . ' byte';
-            }
-            else
-            {
-                $bytes = '0 bytes';
-            }
-
-            return $bytes;
-        }
         
         $this->validate($request, [ 'reference_desc' => 'required',
                                     'reference_file' => 'required',
                                     'shortname' => 'required']);
         
-        if (!is_null($request->reference_file)) {
+        if ($request->reference_file<>'') {
             $name = $request->shortname.'.pdf';
-            $path = Storage::disk('public')->put('references/'.$name, $request->reference_file);
+            $path = Storage::disk('public')->put('cch/references/'.$name, $request->reference_file);
                             
             $reference = new Reference();
             $reference->team_id = $user->current_team_id;
             $reference->reference_desc = $request->reference_desc;
             $reference->shortname = $request->shortname;
-            $reference->reference_url =  Storage::disk('public')->url('references/'.$name);
-            $reference->size = formatSizeUnits(Storage::disk('public')->size('/references/'.$name));
+            $reference->reference_url =  Storage::disk('public')->url('cch/references/'.$name);
+            $reference->size = $this->formatSizeUnits(Storage::disk('public')->size('cch/references/'.$name));
             $reference->modified_by = $user->id;
             $reference->save();
 
@@ -98,71 +70,268 @@ class ContentController extends Controller
             );
         }
     }
-
-    /* 
-    public function store(Request $request)
+    
+    public function storePOCSection(Request $request)
     {
         $user = $request->user();
+                
+        $this->validate($request, [ 'name' => 'required|max:255', 'file_name'=>'required', 'icon_file'=>'required' ]);
+        
+        if ($request->icon_file<>'') {
+            $name = uniqid().'_'.$request->file_name;
+            $path = Storage::disk('public')->put('cch/icons/'.$name, $request->icon_file);
+                            
+            $i = new POCSection();
+            $i->team_id = $user->current_team_id;
+            $i->name = $request->name;
+            $i->icon_url = Storage::disk('public')->url('cch/icons/'.$name);
+            $i->modified_by = $user->id;
+            $i->save();
 
-        $this->validate($request, [
-                                   'type' => 'required|max:255',
-                                   'tag' => 'required|max:255',
-                                   'color' => 'required|max:255',
-                                   'imei' => 'required|max:255',
-                                  ]);
+            return $i;
+        } else {
+            return response()->json(
+                ['icon_file' => ['The file did not upload correctly.']], 422
+            );
+        }
+    }
+    
+    public function storePOCSubSection(Request $request)
+    {
+        $user = $request->user();
+                
+        $this->validate($request, [ 'name' => 'required|max:255', 
+                                    'section_id' => 'required|exists:mod_cch_content_poc_sections,id', 
+                                    'file_name'=>'required', 
+                                    'icon_file'=>'required' ]);
+        
+        if ($request->icon_file<>'') {
+            $name = uniqid().'_'.$request->file_name;
+            $path = Storage::disk('public')->put('cch/icons/'.$name, $request->icon_file);
+                            
+            $i = new POCSubSection();
+            $i->team_id = $user->current_team_id;
+            $i->section_id = $request->section_id;
+            $i->name = $request->name;
+            $i->icon_url = Storage::disk('public')->url('cch/icons/'.$name);
+            $i->modified_by = $user->id;
+            $i->save();
 
-        $device = Device::whereRaw('name=? and tag=?',array($request->type,$request->tag))->first();
+            return $i;
+        } else {
+            return response()->json(
+                ['icon_file' => ['The file did not upload correctly.']], 422
+            );
+        }
+    }
+    
+    public function storePOCTopic(Request $request)
+    {
+        $user = $request->user();
+                
+        $this->validate($request, [ 'name' => 'required|max:255', 
+                                    'sub_section_id' => 'required|exists:mod_cch_content_poc_sub_sections,id', 
+                                    'description' => 'required|max:255',
+                                    'shortname' => 'required',
+                                    'file_name'=>'required', 
+                                    'upload_file'=>'required',
+                                   ]);
+        
+        if ($request->upload_file<>'') {
+            $path = Storage::disk('public')->put('cch/topics/'.$request->file_name, $request->upload_file);
+                            
+            $i = new POCTopic();
+            $i->team_id = $user->current_team_id;
+            $i->sub_section_id = $request->sub_section_id;
+            $i->name = $request->name;
+            $i->shortname = $request->shortname;
+            $i->description = $request->description;
+            $i->file_url = Storage::disk('public')->url('cch/topics/'.$request->file_name);
+            $i->modified_by = $user->id;
+            $i->save();
 
-        if(!$device) {
-            $device = new Device();
-            $device->type = $request->type;
-            $device->tag = $request->tag;
-            $device->color = $request->color;
-            $device->imei = $request->imei;
-            $device->status = 'unallocated'; 
-            $device->modified_by = $user->id;
-            $device->team_id = $user->current_team_id;
-            $device->user_id = 0;
-            $device->facility_id = 0; 
-            $device->save();
+            return $i;
+        } else {
+            return response()->json(
+                ['upload_file' => ['The file did not upload correctly.']], 422
+            );
+        }
+    }
+
+    
+
+    public function updateLCReference(Request $request, $id)
+    {
+        $user = $request->user();
+        $i = Reference::findOrFail($id);
+        $this->validate($request, [ 'reference_desc' => 'required',
+                                    'shortname' => 'required']);
+         
+        if ($request->reference_file<>'') {
+            $name = $request->shortname.'.pdf';
+            $path = Storage::disk('public')->put('cch/references/'.$name, $request->reference_file);
+            $i->reference_url =  Storage::disk('public')->url('cch/references/'.$name);
+            $i->size = $this->formatSizeUnits(Storage::disk('public')->size('cch/references/'.$name));
         }
         
-        return $this->getRoles($user->current_team_id); 
-    }
+        $i->reference_desc = $request->reference_desc;
+        $i->shortname = $request->shortname;
+        $i->modified_by = $user->id;
+        $i->save();
 
-    public function update(Request $request, $deviceId)
+        return $i; 
+    }
+    
+    public function updatePOCSection(Request $request, $id)
     {
         $user = $request->user();
-        $device = Device::findOrFail($deviceId);
-        $this->validate($request, [
-                                   'type' => 'required|max:255',
-                                   'tag' => 'required|max:255',
-                                   'color' => 'required|max:255',
-                                   'imei' => 'required|max:255',
-                                   'status' => 'required|max:255',
-                                  ]);
+        $i = POCSection::findOrFail($id);
+        $this->validate($request, [ 'name' => 'required|max:255' ]);
 
-        $device->type = $request->type;
-        $device->tag = $request->tag;
-        $device->color = $request->color;
-        $device->imei = $request->imei;
-        $device->status = $request->status; 
-        $device->modified_by = $user->id;
-        $device->save();
+         
+        if ($request->icon_file<>'') {
+            $name = uniqid().'_'.$request->file_name;
+            $path = Storage::disk('public')->put('cch/icons/'.$name, $request->icon_file);
+            $i->icon_url = Storage::disk('public')->url('cch/icons/'.$name);
+        }
+                         
+        $i->name = $request->name;
+        $i->modified_by = $user->id;
+        $i->save();
 
-        return $device;; 
+        return $i; 
     }
-
-    public function destroy(Request $request, $deviceId)
+            
+    public function updatePOCSubSection(Request $request, $id)
     {
-        $device = Device::findOrFail($deviceId); 
-        $device->delete();
-        return $this->getDevices(); 
-    }
+        $user = $request->user();
+        $i = POCSubSection::findOrFail($id);
+        $this->validate($request, [ 'name' => 'required|max:255',                                     
+                                    'section_id' => 'required|exists:mod_cch_content_poc_sections,id', ]);
 
-    private function getDevices()
-    {
-        return Devices::all();
+         
+        if ($request->icon_file<>'') {
+            $name = uniqid().'_'.$request->file_name;
+            $path = Storage::disk('public')->put('cch/icons/'.$name, $request->icon_file);
+            $i->icon_url = Storage::disk('public')->url('cch/icons/'.$name);
+        }
+                         
+        $i->name = $request->name;
+        $i->section_id = $request->section_id;
+        $i->modified_by = $user->id;
+        $i->save();
+
+        return $i; 
     }
-     */
+    
+    public function updatePOCTopic(Request $request, $id)
+    {
+        $user = $request->user();
+        $i = POCTopic::findOrFail($id);
+                        
+        $this->validate($request, [ 'name' => 'required|max:255', 
+                                    'sub_section_id' => 'required|exists:mod_cch_content_poc_sub_sections,id', 
+                                    'description' => 'required|max:255',
+                                    'shortname' => 'required'
+                                   ]);
+
+         
+        if ($request->upload_file<>'') {
+            $path = Storage::disk('public')->put('cch/topics/'.$request->file_name, $request->upload_file);                         
+            $i->file_url = Storage::disk('public')->url('cch/topics/'.$request->file_name);
+        }
+                         
+        $i->sub_section_id = $request->sub_section_id;
+        $i->name = $request->name;
+        $i->shortname = $request->shortname;
+        $i->description = $request->description;
+        $i->modified_by = $user->id;
+        $i->save();
+
+        return $i; 
+    }
+    
+    
+    public function destroyLCReference(Request $request, $id)
+    {
+        $i = Reference::findOrFail($id); 
+        Storage::disk('public')->delete(preg_replace('/storage\//','',$i->reference_url));
+        $i->delete();
+        return response()->json(['data' => 'Ok'], 200);
+    }
+    
+    public function destroyPOCSection(Request $request, $id)
+    {
+        $i = POCSection::findOrFail($id); 
+        Storage::disk('public')->delete(preg_replace('/storage\//','',$i->icon_url));
+        $i->delete();
+        return response()->json(['data' => 'Ok'], 200);
+    }
+    
+    public function destroyPOCSubSection(Request $request, $id)
+    {
+        $i = POCSubSection::findOrFail($id); 
+        Storage::disk('public')->delete(preg_replace('/storage\//','',$i->icon_url));
+        $i->delete();
+        return response()->json(['data' => 'Ok'], 200);
+    }
+    
+    public function destroyPOCTopic(Request $request, $id)
+    {
+        $i = POCTopic::findOrFail($id); 
+        Storage::disk('public')->delete(preg_replace('/storage\//','',$i->file_url));
+        $i->delete();
+        return response()->json(['data' => 'Ok'], 200);
+    }
+    
+            
+    private function formatSizeUnits($bytes)  
+    {
+        if ($bytes >= 1073741824)
+        {
+            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+        }
+        elseif ($bytes >= 1048576)
+        {
+            $bytes = number_format($bytes / 1048576, 2) . ' MB';
+        }
+        elseif ($bytes >= 1024)
+        {
+            $bytes = number_format($bytes / 1024, 2) . ' KB';
+        }
+        elseif ($bytes > 1)
+        {
+            $bytes = $bytes . ' bytes';
+        }
+        elseif ($bytes == 1)
+        {
+            $bytes = $bytes . ' byte';
+        }
+        else
+        {
+            $bytes = '0 bytes';
+        }
+
+        return $bytes;
+    }
+    
+    public function displayImage($type, $id) 
+    {
+        $file_path = null;
+        
+        switch ($type) {
+            case 'section': $file_path = POCSection::find($id)->icon_url; break; 
+            case 'subsection': $file_path = POCSubSection::find($id)->icon_url; break; 
+        }
+        if ($file_path) {
+            $file_path = preg_replace('/storage\//','',$file_path);
+            $contents = Storage::disk('public')->get($file_path);
+            $mime = mime_content_type($contents); 
+            $contents = base64_decode(preg_replace('/data:\w+\/\w+;base64,/','',$contents));
+            header("Content-Type: ".$mime);
+            header("Content-Length: " . strlen($contents));
+            echo $contents;
+        }
+        exit;
+    }
 }

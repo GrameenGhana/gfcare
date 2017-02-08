@@ -22,11 +22,14 @@
                 <tbody>
                     <tr v-for="section in sections">
 
-                        <td class="spark-table-pad">@{{ section.icon_url }}</td>
+                        <td v-if="section.icon_url" class="spark-table-pad">
+                            <img v-bind:src="getImageUrl(section)"/>
+                        </td>
+                        <td v-else class="spark-table-pad"></td>
                         <td class="spark-table-pad">@{{ section.name }}</td>
                         <td class="spark-table-pad">@{{ section.subsections.length}}</td>
                         <td class="spark-table-pad">
-                            <button class="btn btn-danger btn-circle pull-right" @click.prevent="removeSection(section)" :disabled="removingSection(section.id)">
+                            <button class="btn btn-danger btn-circle pull-right" @click.prevent="removeSection(section)" :disabled="removingSection(section.id) || section.subsections.length>0">
                                 <span v-if="removingSection(section.id)">
                                     <i class="fa fa-spinner fa-spin"></i>
                                 </span>
@@ -46,6 +49,8 @@
             No sections found.
         </div>
     </div>
+
+    @include('CCH::content.add-section')
+    @include('CCH::content.edit-section')
         
-    
 </gfcare-cch-content-poc-section-screen>

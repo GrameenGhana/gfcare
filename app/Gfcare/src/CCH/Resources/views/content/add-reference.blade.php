@@ -21,6 +21,7 @@
                             :form="forms.addReference"
                             :name="'reference_file'"
                             :warning="'File must be less than 20MB. Must be in PDF format'"
+                            :filename.sync="forms.addReference.file_name"
                             :input.sync="forms.addReference.reference_file">
                         </spark-file>
                                                 

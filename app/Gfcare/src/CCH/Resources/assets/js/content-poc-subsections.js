@@ -1,7 +1,7 @@
 Vue.component('gfcare-cch-content-poc-subsection-screen', {
 
     ready: function() {
-        this.getSubSections();
+        //this.getSubSections();
     },
 
     data: function() {
@@ -10,29 +10,26 @@ Vue.component('gfcare-cch-content-poc-subsection-screen', {
             editingSubSection: {'name':''},
             removingSubSectionId: null,
              
-            sectionOptions: [ ],
+            sectionOptions: [],
             
             forms: {
                 addSubSection: new SparkForm({  
                     name: '',  
                     section_id: '',  
-                    reference_file: '',
+                    file_name: '',
+                    icon_file: '',
                 }),
                 updateSubSection: new SparkForm({                    
                     name: '',  
                     section_id: '',  
-                    reference_file: '',
+                    file_name: '',
+                    icon_file: '',
                 }),
             }
         };
     },
     
     events: {
-        updateSubsections: function () {
-            this.getSubSections();
-            return true;
-        },      
-
         sectionsRetrieved: function (sections) {
             this.sectionOptions = []; 
             for(var i=0; i < sections.length; ++i) {
@@ -44,11 +41,36 @@ Vue.component('gfcare-cch-content-poc-subsection-screen', {
             });
             return true;
         },
+        
+        subsectionsRetrieved: function(subsections) {
+            this.subsections = subsections;
+        },
     },
 
     computed: { },
 
     methods: {
+        getImageUrl: function(subsection) {
+            return '/gfcare/chn-on-the-go/content/image/subsection/'+subsection.id;    
+        },
+        
+        addSubSection: function () {   
+            this.forms.addSubSection.sub_section_id ='';
+            this.forms.addSubSection.name ='';
+            this.forms.addSubSection.shortname ='';
+            this.forms.addSubSection.description ='';
+            $('#modal-add-subsection').modal('show');  
+        },
+
+        editSubSection: function (topic) { 
+            this.editingTopic = topic;
+            this.forms.updateSubSection.sub_section_id = topic.sub_section_id;
+            this.forms.updateSubSection.name = topic.name;
+            this.forms.updateSubSection.shortname = topic.shortname;
+            this.forms.updateSubSection.description = topic.description;
+            $('#modal-edit-subsection').modal('show'); 
+        },
+        
         removingSubSection: function(id) { return (this.removingSubSectionId == id); },
 
         removeFromList: function (list, item) {
@@ -77,6 +99,7 @@ Vue.component('gfcare-cch-content-poc-subsection-screen', {
             Spark.post('/gfcare/chn-on-the-go/content/poc/subsections', this.forms.addSubSection)
                 .then(function () {
                     $('#modal-add-subsection').modal('hide');
+                    self.$dispatch('updateSections');
                     self.$dispatch('updateSubsections');
                 });
         }, 
@@ -86,6 +109,7 @@ Vue.component('gfcare-cch-content-poc-subsection-screen', {
             Spark.put('/gfcare/chn-on-the-go/content/poc/subsections/' + this.editingSubSection.id, this.forms.updateSubSection)
                 .then(function () {
                     $('#modal-edit-subsection').modal('hide');
+                    self.$dispatch('updateSections');
                     self.$dispatch('updateSubsections');
                 });
         },     
@@ -98,6 +122,7 @@ Vue.component('gfcare-cch-content-poc-subsection-screen', {
                 .success(function () {
                     self.removingSubSectionId = 0;
                     self.subsections = self.removeFromList(this.subsections, sec);
+                    self.$dispatch('updateSections');
                     self.$dispatch('updateSubsections');
                 })
                 .error(function(resp) {

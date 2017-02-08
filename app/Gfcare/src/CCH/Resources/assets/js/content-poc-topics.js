@@ -18,14 +18,16 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
                     name: '',
                     shortname: '',
                     description: '',
-                    reference_file: '',
+                    upload_file: '',
+                    file_name: '',
                 }),
                 updateTopic: new SparkForm({ 
                     sub_section_id: '',
                     name: '',
                     shortname: '',
                     description: '',
-                    reference_file: '',
+                    upload_file: '',
+                    file_name: '',
                 }),
             }
         };
@@ -37,11 +39,11 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
             return true;
         },
         subsectionsRetrieved: function (subsections) {
-            this.subsectionOptions = []; 
+            this.subSectionOptions = []; 
             for(var i=0; i < subsections.length; ++i) {
-                    this.subsectionOptions.push({'text': subsections[i].section +' > '+subsections[i].name, 'value':subsections[i].id});
+                    this.subSectionOptions.push({'text': subsections[i].section +' > '+subsections[i].name, 'value':subsections[i].id});
             }
-            this.subsectionOptions.sort(function(a,b) { 
+            this.subSectionOptions.sort(function(a,b) { 
                 var x = a.text; var y = b.text;
                 return (x < y) ? -1 : ((x > y) ? 1 : 0);
             });
@@ -54,23 +56,19 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
 
     methods: {
         addTopic: function () {   
-            this.forms.addTopic.type ='';
-            this.forms.addTopic.section ='';
+            this.forms.addTopic.sub_section_id ='';
             this.forms.addTopic.name ='';
             this.forms.addTopic.shortname ='';
-            this.forms.addTopic.subtitle ='';
             this.forms.addTopic.description ='';
             $('#modal-add-topic').modal('show');  
         },
 
         editTopic: function (topic) { 
             this.editingTopic = topic;
-            this.forms.addTopic.type = topic.type;
-            this.forms.addTopic.section = topic.section;
-            this.forms.addTopic.name = topic.name;
-            this.forms.addTopic.shortname = topic.shortname;
-            this.forms.addTopic.subtitle = topic.subtitle;
-            this.forms.addTopic.description = topic.description;
+            this.forms.updateTopic.sub_section_id = topic.sub_section_id;
+            this.forms.updateTopic.name = topic.name;
+            this.forms.updateTopic.shortname = topic.shortname;
+            this.forms.updateTopic.description = topic.description;
             $('#modal-edit-topic').modal('show'); 
         },
         
@@ -102,6 +100,7 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
             Spark.post('/gfcare/chn-on-the-go/content/poc/topics', this.forms.addTopic)
                 .then(function () {
                     $('#modal-add-topic').modal('hide');
+                    self.$dispatch('updateSubsections');
                     self.$dispatch('updateTopics');
                 });
         }, 
@@ -111,18 +110,20 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
             Spark.put('/gfcare/chn-on-the-go/content/poc/topics/' + this.editingTopic.id, this.forms.updateTopic)
                 .then(function () {
                     $('#modal-edit-topic').modal('hide');
+                    self.$dispatch('updateSubsections');
                     self.$dispatch('updateTopics');
                 });
         },     
 
         removeTopic: function (topic) {
             var self = this;
-            self.removingTopicId = user.id;
+            self.removingTopicId = topic.id;
             
             this.$http.delete('/gfcare/chn-on-the-go/content/poc/topics/' + topic.id)
                 .success(function () {
                     self.removingTopicId = 0;
                     self.topics = self.removeFromList(this.topics, topic);
+                    self.$dispatch('updateSubsections');
                     self.$dispatch('updateTopics');
                 })
                 .error(function(resp) {

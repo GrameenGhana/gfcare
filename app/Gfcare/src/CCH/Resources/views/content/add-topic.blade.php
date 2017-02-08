@@ -11,6 +11,13 @@
 
                     <!-- Add Form -->
                     <form class="form-horizontal" role="form"> 
+                        <spark-select :display="'Sub Section*'"
+                                       :form="forms.addTopic"
+                                       :name="'sub_section_id'"
+                                       :items="subSectionOptions"
+                                       :input.sync="forms.addTopic.sub_section_id">
+                        </spark-select>   
+                       
                         <spark-text :display="'Name*'"
                             :form="forms.addTopic"
                             :name="'name'"
@@ -24,13 +31,6 @@
                             :input.sync="forms.addTopic.shortname">
                         </spark-shortname>   
                                                                       
-                         <spark-select :display="'Sub Topic*'"
-                                       :form="forms.addTopic"
-                                       :name="'sub_topic'"
-                                       :items="subTopicOptions"
-                                       :input.sync="forms.addTopic.sub_topic">
-                        </spark-select>                 
-
                         <spark-text :display="'Description*'"
                             :form="forms.addTopic"
                             :name="'description'"
@@ -39,9 +39,10 @@
                             
                         <spark-file :display="'Upload file'"
                             :form="forms.addTopic"
-                            :name="'reference_file'"
-                            :warning="'File must be less than 20MB. Must be in PDF format'"
-                            :input.sync="forms.addTopic.reference_file">
+                            :name="'upload_file'"
+                            :warning="'File must be less than 20MB. Must be in xml format'"
+                            :filename.sync="forms.addTopic.file_name"
+                            :input.sync="forms.addTopic.upload_file">
                         </spark-file>           
                     </form>
                 </div>

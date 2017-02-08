@@ -22,9 +22,7 @@ require('./content-poc-topics');
 
 Vue.component('gfcare-cch-content-poc-section-screen', {
 
-    ready: function ready() {
-        this.getSections();
-    },
+    ready: function ready() {},
 
     data: function data() {
         return {
@@ -35,19 +33,21 @@ Vue.component('gfcare-cch-content-poc-section-screen', {
             forms: {
                 addSection: new SparkForm({
                     name: '',
-                    reference_file: ''
+                    icon_file: '',
+                    file_name: ''
                 }),
                 updateSection: new SparkForm({
                     name: '',
-                    reference_file: ''
+                    icon_file: '',
+                    file_name: ''
                 })
             }
         };
     },
 
     events: {
-        updateSections: function updateSections() {
-            this.getSections();
+        sectionsRetrieved: function sectionsRetrieved(sections) {
+            this.sections = sections;
             return true;
         }
     },
@@ -55,6 +55,11 @@ Vue.component('gfcare-cch-content-poc-section-screen', {
     computed: {},
 
     methods: {
+
+        getImageUrl: function getImageUrl(section) {
+            return '/gfcare/chn-on-the-go/content/image/section/' + section.id;
+        },
+
         removingSection: function removingSection(id) {
             return this.removingSectionId == id;
         },
@@ -67,19 +72,13 @@ Vue.component('gfcare-cch-content-poc-section-screen', {
 
         addSection: function addSection() {
             this.forms.addSection.name = '';
-            this.forms.addSection.shortname = '';
-            this.forms.addSection.sub_section = '';
-            this.forms.addSection.description = '';
-            this.forms.addSection.reference_file = '';
+            this.forms.addSection.icon_file = '';
             $('#modal-add-section').modal('show');
         },
 
         editSection: function editSection(sec) {
             this.editingSection = sec;
             this.forms.updateSection.name = sec.name;
-            this.forms.updateSection.shortname = sec.shortname;
-            this.forms.updateSection.sub_section = sec.sub_section;
-            this.forms.updateSection.description = sec.description;
             $('#modal-edit-section').modal('show');
         },
 
@@ -137,7 +136,7 @@ Vue.component('gfcare-cch-content-poc-section-screen', {
 Vue.component('gfcare-cch-content-poc-subsection-screen', {
 
     ready: function ready() {
-        this.getSubSections();
+        //this.getSubSections();
     },
 
     data: function data() {
@@ -152,23 +151,20 @@ Vue.component('gfcare-cch-content-poc-subsection-screen', {
                 addSubSection: new SparkForm({
                     name: '',
                     section_id: '',
-                    reference_file: ''
+                    file_name: '',
+                    icon_file: ''
                 }),
                 updateSubSection: new SparkForm({
                     name: '',
                     section_id: '',
-                    reference_file: ''
+                    file_name: '',
+                    icon_file: ''
                 })
             }
         };
     },
 
     events: {
-        updateSubsections: function updateSubsections() {
-            this.getSubSections();
-            return true;
-        },
-
         sectionsRetrieved: function sectionsRetrieved(sections) {
             this.sectionOptions = [];
             for (var i = 0; i < sections.length; ++i) {
@@ -179,12 +175,37 @@ Vue.component('gfcare-cch-content-poc-subsection-screen', {
                 return x < y ? -1 : x > y ? 1 : 0;
             });
             return true;
+        },
+
+        subsectionsRetrieved: function subsectionsRetrieved(subsections) {
+            this.subsections = subsections;
         }
     },
 
     computed: {},
 
     methods: {
+        getImageUrl: function getImageUrl(subsection) {
+            return '/gfcare/chn-on-the-go/content/image/subsection/' + subsection.id;
+        },
+
+        addSubSection: function addSubSection() {
+            this.forms.addSubSection.sub_section_id = '';
+            this.forms.addSubSection.name = '';
+            this.forms.addSubSection.shortname = '';
+            this.forms.addSubSection.description = '';
+            $('#modal-add-subsection').modal('show');
+        },
+
+        editSubSection: function editSubSection(topic) {
+            this.editingTopic = topic;
+            this.forms.updateSubSection.sub_section_id = topic.sub_section_id;
+            this.forms.updateSubSection.name = topic.name;
+            this.forms.updateSubSection.shortname = topic.shortname;
+            this.forms.updateSubSection.description = topic.description;
+            $('#modal-edit-subsection').modal('show');
+        },
+
         removingSubSection: function removingSubSection(id) {
             return this.removingSubSectionId == id;
         },
@@ -213,6 +234,7 @@ Vue.component('gfcare-cch-content-poc-subsection-screen', {
             var self = this;
             Spark.post('/gfcare/chn-on-the-go/content/poc/subsections', this.forms.addSubSection).then(function () {
                 $('#modal-add-subsection').modal('hide');
+                self.$dispatch('updateSections');
                 self.$dispatch('updateSubsections');
             });
         },
@@ -221,6 +243,7 @@ Vue.component('gfcare-cch-content-poc-subsection-screen', {
             var self = this;
             Spark.put('/gfcare/chn-on-the-go/content/poc/subsections/' + this.editingSubSection.id, this.forms.updateSubSection).then(function () {
                 $('#modal-edit-subsection').modal('hide');
+                self.$dispatch('updateSections');
                 self.$dispatch('updateSubsections');
             });
         },
@@ -232,6 +255,7 @@ Vue.component('gfcare-cch-content-poc-subsection-screen', {
             this.$http.delete('/gfcare/chn-on-the-go/content/poc/subsections/' + sec.id).success(function () {
                 self.removingSubSectionId = 0;
                 self.subsections = self.removeFromList(this.subsections, sec);
+                self.$dispatch('updateSections');
                 self.$dispatch('updateSubsections');
             }).error(function (resp) {
                 self.removingSubSectionId = 0;
@@ -266,14 +290,16 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
                     name: '',
                     shortname: '',
                     description: '',
-                    reference_file: ''
+                    upload_file: '',
+                    file_name: ''
                 }),
                 updateTopic: new SparkForm({
                     sub_section_id: '',
                     name: '',
                     shortname: '',
                     description: '',
-                    reference_file: ''
+                    upload_file: '',
+                    file_name: ''
                 })
             }
         };
@@ -285,11 +311,11 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
             return true;
         },
         subsectionsRetrieved: function subsectionsRetrieved(subsections) {
-            this.subsectionOptions = [];
+            this.subSectionOptions = [];
             for (var i = 0; i < subsections.length; ++i) {
-                this.subsectionOptions.push({ 'text': subsections[i].section + ' > ' + subsections[i].name, 'value': subsections[i].id });
+                this.subSectionOptions.push({ 'text': subsections[i].section + ' > ' + subsections[i].name, 'value': subsections[i].id });
             }
-            this.subsectionOptions.sort(function (a, b) {
+            this.subSectionOptions.sort(function (a, b) {
                 var x = a.text;var y = b.text;
                 return x < y ? -1 : x > y ? 1 : 0;
             });
@@ -301,23 +327,19 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
 
     methods: {
         addTopic: function addTopic() {
-            this.forms.addTopic.type = '';
-            this.forms.addTopic.section = '';
+            this.forms.addTopic.sub_section_id = '';
             this.forms.addTopic.name = '';
             this.forms.addTopic.shortname = '';
-            this.forms.addTopic.subtitle = '';
             this.forms.addTopic.description = '';
             $('#modal-add-topic').modal('show');
         },
 
         editTopic: function editTopic(topic) {
             this.editingTopic = topic;
-            this.forms.addTopic.type = topic.type;
-            this.forms.addTopic.section = topic.section;
-            this.forms.addTopic.name = topic.name;
-            this.forms.addTopic.shortname = topic.shortname;
-            this.forms.addTopic.subtitle = topic.subtitle;
-            this.forms.addTopic.description = topic.description;
+            this.forms.updateTopic.sub_section_id = topic.sub_section_id;
+            this.forms.updateTopic.name = topic.name;
+            this.forms.updateTopic.shortname = topic.shortname;
+            this.forms.updateTopic.description = topic.description;
             $('#modal-edit-topic').modal('show');
         },
 
@@ -349,6 +371,7 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
             var self = this;
             Spark.post('/gfcare/chn-on-the-go/content/poc/topics', this.forms.addTopic).then(function () {
                 $('#modal-add-topic').modal('hide');
+                self.$dispatch('updateSubsections');
                 self.$dispatch('updateTopics');
             });
         },
@@ -357,17 +380,19 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
             var self = this;
             Spark.put('/gfcare/chn-on-the-go/content/poc/topics/' + this.editingTopic.id, this.forms.updateTopic).then(function () {
                 $('#modal-edit-topic').modal('hide');
+                self.$dispatch('updateSubsections');
                 self.$dispatch('updateTopics');
             });
         },
 
         removeTopic: function removeTopic(topic) {
             var self = this;
-            self.removingTopicId = user.id;
+            self.removingTopicId = topic.id;
 
             this.$http.delete('/gfcare/chn-on-the-go/content/poc/topics/' + topic.id).success(function () {
                 self.removingTopicId = 0;
                 self.topics = self.removeFromList(this.topics, topic);
+                self.$dispatch('updateSubsections');
                 self.$dispatch('updateTopics');
             }).error(function (resp) {
                 self.removingTopicId = 0;
@@ -388,12 +413,18 @@ Vue.component('gfcare-cch-content-references-screen', {
         this.getReferences();
     },
 
+    components: {
+        NotificationStore: NotificationStore
+    },
+
     data: function data() {
         return {
             references: [],
+            editingReference: { 'upload': [] },
             removingReferenceId: null,
             forms: {
-                addReference: new SparkForm({ reference_desc: '', reference_file: '', shortname: '' })
+                addReference: new SparkForm({ reference_desc: '', reference_file: '', shortname: '', file_name: '' }),
+                updateReference: new SparkForm({ reference_desc: '', reference_file: '', shortname: '', file_name: '' })
             }
         };
     },
@@ -415,6 +446,14 @@ Vue.component('gfcare-cch-content-references-screen', {
             $('#modal-add-reference').modal('show');
         },
 
+        editReference: function editReference(ref) {
+            this.editingReference = ref;
+            this.forms.updateReference.reference_desc = ref.reference_desc;
+            this.forms.updateReference.reference_file = '';
+            this.forms.updateReference.shortname = ref.shortname;
+            $('#modal-edit-reference').modal('show');
+        },
+
         removingReference: function removingReference(id) {
             return this.removingReferenceId == id;
         },
@@ -428,8 +467,16 @@ Vue.component('gfcare-cch-content-references-screen', {
         // Ajax calls
         addNewReference: function addNewReference() {
             var self = this;
-            Spark.post('/gfcare/chn-on-the-go/content/references', this.forms.addReference).then(function () {
+            Spark.post('/gfcare/chn-on-the-go/content/lc/references', this.forms.addReference).then(function () {
                 $('#modal-add-reference').modal('hide');
+                self.$dispatch('updateReferences');
+            });
+        },
+
+        updateReference: function updateReference() {
+            var self = this;
+            Spark.put('/gfcare/chn-on-the-go/content/lc/references/' + this.editingReference.id, this.forms.updateReference).then(function () {
+                $('#modal-edit-reference').modal('hide');
                 self.$dispatch('updateReferences');
             });
         },
@@ -438,7 +485,7 @@ Vue.component('gfcare-cch-content-references-screen', {
             var self = this;
             self.removingReferenceId = reference.id;
 
-            this.$http.delete('/gfcare/chn-on-the-go/content/ls/references/' + reference.id).success(function () {
+            this.$http.delete('/gfcare/chn-on-the-go/content/lc/references/' + reference.id).success(function () {
                 self.removingReferenceId = 0;
                 self.references = self.removeFromList(self.references, reference);
                 self.$dispatch('updateReferences');
@@ -478,6 +525,8 @@ Vue.component('gfcare-cch-screen', {
     ready: function ready() {
         this.getUsers();
         this.getFacilities();
+        this.getSections();
+        this.getSubSections();
     },
 
     data: function data() {
@@ -492,6 +541,14 @@ Vue.component('gfcare-cch-screen', {
     events: {
         updateUsers: function updateUsers() {
             this.getUsers();
+            return true;
+        },
+        updateSections: function updateSections() {
+            this.getSections();
+            return true;
+        },
+        updateSubsections: function updateSubsections() {
+            this.getSubSections();
             return true;
         },
         userRetrieved: function userRetrieved(user) {
@@ -519,6 +576,30 @@ Vue.component('gfcare-cch-screen', {
             this.$http.get('/gfcare/api/teams/' + this.teamId + '/facilities').success(function (facilities) {
                 self.facilities = facilities;
                 self.$broadcast('facilitiesRetrieved', self.facilities);
+            });
+        },
+        getSections: function getSections() {
+            var self = this;
+            this.$http.get('/gfcare/chn-on-the-go/content/poc/sections').success(function (res) {
+                var sections = res;
+                sections.sort(function (a, b) {
+                    var x = a.name.toLowerCase();
+                    var y = b.name.toLowerCase();
+                    return x < y ? -1 : x > y ? 1 : 0;
+                });
+                self.$broadcast('sectionsRetrieved', sections);
+            });
+        },
+        getSubSections: function getSubSections() {
+            var self = this;
+            this.$http.get('/gfcare/chn-on-the-go/content/poc/subsections').success(function (res) {
+                var subsections = res;
+                subsections.sort(function (a, b) {
+                    var x = a.section.toLowerCase() + ' ' + a.name.toLowerCase();
+                    var y = b.section.toLowerCase() + ' ' + b.name.toLowerCase();
+                    return x < y ? -1 : x > y ? 1 : 0;
+                });
+                self.$broadcast('subsectionsRetrieved', subsections);
             });
         }
     },
@@ -34573,7 +34654,7 @@ Vue.component('spark-email', {
 });
 
 Vue.component('spark-file', {
-    props: ['display', 'form', 'name', 'input', 'warning'],
+    props: ['display', 'form', 'name', 'input', 'filename', 'warning'],
 
     template: '<div class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-4 control-label">{{ display }}</label>\
@@ -34595,6 +34676,7 @@ Vue.component('spark-file', {
         createFile: function createFile(file) {
             var reader = new FileReader();
             var vm = this;
+            this.filename = file.name;
             reader.onload = function (e) {
                 vm.input = e.target.result;
             };
@@ -34623,13 +34705,19 @@ Vue.component('spark-shortname', {
     template: '<div class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-4 control-label">{{ display }}</label>\
     <div class="col-md-6">\
-        <input type="text" class="form-control spark-first-field" v-model="input">\
+        <input type="text" disabled="true" class="form-control spark-first-field" v-model="input">\
         <span class="btn-warning btn-circle" style="cursor:pointer" id="generate" @click.prevent="createShortName">Generate short name</span> \
         <span class="help-block" v-show="form.errors.has(name)">\
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
 </div>',
+
+    watch: {
+        'source': function source(val) {
+            this.createShortName();
+        }
+    },
 
     methods: {
         createShortName: function createShortName() {
