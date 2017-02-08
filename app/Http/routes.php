@@ -32,6 +32,9 @@ Route::group(['middleware' => 'web'], function ($router) {
         $router->delete('settings/teams/invitations/{invite}', 'Settings\InvitationController@destroyTeamInvitationForUser');
         $router->delete('settings/teams/{team}/invitations/{invite}', 'Settings\InvitationController@destroyTeamInvitationForOwner');
         
+        $router->get('tracker', 'Settings\TrackerController@index');
+        $router->post('tracker', 'Settings\TrackerController@store');
+        
         $router->post('settings/teams/{id}/modules', 'Settings\ModuleController@store');
         $router->delete('settings/teams/{id}/modules/{mid}', 'Settings\ModuleController@destroy');
         $router->get('settings/teams/{id}/modules/{mid}/switch', 'Settings\ModuleController@toggleModuleStatus');

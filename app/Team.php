@@ -5,6 +5,7 @@ namespace App;
 use App\Teams\Team as BaseTeam;
 use App\Teams\Module;
 use App\Teams\Location;
+use App\Teams\Tracker;
 use App\Teams\Facility;
 use App\Teams\FacilityGroup;
 
@@ -77,9 +78,11 @@ class Team extends BaseTeam
         return false;
     }
     
-
     
-    
+    public function tracker()
+    {
+        return $this->hasMany(Tracker::class);
+    }
     
     /**
      * Get all of the locations for the team.
