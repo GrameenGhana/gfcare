@@ -106,5 +106,5 @@ Route::group(['middleware' => 'web'], function ($router) {
 });
 
 Route::group(['middleware' => ['api'],'prefix'=>'api'], function ($router) {
-    $router->post('api/users/login', 'API\LoginController@authenticate');
+    $router->post('/users/login', 'API\LoginController@authenticate');
 });
