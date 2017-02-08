@@ -11,6 +11,13 @@
 
                     <!-- Add Form -->
                     <form class="form-horizontal" role="form"> 
+                        <spark-select :display="'Sub Section*'"
+                                       :form="forms.updateTopic"
+                                       :name="'sub_section_id'"
+                                       :items="subSectionOptions"
+                                       :input.sync="forms.updateTopic.sub_section_id">
+                        </spark-select>   
+                       
                         <spark-text :display="'Name*'"
                             :form="forms.updateTopic"
                             :name="'name'"
@@ -24,13 +31,6 @@
                             :input.sync="forms.updateTopic.shortname">
                         </spark-shortname>   
                                                                       
-                         <spark-select :display="'Sub Topic*'"
-                                       :form="forms.updateTopic"
-                                       :name="'sub_topic'"
-                                       :items="subTopicOptions"
-                                       :input.sync="forms.updateTopic.sub_topic">
-                        </spark-select>                 
-
                         <spark-text :display="'Description*'"
                             :form="forms.updateTopic"
                             :name="'description'"
@@ -39,16 +39,17 @@
                             
                         <spark-file :display="'Upload file'"
                             :form="forms.updateTopic"
-                            :name="'reference_file'"
-                            :warning="'File must be less than 20MB. Must be in PDF format'"
-                            :input.sync="forms.updateTopic.reference_file">
-                        </spark-file>           
+                            :name="'upload_file'"
+                            :warning="'File must be less than 20MB. Must be in xml format'"
+                            :filename.sync="forms.addTopic.file_name"
+                            :input.sync="forms.updateTopic.upload_file">
+                        </spark-file>
                     </form>
 
                     <fieldset>
                        <legend>Uploads</legend> 
-                        <div class="panel-body" v-if="editingTopic.upload!=null">
-                            File name: @{{ editingTopic.upload.file_url }}
+                        <div class="panel-body" v-if="editingTopic.file_url">
+                            File name: @{{ editingTopic.file_url }}
                         </div>
                         <div v-else class="panel-body">
                             No uploads found.

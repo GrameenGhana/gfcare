@@ -1,4 +1,4 @@
-<gfcare-cch-content-screen inline-template>
+<gfcare-cch-content-poc-topic-screen inline-template>
 
     <!-- Topics -->
     <div class="panel panel-default">
@@ -10,24 +10,24 @@
             </button> 
         </div>
 
-        <div class="panel-body" v-if="user && topics.length > 0">
+        <div class="panel-body" v-if="topics.length > 0">
             <table class="table table-responsive">
                 <thead>
                     <tr>
-                        <th>Name</th>
                         <th>Section</th>
                         <th>Sub Section</th>
-                        <th>Uploaded Status</th>
+                        <th>Topic</th>
+                        <th>Uploaded?</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="topic in topics">
-                        <td class="spark-table-pad">@{{ topic.name }}</td>
-                        <td class="spark-table-pad">@{{ topic.section }}</td>
-                        <td class="spark-table-pad">@{{ topic.sub_section }}</td>
+                        <td class="spark-table-pad" style="width:150px">@{{ topic.section }}</td>
+                        <td class="spark-table-pad" style="width:150px">@{{ topic.sub_section }}</td>
+                        <td class="spark-table-pad" style="width:300px">@{{ topic.name }}</td>
 						<td class="spark-table-pad">
-                            <div v-if="topic.upload_status=='Uploaded'">
+                            <div v-if="topic.file_url">
                                 Uploaded
                             </div>
                             <div v-else>
@@ -63,5 +63,7 @@
         </div>
     </div>
          
+    @include('CCH::content.add-topic')
+    @include('CCH::content.edit-topic')
     
-</gfcare-cch-content-screen>
+</gfcare-cch-content-poc-topic-screen>

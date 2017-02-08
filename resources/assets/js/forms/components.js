@@ -33,7 +33,7 @@ Vue.component('spark-email', {
 });
 
 Vue.component('spark-file', {
-    props: ['display', 'form', 'name', 'input','warning'],
+    props: ['display', 'form', 'name', 'input','filename', 'warning'],
 
     template: '<div class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-4 control-label">{{ display }}</label>\
@@ -56,6 +56,7 @@ Vue.component('spark-file', {
         createFile(file) {
             var reader = new FileReader();
             var vm = this;
+            this.filename = file.name;
             reader.onload = (e) => {
                 vm.input = e.target.result                
             };
@@ -84,7 +85,7 @@ Vue.component('spark-shortname', {
     template: '<div class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-4 control-label">{{ display }}</label>\
     <div class="col-md-6">\
-        <input type="text" class="form-control spark-first-field" v-model="input">\
+        <input type="text" disabled="true" class="form-control spark-first-field" v-model="input">\
         <span class="btn-warning btn-circle" style="cursor:pointer" id="generate" @click.prevent="createShortName">Generate short name</span> \
         <span class="help-block" v-show="form.errors.has(name)">\
             <strong>{{ form.errors.get(name) }}</strong>\
@@ -92,6 +93,13 @@ Vue.component('spark-shortname', {
     </div>\
 </div>',
     
+    watch: {
+        'source': function(val) {
+            this.createShortName();
+        }
+    },
+              
+
     methods: {
           createShortName: function() {
             var lower = $.trim(this.source.toLowerCase()); // to lower case

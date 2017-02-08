@@ -1,4 +1,9 @@
 require('./main');
 require('./dashboard');
-require('./system');
-require('./content');
+require('./system-users');
+require('./system-roles');
+require('./system-devices');
+require('./content-references');
+require('./content-poc-sections');
+require('./content-poc-subsections');
+require('./content-poc-topics');

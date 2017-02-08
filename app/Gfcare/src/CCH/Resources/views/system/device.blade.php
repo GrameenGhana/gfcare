@@ -1,4 +1,4 @@
-<gfcare-cch-system-screen inline-template>
+<gfcare-cch-system-device-screen inline-template>
 
     <!-- Devices -->
     <div class="panel panel-default">
@@ -9,7 +9,7 @@
             </button> 
         </div>
 
-        <div class="panel-body" v-if="user && roles.length > 0">
+        <div class="panel-body" v-if="devices.length > 0">
             <table class="table table-responsive">
                 <thead>
                     <tr>
@@ -60,4 +60,4 @@
     @include('CCH::system.add-device')
     @include('CCH::system.edit-device')
 
-</gfcare-cch-system-screen>
+</gfcare-cch-system-device-screen>

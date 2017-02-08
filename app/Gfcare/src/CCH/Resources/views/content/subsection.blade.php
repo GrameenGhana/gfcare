@@ -1,4 +1,4 @@
-<gfcare-cch-content-screen inline-template>
+<gfcare-cch-content-poc-subsection-screen inline-template>
 
     <!-- Sub Sections -->
     <div class="panel panel-default">
@@ -9,13 +9,13 @@
             </button> 
         </div>
 
-        <div class="panel-body" v-if="user && subsections.length > 0">
+        <div class="panel-body" v-if="subsections.length > 0">
             <table class="table table-responsive">
                 <thead>
                     <tr>
                         <th>Icon</th>
-                        <th>Name</th>
                         <th>Section</th>
+                        <th>Sub Section</th>
                         <th># Topics</th>
                         <th></th>
                     </tr>
@@ -23,12 +23,15 @@
                 <tbody>
                     <tr v-for="subsection in subsections">
 
-                        <td class="spark-table-pad">@{{ subsection.icon_url }}</td>
-                        <td class="spark-table-pad">@{{ subsection.name }}</td>
+                        <td v-if="subsection.icon_url" class="spark-table-pad">
+                            <img v-bind:src="getImageUrl(subsection)"/>
+                        </td>
+                        <td v-else class="spark-table-pad"></td>                        
                         <td class="spark-table-pad">@{{ subsection.section }}</td>
+                        <td class="spark-table-pad">@{{ subsection.name }}</td>
                         <td class="spark-table-pad">@{{ subsection.topics.length}}</td>
                         <td class="spark-table-pad">
-                            <button class="btn btn-danger btn-circle pull-right" @click.prevent="removeSubSection(subsection)" :disabled="removingSubSection(subsection.id)">
+                            <button class="btn btn-danger btn-circle pull-right" @click.prevent="removeSubSection(subsection)" :disabled="removingSubSection(subsection.id)  || subsection.topics.length>0">
                                 <span v-if="removingSubSection(subsection.id)">
                                     <i class="fa fa-spinner fa-spin"></i>
                                 </span>
@@ -49,6 +52,7 @@
         </div>
     </div>
     
-        
+    @include('CCH::content.add-subsection')
+    @include('CCH::content.edit-subsection')
     
-</gfcare-cch-content-screen>
+</gfcare-cch-content-poc-subsection-screen>
