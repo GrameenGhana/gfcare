@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 
 use App\GfCare\src\CCH\Models\POCSection;
@@ -26,19 +27,22 @@ class ContentController extends Controller
     public function getPOCSections(Request $request)
     {
         $items = POCSection::all();
-        return response()->json($items);
+        $data = ['last_update'=>$this->getLastUpdate($request), 'content'=>$items];
+        return response()->json($data);
     }
     
     public function getPOCSubSections(Request $request)
     {
         $items = POCSubSection::all();
-        return response()->json($items);
+        $data = ['last_update'=>$this->getLastUpdate($request), 'content'=>$items];
+        return response()->json($data);
     }
     
     public function getPOCTopics(Request $request)
     {
         $items = POCTopic::all();
-        return response()->json($items);
+        $data = ['last_update'=>$this->getLastUpdate($request), 'content'=>$items];
+        return response()->json($data);
     }
 
     
@@ -333,5 +337,18 @@ class ContentController extends Controller
             echo $contents;
         }
         exit;
+    }
+
+    private function getLastUpdate(Request $request)
+    {
+        $user = $request->user();
+        $teamId = $user->current_team_id;
+		$sql = "SELECT GREATEST(MAX(t.updated_at), MAX(ss.updated_at), MAX(s.updated_at)) as lu
+  				  FROM `mod_cch_content_poc_topics` t
+  				  JOIN mod_cch_content_poc_sub_sections ss ON ss.id = t.sub_section_id
+  				  JOIN mod_cch_content_poc_sections s ON s.id = ss.section_id
+  			 	 WHERE s.team_id = $teamId";
+		$i = DB::select($sql);
+        return $i[0]->lu;
     }
 }
