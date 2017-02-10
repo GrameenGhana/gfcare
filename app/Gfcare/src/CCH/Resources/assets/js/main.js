@@ -63,7 +63,7 @@ Vue.component('gfcare-cch-screen', {
             var self = this;
             this.$http.get('/gfcare/chn-on-the-go/content/poc/sections')
                 .success(function (res) {
-                    var sections = res;
+                    var sections = res.content;
                     sections.sort(function(a,b) { 
                         var x = a.name.toLowerCase();
                         var y = b.name.toLowerCase();
@@ -76,7 +76,7 @@ Vue.component('gfcare-cch-screen', {
             var self = this;
             this.$http.get('/gfcare/chn-on-the-go/content/poc/subsections')
                 .success(function (res) {
-                    var subsections = res;
+                    var subsections = res.content;
                     subsections.sort(function(a,b) { 
                         var x = a.section.toLowerCase() + ' ' + a.name.toLowerCase();
                         var y = b.section.toLowerCase() + ' ' + b.name.toLowerCase();

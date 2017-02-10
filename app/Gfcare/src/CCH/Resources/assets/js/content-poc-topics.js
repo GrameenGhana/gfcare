@@ -85,7 +85,7 @@ Vue.component('gfcare-cch-content-poc-topic-screen', {
             var self  = this;
             this.$http.get('/gfcare/chn-on-the-go/content/poc/topics')
                 .success(function (res) {
-                    self.topics = res;
+                    self.topics = res.content;
                     self.topics.sort(function(a,b) { 
                         var x = a.section.toLowerCase() + a.sub_section;
                         var y = b.section.toLowerCase() + b.sub_section;
