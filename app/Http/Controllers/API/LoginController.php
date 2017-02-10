@@ -69,6 +69,18 @@ class LoginController extends Controller
         return response()->json(['token'=>$token, 'user'=>$user]);
     }
 
+    public function setCurrentContext(Request $request, $uid, $tid, $mid)
+    {
+          $user = \App\User::find($uid);
+          if ($user) {
+                $user->current_team_id=$tid;
+                $user->current_module_id=$mid;
+                $user->save();
+                return response()->json('Ok');
+          } else {
+            return response()->json(['error'=>'cannot find user'], 401);
+          }
+    }
 
     private function getProjects($user, $module)
     {
