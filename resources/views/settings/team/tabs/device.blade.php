@@ -1,4 +1,4 @@
-<gfcare-cch-system-device-screen inline-template>
+<spark-team-settings-device-screen inline-template>
 
     <!-- Devices -->
     <div class="panel panel-default">
@@ -57,7 +57,7 @@
         </div>
     </div>
     
-    @include('CCH::system.add-device')
-    @include('CCH::system.edit-device')
+    @include('settings.team.tabs.device.add-device')
+    @include('settings.team.tabs.device.edit-device')
 
-</gfcare-cch-system-device-screen>
+</spark-team-settings-device-screen>

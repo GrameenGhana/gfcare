@@ -33,12 +33,6 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'chn-on-the-go'], functi
     $router->post('system/users',     $cpath.'\UserController@store');
     $router->delete('system/users/{id}', $cpath.'\UserController@destroy');
 
-    $router->get('system/devices', $cpath.'\DeviceController@show');
-    $router->put('system/devices/{id}', $cpath.'\DeviceController@update');
-    $router->post('system/devices',     $cpath.'\DeviceController@store');
-    $router->delete('system/devices/{id}', $cpath.'\DeviceController@destroy');
-
-    
     $router->get('system/roles', $cpath.'\RoleController@show');
     $router->get('system/roles/{role}', $cpath.'\RoleController@getUsers');
     $router->put('system/roles/{id}', $cpath.'\RoleController@update');

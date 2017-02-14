@@ -60,9 +60,6 @@ class ModuleTabs extends Tabs
     public function system()
     {
         return [
-            new Tab('Devices', 'CCH::system.device', 'fa-mobile-phone', 
-                function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[1]->name),
-            
             new Tab('Roles', 'CCH::system.role', 'fa-sitemap', 
                 function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[1]->name),
 

@@ -97,6 +97,32 @@ class TeamController extends Controller
 
         return response()->json($facs);
     }
+
+    /**
+     * Get the team devices 
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getTeamDevices(Request $request, $teamId)
+    {
+        $facs = array();
+        $team = $this->teams->getTeam($request->user(), $teamId);
+        $devices = $team->devices()->get();     
+        return response()->json($devices);
+    }
+
+    /**
+     * Get the team users 
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getTeamProjectUsers(Request $request, $teamId)
+    {
+        $facs = array();
+        $team = $this->teams->getTeam($request->user(), $teamId);
+        $users = $team->projectusers()->get();     
+        return response()->json($users);
+    }
     
     /**
      * Get the team location

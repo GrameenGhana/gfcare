@@ -147,6 +147,7 @@ class AppServiceProvider extends ServiceProvider
             'owner' => 'Administrator',
             'editor' => 'Content Editor',
             'member' => 'Member',
+            'project' => 'Project',
         ]);
     }
 
@@ -170,9 +171,11 @@ class AppServiceProvider extends ServiceProvider
         Spark::teamSettingsTabs()->configure(function ($tabs) {
             return [
                 $tabs->owner(),
+                $tabs->user(),
                 $tabs->membership(),
-                $tabs->module(),
+                $tabs->device(),
                 $tabs->location(),
+                $tabs->module(),
                 // $tabs->make('Name', 'view', 'fa-icon'),
             ];
         });
@@ -246,9 +249,9 @@ class AppServiceProvider extends ServiceProvider
                         ->menu_name("MobiHealth")
                         ->menu_slug("mobihealth");
         
-        Spark::module('NoYawa', 'gfcare-module-4')->hidden()
+        Spark::module('NoYawa', 'gfcare-module-4')
                         ->description("A sexual reproductive health information app")
-                        ->module_path('NoYawa')
+                        ->module_path('Noyawa')
                         ->menu_name("No Yawa");
         
         Spark::module('Linda', 'gfcare-module-5')->hidden()

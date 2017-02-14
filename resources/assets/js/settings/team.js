@@ -1,20 +1,16 @@
 Vue.component('spark-team-settings-screen', {
     props: ['teamId'],
 
-    /*
-     * Bootstrap the component. Load the initial data.
-     */
     ready: function () {
         this.getTeam();
+        this.getUsers();
+        this.getDevices();
+        this.getFacilities();
         this.getRoles();
         this.getModules();
         this.getLocationTypes();
     },
 
-
-    /*
-     * Initial state of the component's data.
-     */
     data: function () {
         return {
             team: null,
@@ -23,13 +19,22 @@ Vue.component('spark-team-settings-screen', {
 
 
     events: {
-        /*
-         * Handle the "updateTeam" event. Re-retrieve the team.
-         */
         updateTeam: function () {
             this.getTeam();
             return true;
-        }
+        },
+        updateUsers: function () {
+            this.getUsers();
+            return true;
+        },
+        updateDevices: function () {
+            this.getDevices();
+            return true;
+        },
+        updateFacilities: function() {
+            this.getFacilities();
+            return true;
+        },
     },
 
     computed: {
@@ -37,9 +42,6 @@ Vue.component('spark-team-settings-screen', {
     },
 
     methods: {
-        /*
-         * Get the team from the API.
-         */
         getTeam: function () {
             this.$http.get('/gfcare/api/teams/' + this.teamId)
                 .success(function (team) {
@@ -47,10 +49,30 @@ Vue.component('spark-team-settings-screen', {
                     this.$broadcast('teamRetrieved', team);
                 });
         },
+
+        getUsers: function () {
+            var self = this;
+            this.$http.get('/gfcare/api/teams/'+ this.teamId + '/users')
+                .success(function (users) {
+                    self.users = users;
+                    self.$broadcast('usersRetrieved', self.users);
+                });
+        },
         
-        /**
-         * Get all of the roles that may be assigned to users.
-         */
+        getDevices: function () {
+            var self = this;
+            this.$http.get('/gfcare/api/teams/'+ this.teamId + '/devices')
+                .success(function (devices) {
+                    self.devices = devices;
+                    self.devices.sort(function(a,b) { 
+                        var x = a.type.toLowerCase();
+                        var y = b.type.toLowerCase();
+                        return (x < y) ? -1 : ((x > y) ? 1 : 0);
+                    });
+                    self.$broadcast('devicesRetrieved', self.devices);
+                });
+        },
+
         getRoles: function () {
             this.$http.get('/gfcare/api/teams/roles')
                 .success(function (roles) {
@@ -59,9 +81,6 @@ Vue.component('spark-team-settings-screen', {
                 });
         },
         
-        /**
-         * Get all of the modules that may be assigned to teams.
-         */
         getModules: function () {
             this.$http.get('/gfcare/api/teams/modules')
                 .success(function (modules) {
@@ -69,10 +88,16 @@ Vue.component('spark-team-settings-screen', {
                     this.$broadcast('modulesRetrieved', modules);
                 });
         },
-        
-        /**
-         * Get all of the locations that may be assigned to teams.
-         */
+
+        getFacilities: function () {
+            var self = this;
+            this.$http.get('/gfcare/api/teams/' + this.teamId + '/facilities')
+                .success(function (facilities) {
+                    self.facilities = facilities;
+                    self.$broadcast('facilitiesRetrieved', self.facilities);
+                });
+        },
+
         getLocationTypes: function () {
             this.$http.get('/gfcare/api/teams/locationtypes')
                 .success(function (types) {

@@ -1,7 +1,6 @@
 Vue.component('gfcare-cch-system-role-screen', {
 
     ready: function() {
-        this.getCCHRoles();
     },
 
     data: function() {
@@ -21,9 +20,9 @@ Vue.component('gfcare-cch-system-role-screen', {
     },
     
     events: {
-        updateRoles: function () {
-            this.getCCHRoles();
-            return true;
+        cchRolesRetrieved: function(roles) {
+           this.roles = roles;
+           return true;
         },
     },
 
@@ -84,15 +83,6 @@ Vue.component('gfcare-cch-system-role-screen', {
                 .error(function(resp) {
                     self.removingRoleId = 0;
                     NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000,});
-                });
-        },
-        
-        getCCHRoles: function () {
-            var self = this;
-            this.$http.get('/gfcare/chn-on-the-go/system/roles')
-                .success(function (roles) {
-                    self.roles = roles;
-                    self.$broadcast('cchRolesRetrieved', self.roles);
                 });
         },
     },

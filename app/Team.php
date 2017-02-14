@@ -8,37 +8,22 @@ use App\Teams\Location;
 use App\Teams\Tracker;
 use App\Teams\Facility;
 use App\Teams\FacilityGroup;
+use App\Teams\Device;
+use App\Teams\ProjectUser;
 
 class Team extends BaseTeam
 {
-    /**
-     * Get all of the modules for the team.
-     */
     public function modules()
     {
         return $this->hasMany(Module::class)->orderBy('menu_name', 'asc');
     }
     
-     /**
-     * Check if team has a module
-     *
-     * @param  string  $moduleId
-     * @return boolean
-     */
     public function hasModule($moduleId)
     {
         $module = $this->modules()->where('module_id', $moduleId)->first();
         return ($module) ? true: false;
     }
     
-    /**
-     * Add a module to the team 
-     *
-     * @param  string  $moduleId
-     * @param  string  $menu_name
-     * @param  string  $menu_slug
-     * @return \App\Teams\Module
-     */
     public function addModule($moduleId, $menu_name, $menu_slug)
     {
         $module = $this->modules()->where('module_id', $moduleId)->first();
@@ -52,12 +37,6 @@ class Team extends BaseTeam
         return $module;
     }
      
-    /**
-     * Toggle team module status 
-     *
-     * @param int  $moduleId
-     * @return \App\Teams\Module
-     */
     public function toggleModuleStatus($moduleId)
     {
         $module = $this->modules()->where('id', $moduleId)->first();
@@ -65,12 +44,6 @@ class Team extends BaseTeam
         return $module;
     }
     
-    /**
-     * Remove a module from the team 
-     *
-     * @param  string  $moduleId
-     * @return boolean
-     */
     public function removeModule($moduleId)
     {
         $module = $this->modules()->where('id', $moduleId)->first();
@@ -83,24 +56,13 @@ class Team extends BaseTeam
     {
         return $this->hasMany(Tracker::class);
     }
-    
-    /**
-     * Get all of the locations for the team.
-     */
+
+
     public function locations()
     {
         return $this->hasMany(Location::class)->orderBy('type', 'asc')->orderBy('name');
     }
     
-    /**
-     * Add a location to the team 
-     *
-     * @param  int  $parentId
-     * @param  string  $type
-     * @param  string  $name
-     * @param  int  $level
-     * @return \App\Teams\Location
-     */
     public function addLocation($parentId, $type, $name, $level)
     {
         $location = $this->locations()->whereRaw("parent_id=? and type=? and LOWER(name)=? and level=?",
@@ -113,25 +75,26 @@ class Team extends BaseTeam
         return $location;
     }    
     
-    
-    /**
-     * Get all of the facilities for the team.
-     */
     public function facilities()
     {
         return $this->hasMany(Facility::class)->orderBy('location_id')->orderBy('type', 'asc')->orderBy('name');
     }
     
-    /**
-     * Get all of the facilitygroup for the team.
-     */
     public function facilitygroups()
     {
         return $this->hasMany(FacilityGroup::class)->orderBy('type', 'asc')->orderBy('name');
     }
     
    
+    public function devices()
+    {
+        return $this->hasMany(Device::class)->orderBy('imei', 'asc')->orderBy('type');
+    }
     
+    public function projectusers()
+    {
+        return $this->belongsToMany(ProjectUser::class,'user_teams','team_id','user_id')->where('user_type','User')->orderBy('name', 'asc');
+    }
     
     
     protected function startsWith($haystack, $needle)

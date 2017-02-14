@@ -48,6 +48,7 @@ Vue.component('spark-team-settings-add-team-facilitygroup-screen', $.extend(true
                 .then(function () {
                     $('#modal-add-team-facilitygroup').modal('hide');
                     self.$dispatch('updateTeam');
+                    self.$dispatch('updateFacilties');
                 });
         },
         
@@ -109,6 +110,7 @@ Vue.component('spark-team-settings-edit-team-facilitygroup-screen', $.extend(tru
                 .then(function () {
                     $('#modal-edit-team-facilitygroup').modal('hide');
                     self.$dispatch('updateTeam');
+                    self.$dispatch('updateFacilties');
                 });
         }
     }

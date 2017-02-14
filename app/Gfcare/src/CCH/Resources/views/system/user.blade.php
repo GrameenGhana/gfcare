@@ -1,4 +1,4 @@
-<gfcare-cch-system-user-screen inline-template>
+<gfcare-cch-system-user-screen :team-id="{{ $team->id }}" inline-template>
 
     <!-- Users -->
     <div class="panel panel-default">

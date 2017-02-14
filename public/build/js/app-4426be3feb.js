@@ -3,21 +3,21 @@
 
 require('./../src/CCH/Resources/assets/js/components.js');
 require('./../src/MobiHealth/Resources/assets/js/components.js');
+require('./../src/Noyawa/Resources/assets/js/components.js');
 
-},{"./../src/CCH/Resources/assets/js/components.js":2,"./../src/MobiHealth/Resources/assets/js/components.js":12}],2:[function(require,module,exports){
+},{"./../src/CCH/Resources/assets/js/components.js":2,"./../src/MobiHealth/Resources/assets/js/components.js":11,"./../src/Noyawa/Resources/assets/js/components.js":18}],2:[function(require,module,exports){
 'use strict';
 
 require('./main');
 require('./dashboard');
 require('./system-users');
 require('./system-roles');
-require('./system-devices');
 require('./content-references');
 require('./content-poc-sections');
 require('./content-poc-subsections');
 require('./content-poc-topics');
 
-},{"./content-poc-sections":3,"./content-poc-subsections":4,"./content-poc-topics":5,"./content-references":6,"./dashboard":7,"./main":8,"./system-devices":9,"./system-roles":10,"./system-users":11}],3:[function(require,module,exports){
+},{"./content-poc-sections":3,"./content-poc-subsections":4,"./content-poc-topics":5,"./content-references":6,"./dashboard":7,"./main":8,"./system-roles":9,"./system-users":10}],3:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-cch-content-poc-section-screen', {
@@ -524,7 +524,7 @@ Vue.component('gfcare-cch-screen', {
 
     ready: function ready() {
         this.getUsers();
-        this.getFacilities();
+        this.getCCHRoles();
         this.getSections();
         this.getSubSections();
     },
@@ -533,14 +533,17 @@ Vue.component('gfcare-cch-screen', {
         return {
             user: null,
             team: null,
-            users: null,
-            facilities: null
+            users: null
         };
     },
 
     events: {
         updateUsers: function updateUsers() {
             this.getUsers();
+            return true;
+        },
+        updateRoles: function updateRoles() {
+            this.getCCHRoles();
             return true;
         },
         updateSections: function updateSections() {
@@ -571,13 +574,13 @@ Vue.component('gfcare-cch-screen', {
                 self.$broadcast('cchUsersRetrieved', self.users);
             });
         },
-        getFacilities: function getFacilities() {
-            var self = this;
-            this.$http.get('/gfcare/api/teams/' + this.teamId + '/facilities').success(function (facilities) {
-                self.facilities = facilities;
-                self.$broadcast('facilitiesRetrieved', self.facilities);
+
+        getCCHRoles: function getCCHRoles() {
+            this.$http.get('/gfcare/chn-on-the-go/system/roles').success(function (roles) {
+                this.$broadcast('cchRolesRetrieved', roles);
             });
         },
+
         getSections: function getSections() {
             var self = this;
             this.$http.get('/gfcare/chn-on-the-go/content/poc/sections').success(function (res) {
@@ -610,165 +613,9 @@ Vue.component('gfcare-cch-screen', {
 },{}],9:[function(require,module,exports){
 'use strict';
 
-Vue.component('gfcare-cch-system-device-screen', {
-
-    ready: function ready() {
-        this.getCCHDevices();
-    },
-
-    data: function data() {
-        return {
-            users: [],
-            devices: [],
-            editingDevice: { 'name': 'none' },
-            removingDeviceId: null,
-
-            yesNoOptions: [{ 'text': 'Yes', value: 1 }, { 'text': 'No', 'value': 0 }],
-
-            deviceOptions: [],
-
-            deviceStatusOptions: [{ 'text': 'Unallocated', 'value': 'unallocated' }, { 'text': 'In active use', 'value': 'active' }, { 'text': 'Under repair', 'value': 'repair' }, { 'text': 'Deactivated', 'value': 'deactivated' }, { 'text': 'Damaged', 'value': 'damaged' }, { 'text': 'Lost or stolen', 'value': 'lost_stolen' }, { 'text': 'Unknown', 'value': 'unknown' }],
-
-            forms: {
-                addDevice: new SparkForm({
-                    type: '',
-                    tag: '',
-                    color: '',
-                    imei: ''
-                }),
-
-                updateDevice: new SparkForm({
-                    type: '',
-                    tag: '',
-                    color: '',
-                    imei: '',
-                    status: ''
-                })
-            }
-        };
-    },
-
-    events: {
-        updateDevices: function updateDevices() {
-            this.getCCHDevices();
-            return true;
-        },
-        cchUsersRetrieved: function cchUsersRetrieved(users) {
-            this.users = users;
-            return true;
-        }
-    },
-
-    computed: {},
-
-    methods: {
-        addDevice: function addDevice() {
-            this.forms.addDevice.type = '';
-            this.forms.addDevice.tag = '';
-            this.forms.addDevice.color = '';
-            this.forms.addDevice.imei = '';
-            $('#modal-add-device').modal('show');
-        },
-
-        editDevice: function editDevice(d) {
-            this.editingDevice = d;
-            this.forms.updateDevice.type = d.type;
-            this.forms.updateDevice.tag = d.tag;
-            this.forms.updateDevice.color = d.color;
-            this.forms.updateDevice.imei = d.imei;
-            this.forms.updateDevice.status = d.status;
-            $('#modal-edit-device').modal('show');
-        },
-
-        removingDevice: function removingDevice(id) {
-            return this.removingDeviceId == id;
-        },
-
-        removeFromList: function removeFromList(list, item) {
-            return _.reject(list, function (i) {
-                return i.id === item.id;
-            });
-        },
-
-        // Ajax calls
-        addNewDevice: function addNewDevice() {
-            var self = this;
-            Spark.post('/gfcare/chn-on-the-go/system/devices', this.forms.addDevice).then(function () {
-                $('#modal-add-device').modal('hide');
-                self.$dispatch('updateDevices');
-            });
-        },
-
-        updateDevice: function updateDevice() {
-            var self = this;
-            Spark.put('/gfcare/chn-on-the-go/system/devices/' + this.editingDevice.id, this.forms.updateDevice).then(function () {
-                $('#modal-edit-device').modal('hide');
-                self.$dispatch('updateDevices');
-            });
-        },
-
-        removeDevice: function removeDevice(device) {
-            var self = this;
-            self.removingDeviceId = device.id;
-
-            this.$http.delete('/gfcare/chn-on-the-go/system/devices/' + device.id).success(function () {
-                self.removingDeviceId = 0;
-                self.devices = self.removeFromList(this.devices, device);
-                self.$dispatch('updateDevices');
-            }).error(function (resp) {
-                self.removingDeviceId = 0;
-                NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000 });
-            });
-        },
-
-        getCCHDevices: function getCCHDevices() {
-            var self = this;
-            this.$http.get('/gfcare/chn-on-the-go/system/devices').success(function (devices) {
-                self.devices = devices;
-                self.devices.sort(function (a, b) {
-                    var x = a.type.toLowerCase();
-                    var y = b.type.toLowerCase();
-                    return x < y ? -1 : x > y ? 1 : 0;
-                });
-                self.$broadcast('cchDevicesRetrieved', self.devices);
-            });
-        }
-    },
-
-    filters: {
-        device_owner: function device_owner(user_id) {
-            var l = null;
-            var f = null;
-            if (user_id != 0) {
-                l = _.find(this.users, function (u) {
-                    return u.id == user_id;
-                });
-                if (l != null) {
-                    f = _.find(l.facility, function (fac) {
-                        return fac.primary == 1;
-                    });
-                }
-            }
-            return l == null ? 'Not assigned' : l.name + (f == null ? '' : ' (' + f.facility.name + ')');
-        },
-
-        device_status: function device_status(status) {
-            var l = _.find(this.deviceStatusOptions, function (opt) {
-                return opt['value'] == status;
-            });
-            return l == null ? 'No status' : l['text'];
-        }
-    }
-});
-
-},{}],10:[function(require,module,exports){
-'use strict';
-
 Vue.component('gfcare-cch-system-role-screen', {
 
-    ready: function ready() {
-        this.getCCHRoles();
-    },
+    ready: function ready() {},
 
     data: function data() {
         return {
@@ -787,8 +634,8 @@ Vue.component('gfcare-cch-system-role-screen', {
     },
 
     events: {
-        updateRoles: function updateRoles() {
-            this.getCCHRoles();
+        cchRolesRetrieved: function cchRolesRetrieved(roles) {
+            this.roles = roles;
             return true;
         }
     },
@@ -848,14 +695,6 @@ Vue.component('gfcare-cch-system-role-screen', {
                 self.removingRoleId = 0;
                 NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000 });
             });
-        },
-
-        getCCHRoles: function getCCHRoles() {
-            var self = this;
-            this.$http.get('/gfcare/chn-on-the-go/system/roles').success(function (roles) {
-                self.roles = roles;
-                self.$broadcast('cchRolesRetrieved', self.roles);
-            });
         }
     },
 
@@ -866,142 +705,82 @@ Vue.component('gfcare-cch-system-role-screen', {
     }
 });
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-cch-system-user-screen', {
+    props: ['teamId'],
 
     ready: function ready() {},
 
     data: function data() {
         return {
             users: null,
-            facilities: null,
+            teamUsers: null,
+            userIds: [],
 
             editingUser: { 'name': 'none' },
 
-            removingRoleId: null,
+            removingUserId: null,
 
-            facOptions: [],
             roleOptions: [],
-            deviceOptions: [],
-            yesNoOptions: [{ 'text': 'Yes', value: 1 }, { 'text': 'No', 'value': 0 }],
-
-            genderOptions: [{ 'text': 'Female', 'value': 'female' }, { 'text': 'Male', 'value': 'male' }, { 'text': 'Transgender', 'value': 'transgender' }, { 'text': 'Un Specified', 'value': 'unspecified' }],
-
-            statusOptions: [{ 'text': 'Active', 'value': 'ACTIVE' }, { 'text': 'In-Active', 'value': 'INACTIVE' }, { 'text': 'Test', 'value': 'TEST' }],
+            userOptions: [],
 
             forms: {
                 addUser: new SparkForm({
-                    name: '',
-                    email: '',
-                    password: '',
-                    phone_number: '',
-                    gender: '',
-                    title: '',
-                    ischn: '',
-                    status: '',
-                    role: '',
-                    device: '',
-                    primary_facility: '',
-                    supervised_facility: []
+                    user_id: '',
+                    role: ''
                 }),
 
                 updateUser: new SparkForm({
-                    name: '',
-                    email: '',
-                    password: '',
-                    current_password: '',
-                    device: '',
-                    phone_number: '',
-                    gender: '',
-                    title: '',
-                    ischn: '',
-                    status: '',
-                    role: '',
-                    primary_facility: '',
-                    supervised_facility: []
+                    role: ''
                 })
             }
         };
     },
 
     events: {
-        cchUsersRetrieved: function cchUsersRetrieved(users) {
-            this.users = users;
+        updateTeamUsers: function updateTeamUsers() {
+            this.getTeamUsers();
             return true;
         },
-
+        cchUsersRetrieved: function cchUsersRetrieved(users) {
+            this.users = users;
+            this.userIds = [];
+            for (var i = 0; i < users.length; ++i) {
+                this.userIds.push(users[i].id);
+            }
+            this.getTeamUsers();
+            return true;
+        },
+        teamUsersRetrieved: function teamUsersRetrieved(users) {
+            return true;
+        },
         cchRolesRetrieved: function cchRolesRetrieved(roles) {
             this.roleOptions = [];
             for (var i = 0; i < roles.length; ++i) {
                 this.roleOptions.push({ 'text': roles[i].name, 'value': roles[i].name });
             }
-        },
-
-        cchDevicesRetrieved: function cchDevicesRetrieved(devices) {
-            this.deviceOptions = [];
-            for (var i = 0; i < devices.length; ++i) {
-                if (devices[i].status == 'unallocated') {
-                    this.deviceOptions.push({ 'text': devices[i].type + ' (' + devices[i].tag + ' - ' + devices[i].imei + ')',
-                        'value': devices[i].id });
-                }
-            }
-        },
-
-        facilitiesRetrieved: function facilitiesRetrieved(facs) {
-            this.facilities = facs.slice(0);
-            this.facilities.sort(function (a, b) {
-                var x = a.type.toLowerCase();
-                var y = b.type.toLowerCase();
-                return x < y ? -1 : x > y ? 1 : 0;
-            });
-
-            for (var i = 0; i < this.facilities.length; ++i) {
-                this.facOptions.push({ 'text': this.facilities[i].type + ': ' + this.facilities[i].name,
-                    'value': this.facilities[i].id });
-            }
-            return true;
         }
     },
 
     computed: {
         everythingIsLoaded: function everythingIsLoaded() {
-            return this.users.length > 0 && this.facilities.length > 0 && this.roleOptions.length > 0;;
+            return this.users.length > 0 && this.roleOptions.length > 0;
         }
     },
 
     methods: {
         addUser: function addUser() {
-            this.forms.addUser.name = '';
-            this.forms.addUser.email = '';
-            this.forms.addUser.password = '';
-            this.forms.addUser.phone_number = '';
-            this.forms.addUser.gender = '';
-            this.forms.addUser.title = '';
-            this.forms.addUser.ischn = 0;
-            this.forms.addUser.status = '';
+            this.forms.addUser.user_id = '';
             this.forms.addUser.role = '';
-            this.forms.addUser.device = '';
-            this.forms.addUser.primary_facility = '';
-            this.forms.addUser.supervised_facility = [];
             $('#modal-add-user').modal('show');
         },
 
         editUser: function editUser(user) {
             this.editingUser = user;
-            this.forms.updateUser.name = user.name;
-            this.forms.updateUser.email = user.email;
-            this.forms.updateUser.password = '';
-            this.forms.updateUser.phone_number = user.phone_number;
-            this.forms.updateUser.gender = user.info.gender;
-            this.forms.updateUser.title = user.info.title;
-            this.forms.updateUser.ischn = user.info.ischn;
-            this.forms.updateUser.status = user.info.status;
+            this.forms.updateUser.user_id = user.id;
             this.forms.updateUser.role = user.role;
-            this.forms.updateUser.device = user.device !== null ? user.device.id : '';
-            this.forms.updateUser.primary_facility = this.primaryFacilityId(user.facility);
-            this.forms.updateUser.supervised_facility = this.supervisedFacilities(user.facility);
             $('#modal-edit-user').modal('show');
         },
 
@@ -1013,6 +792,10 @@ Vue.component('gfcare-cch-system-user-screen', {
             return _.reject(list, function (i) {
                 return i.id === item.id;
             });
+        },
+
+        isInArray: function isInArray(item, array) {
+            return !!~$.inArray(item, array);
         },
 
         moduleUsers: function moduleUsers() {
@@ -1027,41 +810,13 @@ Vue.component('gfcare-cch-system-user-screen', {
             });
         },
 
-        primaryFacilityId: function primaryFacilityId(facs) {
-            if (facs.length > 0) {
-                var l = _.find(facs, function (fac) {
-                    return fac.primary == 1;
-                });
-                return l == null ? 0 : l.facility.id;
-            } else {
-                return 0;
-            }
-        },
-
-        supervisedFacilities: function supervisedFacilities(facs) {
-            if (facs.length > 0) {
-                var l = _.find(facs, function (fac) {
-                    return fac.supervised == 1;
-                });
-                if (l == null) {
-                    return [];
-                }
-                var f = [];
-                for (var i = 0; i < l.length; i++) {
-                    f.push(l[i].facility);
-                }
-                return f;
-            } else {
-                return [];
-            }
-        },
-
         // Ajax calls
         addNewUser: function addNewUser() {
             var self = this;
             Spark.post('/gfcare/chn-on-the-go/system/users', this.forms.addUser).then(function () {
                 $('#modal-add-user').modal('hide');
                 self.$dispatch('updateUsers');
+                self.$dispatch('updateTeamUsers');
             });
         },
 
@@ -1070,7 +825,7 @@ Vue.component('gfcare-cch-system-user-screen', {
             Spark.put('/gfcare/chn-on-the-go/system/users/' + this.editingUser.id, this.forms.updateUser).then(function () {
                 $('#modal-edit-user').modal('hide');
                 self.$dispatch('updateUsers');
-                self.$dispatch('updateDevices');
+                self.$dispatch('updateTeamUsers');
             });
         },
 
@@ -1082,9 +837,23 @@ Vue.component('gfcare-cch-system-user-screen', {
                 self.removingUserId = 0;
                 self.users = self.removeFromList(this.users, user);
                 self.$dispatch('updateUsers');
+                self.$dispatch('updateTeamUsers');
             }).error(function (resp) {
                 self.removingUserId = 0;
                 NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000 });
+            });
+        },
+        getTeamUsers: function getTeamUsers() {
+            var self = this;
+            this.$http.get('/gfcare/api/teams/' + this.teamId + '/users').success(function (users) {
+                this.teamUsers = users;
+                this.userOptions = [];
+                for (var i = 0; i < this.teamUsers.length; i++) {
+                    if ($.inArray(this.teamUsers[i].id, this.userIds) == -1) {
+                        this.userOptions.push({ 'text': this.teamUsers[i].name, 'value': this.teamUsers[i].id });
+                    }
+                }
+                self.$dispatch('teamUsersRetrieved', users);
             });
         }
     },
@@ -1113,7 +882,7 @@ Vue.component('gfcare-cch-system-user-screen', {
     }
 });
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 require('./main');
@@ -1122,7 +891,7 @@ require('./system');
 require('./content');
 require('./group');
 
-},{"./content":13,"./dashboard":14,"./group":15,"./main":16,"./system":17}],13:[function(require,module,exports){
+},{"./content":12,"./dashboard":13,"./group":14,"./main":15,"./system":16}],12:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-mobi-content-screen', {
@@ -1142,7 +911,7 @@ Vue.component('gfcare-mobi-content-screen', {
     filters: {}
 });
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-mobi-dashboard-screen', {
@@ -1210,7 +979,7 @@ Vue.component('gfcare-mobi-dashboard-screen', {
     }
 });
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-mobi-group-screen', {
@@ -1230,7 +999,7 @@ Vue.component('gfcare-mobi-group-screen', {
     filters: {}
 });
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-mobi-screen', {
@@ -1288,7 +1057,7 @@ Vue.component('gfcare-mobi-screen', {
     filters: {}
 });
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-mobi-system-screen', {
@@ -1593,7 +1362,373 @@ Vue.component('gfcare-mobi-system-screen', {
     }
 });
 
+},{}],17:[function(require,module,exports){
+'use strict';
+
+Vue.component('gfcare-noyawa-client-screen', {
+
+    ready: function ready() {
+        this.getNoyawaClients();
+    },
+
+    data: function data() {
+        return {
+            users: [],
+            clients: [],
+            editingClient: { 'name': 'none' },
+            removingClientId: null,
+
+            yesNoOptions: [{ 'text': 'Yes', value: 1 }, { 'text': 'No', 'value': 0 }],
+
+            userOptions: [],
+
+            forms: {
+                addClient: new SparkForm({
+                    user_id: '',
+                    name: '',
+                    registered: ''
+                }),
+
+                updateClient: new SparkForm({
+                    user_id: '',
+                    name: '',
+                    registered: ''
+                })
+            }
+        };
+    },
+
+    events: {
+        updateClients: function updateClients() {
+            this.getNoyawaClients();
+            return true;
+        },
+        noyawaUsersRetrieved: function noyawaUsersRetrieved(users) {
+            this.users = users;
+            this.userOptions = [];
+            for (var i = 0; i < users.length; i++) {
+                if (users[i].role == 'Volunteer') {
+                    this.userOptions.push({ 'text': users[i].name, 'value': users[i].id });
+                }
+            }
+            return true;
+        }
+    },
+
+    computed: {},
+
+    methods: {
+        addClient: function addClient() {
+            this.forms.addClient.name = '';
+            this.forms.addClient.user_id = '';
+            this.forms.addClient.registered = 0;
+            $('#modal-add-client').modal('show');
+        },
+
+        editClient: function editClient(d) {
+            this.editingClient = d;
+            this.forms.updateClient.name = d.name;
+            this.forms.updateClient.user_id = d.user_id;
+            this.forms.updateClient.registered = d.registered;
+            $('#modal-edit-client').modal('show');
+        },
+
+        removingClient: function removingClient(id) {
+            return this.removingClientId == id;
+        },
+
+        removeFromList: function removeFromList(list, item) {
+            return _.reject(list, function (i) {
+                return i.id === item.id;
+            });
+        },
+
+        // Ajax calls
+        addNewClient: function addNewClient() {
+            var self = this;
+            Spark.post('/gfcare/noyawa/clients', this.forms.addClient).then(function () {
+                $('#modal-add-client').modal('hide');
+                self.$dispatch('updateClients');
+            });
+        },
+
+        updateClient: function updateClient() {
+            var self = this;
+            Spark.put('/gfcare/noyawa/clients/' + this.editingClient.id, this.forms.updateClient).then(function () {
+                $('#modal-edit-client').modal('hide');
+                self.$dispatch('updateClients');
+            });
+        },
+
+        removeClient: function removeClient(client) {
+            var self = this;
+            self.removingClientId = client.id;
+
+            this.$http.delete('/gfcare/noyawa/clients/' + client.id).success(function () {
+                self.removingClientId = 0;
+                self.clients = self.removeFromList(this.clients, client);
+                self.$dispatch('updateClients');
+            }).error(function (resp) {
+                self.removingClientId = 0;
+                NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000 });
+            });
+        },
+
+        getNoyawaClients: function getNoyawaClients() {
+            var self = this;
+            this.$http.get('/gfcare/noyawa/clients').success(function (clients) {
+                self.clients = clients;
+                self.clients.sort(function (a, b) {
+                    var x = a.type.toLowerCase();
+                    var y = b.type.toLowerCase();
+                    return x < y ? -1 : x > y ? 1 : 0;
+                });
+                self.$broadcast('noyawaClientsRetrieved', self.clients);
+            });
+        }
+    },
+
+    filters: {
+        registration_status: function registration_status(r) {
+            return r ? 'Registered' : 'Not Registered';
+        },
+        registration_date_status: function registration_date_status(c) {
+            return c.registered == 0 ? 'Not registered' : c.registration_date;
+        }
+
+    }
+});
+
 },{}],18:[function(require,module,exports){
+'use strict';
+
+require('./main');
+require('./dashboard');
+require('./system-users');
+require('./clients');
+
+},{"./clients":17,"./dashboard":19,"./main":20,"./system-users":21}],19:[function(require,module,exports){
+arguments[4][7][0].apply(exports,arguments)
+},{"dup":7}],20:[function(require,module,exports){
+'use strict';
+
+Vue.component('gfcare-noyawa-screen', {
+    props: ['teamId'],
+
+    ready: function ready() {
+        this.getUsers();
+    },
+
+    data: function data() {
+        return {
+            user: null,
+            team: null,
+            users: null
+        };
+    },
+
+    events: {
+        updateUsers: function updateUsers() {
+            this.getUsers();
+            return true;
+        },
+        userRetrieved: function userRetrieved(user) {
+            this.user = user;
+            return true;
+        },
+        currentTeamRetrieved: function currentTeamRetrieved(team) {
+            this.team = team;
+            return true;
+        }
+    },
+
+    computed: {},
+
+    methods: {
+        getUsers: function getUsers() {
+            var self = this;
+            this.$http.get('/gfcare/noyawa/system/users').success(function (users) {
+                self.users = users;
+                self.$broadcast('noyawaUsersRetrieved', self.users);
+            });
+        }
+    },
+
+    filters: {}
+});
+
+},{}],21:[function(require,module,exports){
+'use strict';
+
+Vue.component('gfcare-noyawa-system-user-screen', {
+    props: ['teamId'],
+
+    ready: function ready() {},
+
+    data: function data() {
+        return {
+            users: null,
+            teamUsers: null,
+            userIds: [],
+
+            editingUser: { 'name': 'none' },
+
+            removingUserId: null,
+
+            roleOptions: [{ 'text': 'Volunteer', 'value': 'Volunteer' }, { 'text': 'Supervisor', 'value': 'Supervisor' }],
+            userOptions: [],
+
+            forms: {
+                addUser: new SparkForm({
+                    user_id: '',
+                    role: ''
+                }),
+
+                updateUser: new SparkForm({
+                    role: ''
+                })
+            }
+        };
+    },
+
+    events: {
+        updateTeamUsers: function updateTeamUsers() {
+            this.getTeamUsers();
+            return true;
+        },
+        noyawaUsersRetrieved: function noyawaUsersRetrieved(users) {
+            this.users = users;
+            this.userIds = [];
+            for (var i = 0; i < users.length; i++) {
+                this.userIds.push(users[i].id);
+            }
+            this.getTeamUsers();
+            return true;
+        },
+        teamUsersRetrieved: function teamUsersRetrieved(users) {
+            return true;
+        }
+    },
+
+    computed: {
+        everythingIsLoaded: function everythingIsLoaded() {
+            return this.users.length > 0 && this.roleOptions.length > 0;
+        }
+    },
+
+    methods: {
+        addUser: function addUser() {
+            this.forms.addUser.user_id = '';
+            this.forms.addUser.role = '';
+            $('#modal-add-user').modal('show');
+        },
+
+        editUser: function editUser(user) {
+            this.editingUser = user;
+            this.forms.updateUser.user_id = user.id;
+            this.forms.updateUser.role = user.role;
+            $('#modal-edit-user').modal('show');
+        },
+
+        removingUser: function removingUser(id) {
+            return this.removingUserId == id;
+        },
+
+        removeFromList: function removeFromList(list, item) {
+            return _.reject(list, function (i) {
+                return i.id === item.id;
+            });
+        },
+
+        isInArray: function isInArray(item, array) {
+            return !!~$.inArray(item, array);
+        },
+
+        moduleUsers: function moduleUsers() {
+            return this.users == null ? [] : this.users.filter(function (u) {
+                return u.user_type === 'User';
+            });
+        },
+
+        systemUsers: function systemUsers() {
+            return this.users == null ? [] : this.users.filter(function (u) {
+                return u.user_type != 'User';
+            });
+        },
+
+        // Ajax calls
+        addNewUser: function addNewUser() {
+            var self = this;
+            Spark.post('/gfcare/noyawa/system/users', this.forms.addUser).then(function () {
+                $('#modal-add-user').modal('hide');
+                self.$dispatch('updateUsers');
+                self.$dispatch('updateTeamUsers');
+            });
+        },
+
+        updateUser: function updateUser() {
+            var self = this;
+            Spark.put('/gfcare/noyawa/system/users/' + this.editingUser.id, this.forms.updateUser).then(function () {
+                $('#modal-edit-user').modal('hide');
+                self.$dispatch('updateUsers');
+                self.$dispatch('updateTeamUsers');
+            });
+        },
+
+        removeUser: function removeUser(user) {
+            var self = this;
+            self.removingUserId = user.id;
+
+            this.$http.delete('/gfcare/noyawa/system/users/' + user.id).success(function () {
+                self.removingUserId = 0;
+                self.users = self.removeFromList(this.users, user);
+                self.$dispatch('updateUsers');
+                self.$dispatch('updateTeamUsers');
+            }).error(function (resp) {
+                self.removingUserId = 0;
+                NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000 });
+            });
+        },
+        getTeamUsers: function getTeamUsers() {
+            var self = this;
+            this.$http.get('/gfcare/api/teams/' + this.teamId + '/users').success(function (users) {
+                this.teamUsers = users;
+                this.userOptions = [];
+                for (var i = 0; i < this.teamUsers.length; i++) {
+                    if ($.inArray(this.teamUsers[i].id, this.userIds) == -1) {
+                        this.userOptions.push({ 'text': this.teamUsers[i].name, 'value': this.teamUsers[i].id });
+                    }
+                }
+                self.$dispatch('teamUsersRetrieved', users);
+            });
+        }
+    },
+
+    filters: {
+        user_details_facilities: function user_details_facilities(user) {
+            var l = _.find(user.facility, function (fac) {
+                return fac.primary == 1;
+            });
+            return l == null ? 'None' : l.facility.name;
+        },
+
+        user_details_supervised: function user_details_supervised(user) {
+            var names = "";
+            for (var i = 0; i < user.facility.length; i++) {
+                if (user.facility[i].supervised) {
+                    names = names + (names == "" ? '' : ', ') + user.facility[i].facility.name;
+                }
+            }
+            return names == "" ? "No facilities" : names;
+        },
+
+        user_details_devices: function user_details_devices(user) {
+            return user.device == null ? 'None issued' : user.device.type + ' (' + user.device.imei + ')';
+        }
+    }
+});
+
+},{}],22:[function(require,module,exports){
 "use strict";
 
 // rawAsap provides everything we need except exception management.
@@ -1661,7 +1796,7 @@ RawTask.prototype.call = function () {
     }
 };
 
-},{"./raw":19}],19:[function(require,module,exports){
+},{"./raw":23}],23:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -1888,33 +2023,33 @@ rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
 // https://github.com/tildeio/rsvp.js/blob/cddf7232546a9cf858524b75cde6f9edf72620a7/lib/rsvp/asap.js
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],20:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/json/stringify"), __esModule: true };
-},{"core-js/library/fn/json/stringify":35}],21:[function(require,module,exports){
+},{"core-js/library/fn/json/stringify":39}],25:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/create"), __esModule: true };
-},{"core-js/library/fn/object/create":36}],22:[function(require,module,exports){
+},{"core-js/library/fn/object/create":40}],26:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-properties"), __esModule: true };
-},{"core-js/library/fn/object/define-properties":37}],23:[function(require,module,exports){
+},{"core-js/library/fn/object/define-properties":41}],27:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
-},{"core-js/library/fn/object/define-property":38}],24:[function(require,module,exports){
+},{"core-js/library/fn/object/define-property":42}],28:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/get-own-property-descriptor"), __esModule: true };
-},{"core-js/library/fn/object/get-own-property-descriptor":39}],25:[function(require,module,exports){
+},{"core-js/library/fn/object/get-own-property-descriptor":43}],29:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/get-own-property-names"), __esModule: true };
-},{"core-js/library/fn/object/get-own-property-names":40}],26:[function(require,module,exports){
+},{"core-js/library/fn/object/get-own-property-names":44}],30:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/get-own-property-symbols"), __esModule: true };
-},{"core-js/library/fn/object/get-own-property-symbols":41}],27:[function(require,module,exports){
+},{"core-js/library/fn/object/get-own-property-symbols":45}],31:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/get-prototype-of"), __esModule: true };
-},{"core-js/library/fn/object/get-prototype-of":42}],28:[function(require,module,exports){
+},{"core-js/library/fn/object/get-prototype-of":46}],32:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/is-extensible"), __esModule: true };
-},{"core-js/library/fn/object/is-extensible":43}],29:[function(require,module,exports){
+},{"core-js/library/fn/object/is-extensible":47}],33:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/keys"), __esModule: true };
-},{"core-js/library/fn/object/keys":44}],30:[function(require,module,exports){
+},{"core-js/library/fn/object/keys":48}],34:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/prevent-extensions"), __esModule: true };
-},{"core-js/library/fn/object/prevent-extensions":45}],31:[function(require,module,exports){
+},{"core-js/library/fn/object/prevent-extensions":49}],35:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol"), __esModule: true };
-},{"core-js/library/fn/symbol":46}],32:[function(require,module,exports){
+},{"core-js/library/fn/symbol":50}],36:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol/iterator"), __esModule: true };
-},{"core-js/library/fn/symbol/iterator":47}],33:[function(require,module,exports){
+},{"core-js/library/fn/symbol/iterator":51}],37:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -1936,7 +2071,7 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
 } : function (obj) {
   return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
 };
-},{"../core-js/symbol":31,"../core-js/symbol/iterator":32}],34:[function(require,module,exports){
+},{"../core-js/symbol":35,"../core-js/symbol/iterator":36}],38:[function(require,module,exports){
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.
@@ -4315,81 +4450,81 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-},{}],35:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 var core  = require('../../modules/_core')
   , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
 module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
   return $JSON.stringify.apply($JSON, arguments);
 };
-},{"../../modules/_core":53}],36:[function(require,module,exports){
+},{"../../modules/_core":57}],40:[function(require,module,exports){
 require('../../modules/es6.object.create');
 var $Object = require('../../modules/_core').Object;
 module.exports = function create(P, D){
   return $Object.create(P, D);
 };
-},{"../../modules/_core":53,"../../modules/es6.object.create":106}],37:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.object.create":110}],41:[function(require,module,exports){
 require('../../modules/es6.object.define-properties');
 var $Object = require('../../modules/_core').Object;
 module.exports = function defineProperties(T, D){
   return $Object.defineProperties(T, D);
 };
-},{"../../modules/_core":53,"../../modules/es6.object.define-properties":107}],38:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.object.define-properties":111}],42:[function(require,module,exports){
 require('../../modules/es6.object.define-property');
 var $Object = require('../../modules/_core').Object;
 module.exports = function defineProperty(it, key, desc){
   return $Object.defineProperty(it, key, desc);
 };
-},{"../../modules/_core":53,"../../modules/es6.object.define-property":108}],39:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.object.define-property":112}],43:[function(require,module,exports){
 require('../../modules/es6.object.get-own-property-descriptor');
 var $Object = require('../../modules/_core').Object;
 module.exports = function getOwnPropertyDescriptor(it, key){
   return $Object.getOwnPropertyDescriptor(it, key);
 };
-},{"../../modules/_core":53,"../../modules/es6.object.get-own-property-descriptor":109}],40:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.object.get-own-property-descriptor":113}],44:[function(require,module,exports){
 require('../../modules/es6.object.get-own-property-names');
 var $Object = require('../../modules/_core').Object;
 module.exports = function getOwnPropertyNames(it){
   return $Object.getOwnPropertyNames(it);
 };
-},{"../../modules/_core":53,"../../modules/es6.object.get-own-property-names":110}],41:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.object.get-own-property-names":114}],45:[function(require,module,exports){
 require('../../modules/es6.symbol');
 module.exports = require('../../modules/_core').Object.getOwnPropertySymbols;
-},{"../../modules/_core":53,"../../modules/es6.symbol":117}],42:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.symbol":121}],46:[function(require,module,exports){
 require('../../modules/es6.object.get-prototype-of');
 module.exports = require('../../modules/_core').Object.getPrototypeOf;
-},{"../../modules/_core":53,"../../modules/es6.object.get-prototype-of":111}],43:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.object.get-prototype-of":115}],47:[function(require,module,exports){
 require('../../modules/es6.object.is-extensible');
 module.exports = require('../../modules/_core').Object.isExtensible;
-},{"../../modules/_core":53,"../../modules/es6.object.is-extensible":112}],44:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.object.is-extensible":116}],48:[function(require,module,exports){
 require('../../modules/es6.object.keys');
 module.exports = require('../../modules/_core').Object.keys;
-},{"../../modules/_core":53,"../../modules/es6.object.keys":113}],45:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.object.keys":117}],49:[function(require,module,exports){
 require('../../modules/es6.object.prevent-extensions');
 module.exports = require('../../modules/_core').Object.preventExtensions;
-},{"../../modules/_core":53,"../../modules/es6.object.prevent-extensions":114}],46:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.object.prevent-extensions":118}],50:[function(require,module,exports){
 require('../../modules/es6.symbol');
 require('../../modules/es6.object.to-string');
 require('../../modules/es7.symbol.async-iterator');
 require('../../modules/es7.symbol.observable');
 module.exports = require('../../modules/_core').Symbol;
-},{"../../modules/_core":53,"../../modules/es6.object.to-string":115,"../../modules/es6.symbol":117,"../../modules/es7.symbol.async-iterator":118,"../../modules/es7.symbol.observable":119}],47:[function(require,module,exports){
+},{"../../modules/_core":57,"../../modules/es6.object.to-string":119,"../../modules/es6.symbol":121,"../../modules/es7.symbol.async-iterator":122,"../../modules/es7.symbol.observable":123}],51:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
 require('../../modules/web.dom.iterable');
 module.exports = require('../../modules/_wks-ext').f('iterator');
-},{"../../modules/_wks-ext":103,"../../modules/es6.string.iterator":116,"../../modules/web.dom.iterable":120}],48:[function(require,module,exports){
+},{"../../modules/_wks-ext":107,"../../modules/es6.string.iterator":120,"../../modules/web.dom.iterable":124}],52:[function(require,module,exports){
 module.exports = function(it){
   if(typeof it != 'function')throw TypeError(it + ' is not a function!');
   return it;
 };
-},{}],49:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 module.exports = function(){ /* empty */ };
-},{}],50:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 var isObject = require('./_is-object');
 module.exports = function(it){
   if(!isObject(it))throw TypeError(it + ' is not an object!');
   return it;
 };
-},{"./_is-object":69}],51:[function(require,module,exports){
+},{"./_is-object":73}],55:[function(require,module,exports){
 // false -> Array#indexOf
 // true  -> Array#includes
 var toIObject = require('./_to-iobject')
@@ -4411,16 +4546,16 @@ module.exports = function(IS_INCLUDES){
     } return !IS_INCLUDES && -1;
   };
 };
-},{"./_to-index":95,"./_to-iobject":97,"./_to-length":98}],52:[function(require,module,exports){
+},{"./_to-index":99,"./_to-iobject":101,"./_to-length":102}],56:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = function(it){
   return toString.call(it).slice(8, -1);
 };
-},{}],53:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 var core = module.exports = {version: '2.4.0'};
 if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-},{}],54:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 // optional / simple context binding
 var aFunction = require('./_a-function');
 module.exports = function(fn, that, length){
@@ -4441,18 +4576,18 @@ module.exports = function(fn, that, length){
     return fn.apply(that, arguments);
   };
 };
-},{"./_a-function":48}],55:[function(require,module,exports){
+},{"./_a-function":52}],59:[function(require,module,exports){
 // 7.2.1 RequireObjectCoercible(argument)
 module.exports = function(it){
   if(it == undefined)throw TypeError("Can't call method on  " + it);
   return it;
 };
-},{}],56:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 // Thank's IE8 for his funny defineProperty
 module.exports = !require('./_fails')(function(){
   return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
 });
-},{"./_fails":61}],57:[function(require,module,exports){
+},{"./_fails":65}],61:[function(require,module,exports){
 var isObject = require('./_is-object')
   , document = require('./_global').document
   // in old IE typeof document.createElement is 'object'
@@ -4460,12 +4595,12 @@ var isObject = require('./_is-object')
 module.exports = function(it){
   return is ? document.createElement(it) : {};
 };
-},{"./_global":62,"./_is-object":69}],58:[function(require,module,exports){
+},{"./_global":66,"./_is-object":73}],62:[function(require,module,exports){
 // IE 8- don't enum bug keys
 module.exports = (
   'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 ).split(',');
-},{}],59:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 // all enumerable object keys, includes symbols
 var getKeys = require('./_object-keys')
   , gOPS    = require('./_object-gops')
@@ -4481,7 +4616,7 @@ module.exports = function(it){
     while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))result.push(key);
   } return result;
 };
-},{"./_object-gops":83,"./_object-keys":86,"./_object-pie":87}],60:[function(require,module,exports){
+},{"./_object-gops":87,"./_object-keys":90,"./_object-pie":91}],64:[function(require,module,exports){
 var global    = require('./_global')
   , core      = require('./_core')
   , ctx       = require('./_ctx')
@@ -4543,7 +4678,7 @@ $export.W = 32;  // wrap
 $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library` 
 module.exports = $export;
-},{"./_core":53,"./_ctx":54,"./_global":62,"./_hide":64}],61:[function(require,module,exports){
+},{"./_core":57,"./_ctx":58,"./_global":66,"./_hide":68}],65:[function(require,module,exports){
 module.exports = function(exec){
   try {
     return !!exec();
@@ -4551,17 +4686,17 @@ module.exports = function(exec){
     return true;
   }
 };
-},{}],62:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
   ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
 if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-},{}],63:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 var hasOwnProperty = {}.hasOwnProperty;
 module.exports = function(it, key){
   return hasOwnProperty.call(it, key);
 };
-},{}],64:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 var dP         = require('./_object-dp')
   , createDesc = require('./_property-desc');
 module.exports = require('./_descriptors') ? function(object, key, value){
@@ -4570,29 +4705,29 @@ module.exports = require('./_descriptors') ? function(object, key, value){
   object[key] = value;
   return object;
 };
-},{"./_descriptors":56,"./_object-dp":78,"./_property-desc":89}],65:[function(require,module,exports){
+},{"./_descriptors":60,"./_object-dp":82,"./_property-desc":93}],69:[function(require,module,exports){
 module.exports = require('./_global').document && document.documentElement;
-},{"./_global":62}],66:[function(require,module,exports){
+},{"./_global":66}],70:[function(require,module,exports){
 module.exports = !require('./_descriptors') && !require('./_fails')(function(){
   return Object.defineProperty(require('./_dom-create')('div'), 'a', {get: function(){ return 7; }}).a != 7;
 });
-},{"./_descriptors":56,"./_dom-create":57,"./_fails":61}],67:[function(require,module,exports){
+},{"./_descriptors":60,"./_dom-create":61,"./_fails":65}],71:[function(require,module,exports){
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = require('./_cof');
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
-},{"./_cof":52}],68:[function(require,module,exports){
+},{"./_cof":56}],72:[function(require,module,exports){
 // 7.2.2 IsArray(argument)
 var cof = require('./_cof');
 module.exports = Array.isArray || function isArray(arg){
   return cof(arg) == 'Array';
 };
-},{"./_cof":52}],69:[function(require,module,exports){
+},{"./_cof":56}],73:[function(require,module,exports){
 module.exports = function(it){
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
-},{}],70:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 var create         = require('./_object-create')
   , descriptor     = require('./_property-desc')
@@ -4606,7 +4741,7 @@ module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
   setToStringTag(Constructor, NAME + ' Iterator');
 };
-},{"./_hide":64,"./_object-create":77,"./_property-desc":89,"./_set-to-string-tag":91,"./_wks":104}],71:[function(require,module,exports){
+},{"./_hide":68,"./_object-create":81,"./_property-desc":93,"./_set-to-string-tag":95,"./_wks":108}],75:[function(require,module,exports){
 'use strict';
 var LIBRARY        = require('./_library')
   , $export        = require('./_export')
@@ -4677,13 +4812,13 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
   }
   return methods;
 };
-},{"./_export":60,"./_has":63,"./_hide":64,"./_iter-create":70,"./_iterators":73,"./_library":75,"./_object-gpo":84,"./_redefine":90,"./_set-to-string-tag":91,"./_wks":104}],72:[function(require,module,exports){
+},{"./_export":64,"./_has":67,"./_hide":68,"./_iter-create":74,"./_iterators":77,"./_library":79,"./_object-gpo":88,"./_redefine":94,"./_set-to-string-tag":95,"./_wks":108}],76:[function(require,module,exports){
 module.exports = function(done, value){
   return {value: value, done: !!done};
 };
-},{}],73:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 module.exports = {};
-},{}],74:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 var getKeys   = require('./_object-keys')
   , toIObject = require('./_to-iobject');
 module.exports = function(object, el){
@@ -4694,9 +4829,9 @@ module.exports = function(object, el){
     , key;
   while(length > index)if(O[key = keys[index++]] === el)return key;
 };
-},{"./_object-keys":86,"./_to-iobject":97}],75:[function(require,module,exports){
+},{"./_object-keys":90,"./_to-iobject":101}],79:[function(require,module,exports){
 module.exports = true;
-},{}],76:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var META     = require('./_uid')('meta')
   , isObject = require('./_is-object')
   , has      = require('./_has')
@@ -4750,7 +4885,7 @@ var meta = module.exports = {
   getWeak:  getWeak,
   onFreeze: onFreeze
 };
-},{"./_fails":61,"./_has":63,"./_is-object":69,"./_object-dp":78,"./_uid":101}],77:[function(require,module,exports){
+},{"./_fails":65,"./_has":67,"./_is-object":73,"./_object-dp":82,"./_uid":105}],81:[function(require,module,exports){
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject    = require('./_an-object')
   , dPs         = require('./_object-dps')
@@ -4793,7 +4928,7 @@ module.exports = Object.create || function create(O, Properties){
   return Properties === undefined ? result : dPs(result, Properties);
 };
 
-},{"./_an-object":50,"./_dom-create":57,"./_enum-bug-keys":58,"./_html":65,"./_object-dps":79,"./_shared-key":92}],78:[function(require,module,exports){
+},{"./_an-object":54,"./_dom-create":61,"./_enum-bug-keys":62,"./_html":69,"./_object-dps":83,"./_shared-key":96}],82:[function(require,module,exports){
 var anObject       = require('./_an-object')
   , IE8_DOM_DEFINE = require('./_ie8-dom-define')
   , toPrimitive    = require('./_to-primitive')
@@ -4810,7 +4945,7 @@ exports.f = require('./_descriptors') ? Object.defineProperty : function defineP
   if('value' in Attributes)O[P] = Attributes.value;
   return O;
 };
-},{"./_an-object":50,"./_descriptors":56,"./_ie8-dom-define":66,"./_to-primitive":100}],79:[function(require,module,exports){
+},{"./_an-object":54,"./_descriptors":60,"./_ie8-dom-define":70,"./_to-primitive":104}],83:[function(require,module,exports){
 var dP       = require('./_object-dp')
   , anObject = require('./_an-object')
   , getKeys  = require('./_object-keys');
@@ -4824,7 +4959,7 @@ module.exports = require('./_descriptors') ? Object.defineProperties : function 
   while(length > i)dP.f(O, P = keys[i++], Properties[P]);
   return O;
 };
-},{"./_an-object":50,"./_descriptors":56,"./_object-dp":78,"./_object-keys":86}],80:[function(require,module,exports){
+},{"./_an-object":54,"./_descriptors":60,"./_object-dp":82,"./_object-keys":90}],84:[function(require,module,exports){
 var pIE            = require('./_object-pie')
   , createDesc     = require('./_property-desc')
   , toIObject      = require('./_to-iobject')
@@ -4841,7 +4976,7 @@ exports.f = require('./_descriptors') ? gOPD : function getOwnPropertyDescriptor
   } catch(e){ /* empty */ }
   if(has(O, P))return createDesc(!pIE.f.call(O, P), O[P]);
 };
-},{"./_descriptors":56,"./_has":63,"./_ie8-dom-define":66,"./_object-pie":87,"./_property-desc":89,"./_to-iobject":97,"./_to-primitive":100}],81:[function(require,module,exports){
+},{"./_descriptors":60,"./_has":67,"./_ie8-dom-define":70,"./_object-pie":91,"./_property-desc":93,"./_to-iobject":101,"./_to-primitive":104}],85:[function(require,module,exports){
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject = require('./_to-iobject')
   , gOPN      = require('./_object-gopn').f
@@ -4862,7 +4997,7 @@ module.exports.f = function getOwnPropertyNames(it){
   return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
 };
 
-},{"./_object-gopn":82,"./_to-iobject":97}],82:[function(require,module,exports){
+},{"./_object-gopn":86,"./_to-iobject":101}],86:[function(require,module,exports){
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 var $keys      = require('./_object-keys-internal')
   , hiddenKeys = require('./_enum-bug-keys').concat('length', 'prototype');
@@ -4870,9 +5005,9 @@ var $keys      = require('./_object-keys-internal')
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
   return $keys(O, hiddenKeys);
 };
-},{"./_enum-bug-keys":58,"./_object-keys-internal":85}],83:[function(require,module,exports){
+},{"./_enum-bug-keys":62,"./_object-keys-internal":89}],87:[function(require,module,exports){
 exports.f = Object.getOwnPropertySymbols;
-},{}],84:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has         = require('./_has')
   , toObject    = require('./_to-object')
@@ -4886,7 +5021,7 @@ module.exports = Object.getPrototypeOf || function(O){
     return O.constructor.prototype;
   } return O instanceof Object ? ObjectProto : null;
 };
-},{"./_has":63,"./_shared-key":92,"./_to-object":99}],85:[function(require,module,exports){
+},{"./_has":67,"./_shared-key":96,"./_to-object":103}],89:[function(require,module,exports){
 var has          = require('./_has')
   , toIObject    = require('./_to-iobject')
   , arrayIndexOf = require('./_array-includes')(false)
@@ -4904,7 +5039,7 @@ module.exports = function(object, names){
   }
   return result;
 };
-},{"./_array-includes":51,"./_has":63,"./_shared-key":92,"./_to-iobject":97}],86:[function(require,module,exports){
+},{"./_array-includes":55,"./_has":67,"./_shared-key":96,"./_to-iobject":101}],90:[function(require,module,exports){
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys       = require('./_object-keys-internal')
   , enumBugKeys = require('./_enum-bug-keys');
@@ -4912,9 +5047,9 @@ var $keys       = require('./_object-keys-internal')
 module.exports = Object.keys || function keys(O){
   return $keys(O, enumBugKeys);
 };
-},{"./_enum-bug-keys":58,"./_object-keys-internal":85}],87:[function(require,module,exports){
+},{"./_enum-bug-keys":62,"./_object-keys-internal":89}],91:[function(require,module,exports){
 exports.f = {}.propertyIsEnumerable;
-},{}],88:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 // most Object methods by ES6 should accept primitives
 var $export = require('./_export')
   , core    = require('./_core')
@@ -4925,7 +5060,7 @@ module.exports = function(KEY, exec){
   exp[KEY] = exec(fn);
   $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
 };
-},{"./_core":53,"./_export":60,"./_fails":61}],89:[function(require,module,exports){
+},{"./_core":57,"./_export":64,"./_fails":65}],93:[function(require,module,exports){
 module.exports = function(bitmap, value){
   return {
     enumerable  : !(bitmap & 1),
@@ -4934,9 +5069,9 @@ module.exports = function(bitmap, value){
     value       : value
   };
 };
-},{}],90:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 module.exports = require('./_hide');
-},{"./_hide":64}],91:[function(require,module,exports){
+},{"./_hide":68}],95:[function(require,module,exports){
 var def = require('./_object-dp').f
   , has = require('./_has')
   , TAG = require('./_wks')('toStringTag');
@@ -4944,20 +5079,20 @@ var def = require('./_object-dp').f
 module.exports = function(it, tag, stat){
   if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
 };
-},{"./_has":63,"./_object-dp":78,"./_wks":104}],92:[function(require,module,exports){
+},{"./_has":67,"./_object-dp":82,"./_wks":108}],96:[function(require,module,exports){
 var shared = require('./_shared')('keys')
   , uid    = require('./_uid');
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
-},{"./_shared":93,"./_uid":101}],93:[function(require,module,exports){
+},{"./_shared":97,"./_uid":105}],97:[function(require,module,exports){
 var global = require('./_global')
   , SHARED = '__core-js_shared__'
   , store  = global[SHARED] || (global[SHARED] = {});
 module.exports = function(key){
   return store[key] || (store[key] = {});
 };
-},{"./_global":62}],94:[function(require,module,exports){
+},{"./_global":66}],98:[function(require,module,exports){
 var toInteger = require('./_to-integer')
   , defined   = require('./_defined');
 // true  -> String#at
@@ -4975,7 +5110,7 @@ module.exports = function(TO_STRING){
       : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
   };
 };
-},{"./_defined":55,"./_to-integer":96}],95:[function(require,module,exports){
+},{"./_defined":59,"./_to-integer":100}],99:[function(require,module,exports){
 var toInteger = require('./_to-integer')
   , max       = Math.max
   , min       = Math.min;
@@ -4983,34 +5118,34 @@ module.exports = function(index, length){
   index = toInteger(index);
   return index < 0 ? max(index + length, 0) : min(index, length);
 };
-},{"./_to-integer":96}],96:[function(require,module,exports){
+},{"./_to-integer":100}],100:[function(require,module,exports){
 // 7.1.4 ToInteger
 var ceil  = Math.ceil
   , floor = Math.floor;
 module.exports = function(it){
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
-},{}],97:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = require('./_iobject')
   , defined = require('./_defined');
 module.exports = function(it){
   return IObject(defined(it));
 };
-},{"./_defined":55,"./_iobject":67}],98:[function(require,module,exports){
+},{"./_defined":59,"./_iobject":71}],102:[function(require,module,exports){
 // 7.1.15 ToLength
 var toInteger = require('./_to-integer')
   , min       = Math.min;
 module.exports = function(it){
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
-},{"./_to-integer":96}],99:[function(require,module,exports){
+},{"./_to-integer":100}],103:[function(require,module,exports){
 // 7.1.13 ToObject(argument)
 var defined = require('./_defined');
 module.exports = function(it){
   return Object(defined(it));
 };
-},{"./_defined":55}],100:[function(require,module,exports){
+},{"./_defined":59}],104:[function(require,module,exports){
 // 7.1.1 ToPrimitive(input [, PreferredType])
 var isObject = require('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
@@ -5023,13 +5158,13 @@ module.exports = function(it, S){
   if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
   throw TypeError("Can't convert object to primitive value");
 };
-},{"./_is-object":69}],101:[function(require,module,exports){
+},{"./_is-object":73}],105:[function(require,module,exports){
 var id = 0
   , px = Math.random();
 module.exports = function(key){
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
-},{}],102:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 var global         = require('./_global')
   , core           = require('./_core')
   , LIBRARY        = require('./_library')
@@ -5039,9 +5174,9 @@ module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
   if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
 };
-},{"./_core":53,"./_global":62,"./_library":75,"./_object-dp":78,"./_wks-ext":103}],103:[function(require,module,exports){
+},{"./_core":57,"./_global":66,"./_library":79,"./_object-dp":82,"./_wks-ext":107}],107:[function(require,module,exports){
 exports.f = require('./_wks');
-},{"./_wks":104}],104:[function(require,module,exports){
+},{"./_wks":108}],108:[function(require,module,exports){
 var store      = require('./_shared')('wks')
   , uid        = require('./_uid')
   , Symbol     = require('./_global').Symbol
@@ -5053,7 +5188,7 @@ var $exports = module.exports = function(name){
 };
 
 $exports.store = store;
-},{"./_global":62,"./_shared":93,"./_uid":101}],105:[function(require,module,exports){
+},{"./_global":66,"./_shared":97,"./_uid":105}],109:[function(require,module,exports){
 'use strict';
 var addToUnscopables = require('./_add-to-unscopables')
   , step             = require('./_iter-step')
@@ -5088,19 +5223,19 @@ Iterators.Arguments = Iterators.Array;
 addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
-},{"./_add-to-unscopables":49,"./_iter-define":71,"./_iter-step":72,"./_iterators":73,"./_to-iobject":97}],106:[function(require,module,exports){
+},{"./_add-to-unscopables":53,"./_iter-define":75,"./_iter-step":76,"./_iterators":77,"./_to-iobject":101}],110:[function(require,module,exports){
 var $export = require('./_export')
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 $export($export.S, 'Object', {create: require('./_object-create')});
-},{"./_export":60,"./_object-create":77}],107:[function(require,module,exports){
+},{"./_export":64,"./_object-create":81}],111:[function(require,module,exports){
 var $export = require('./_export');
 // 19.1.2.3 / 15.2.3.7 Object.defineProperties(O, Properties)
 $export($export.S + $export.F * !require('./_descriptors'), 'Object', {defineProperties: require('./_object-dps')});
-},{"./_descriptors":56,"./_export":60,"./_object-dps":79}],108:[function(require,module,exports){
+},{"./_descriptors":60,"./_export":64,"./_object-dps":83}],112:[function(require,module,exports){
 var $export = require('./_export');
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
 $export($export.S + $export.F * !require('./_descriptors'), 'Object', {defineProperty: require('./_object-dp').f});
-},{"./_descriptors":56,"./_export":60,"./_object-dp":78}],109:[function(require,module,exports){
+},{"./_descriptors":60,"./_export":64,"./_object-dp":82}],113:[function(require,module,exports){
 // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
 var toIObject                 = require('./_to-iobject')
   , $getOwnPropertyDescriptor = require('./_object-gopd').f;
@@ -5110,12 +5245,12 @@ require('./_object-sap')('getOwnPropertyDescriptor', function(){
     return $getOwnPropertyDescriptor(toIObject(it), key);
   };
 });
-},{"./_object-gopd":80,"./_object-sap":88,"./_to-iobject":97}],110:[function(require,module,exports){
+},{"./_object-gopd":84,"./_object-sap":92,"./_to-iobject":101}],114:[function(require,module,exports){
 // 19.1.2.7 Object.getOwnPropertyNames(O)
 require('./_object-sap')('getOwnPropertyNames', function(){
   return require('./_object-gopn-ext').f;
 });
-},{"./_object-gopn-ext":81,"./_object-sap":88}],111:[function(require,module,exports){
+},{"./_object-gopn-ext":85,"./_object-sap":92}],115:[function(require,module,exports){
 // 19.1.2.9 Object.getPrototypeOf(O)
 var toObject        = require('./_to-object')
   , $getPrototypeOf = require('./_object-gpo');
@@ -5125,7 +5260,7 @@ require('./_object-sap')('getPrototypeOf', function(){
     return $getPrototypeOf(toObject(it));
   };
 });
-},{"./_object-gpo":84,"./_object-sap":88,"./_to-object":99}],112:[function(require,module,exports){
+},{"./_object-gpo":88,"./_object-sap":92,"./_to-object":103}],116:[function(require,module,exports){
 // 19.1.2.11 Object.isExtensible(O)
 var isObject = require('./_is-object');
 
@@ -5134,7 +5269,7 @@ require('./_object-sap')('isExtensible', function($isExtensible){
     return isObject(it) ? $isExtensible ? $isExtensible(it) : true : false;
   };
 });
-},{"./_is-object":69,"./_object-sap":88}],113:[function(require,module,exports){
+},{"./_is-object":73,"./_object-sap":92}],117:[function(require,module,exports){
 // 19.1.2.14 Object.keys(O)
 var toObject = require('./_to-object')
   , $keys    = require('./_object-keys');
@@ -5144,7 +5279,7 @@ require('./_object-sap')('keys', function(){
     return $keys(toObject(it));
   };
 });
-},{"./_object-keys":86,"./_object-sap":88,"./_to-object":99}],114:[function(require,module,exports){
+},{"./_object-keys":90,"./_object-sap":92,"./_to-object":103}],118:[function(require,module,exports){
 // 19.1.2.15 Object.preventExtensions(O)
 var isObject = require('./_is-object')
   , meta     = require('./_meta').onFreeze;
@@ -5154,9 +5289,9 @@ require('./_object-sap')('preventExtensions', function($preventExtensions){
     return $preventExtensions && isObject(it) ? $preventExtensions(meta(it)) : it;
   };
 });
-},{"./_is-object":69,"./_meta":76,"./_object-sap":88}],115:[function(require,module,exports){
+},{"./_is-object":73,"./_meta":80,"./_object-sap":92}],119:[function(require,module,exports){
 
-},{}],116:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 'use strict';
 var $at  = require('./_string-at')(true);
 
@@ -5174,7 +5309,7 @@ require('./_iter-define')(String, 'String', function(iterated){
   this._i += point.length;
   return {value: point, done: false};
 });
-},{"./_iter-define":71,"./_string-at":94}],117:[function(require,module,exports){
+},{"./_iter-define":75,"./_string-at":98}],121:[function(require,module,exports){
 'use strict';
 // ECMAScript 6 symbols shim
 var global         = require('./_global')
@@ -5410,11 +5545,11 @@ setToStringTag($Symbol, 'Symbol');
 setToStringTag(Math, 'Math', true);
 // 24.3.3 JSON[@@toStringTag]
 setToStringTag(global.JSON, 'JSON', true);
-},{"./_an-object":50,"./_descriptors":56,"./_enum-keys":59,"./_export":60,"./_fails":61,"./_global":62,"./_has":63,"./_hide":64,"./_is-array":68,"./_keyof":74,"./_library":75,"./_meta":76,"./_object-create":77,"./_object-dp":78,"./_object-gopd":80,"./_object-gopn":82,"./_object-gopn-ext":81,"./_object-gops":83,"./_object-keys":86,"./_object-pie":87,"./_property-desc":89,"./_redefine":90,"./_set-to-string-tag":91,"./_shared":93,"./_to-iobject":97,"./_to-primitive":100,"./_uid":101,"./_wks":104,"./_wks-define":102,"./_wks-ext":103}],118:[function(require,module,exports){
+},{"./_an-object":54,"./_descriptors":60,"./_enum-keys":63,"./_export":64,"./_fails":65,"./_global":66,"./_has":67,"./_hide":68,"./_is-array":72,"./_keyof":78,"./_library":79,"./_meta":80,"./_object-create":81,"./_object-dp":82,"./_object-gopd":84,"./_object-gopn":86,"./_object-gopn-ext":85,"./_object-gops":87,"./_object-keys":90,"./_object-pie":91,"./_property-desc":93,"./_redefine":94,"./_set-to-string-tag":95,"./_shared":97,"./_to-iobject":101,"./_to-primitive":104,"./_uid":105,"./_wks":108,"./_wks-define":106,"./_wks-ext":107}],122:[function(require,module,exports){
 require('./_wks-define')('asyncIterator');
-},{"./_wks-define":102}],119:[function(require,module,exports){
+},{"./_wks-define":106}],123:[function(require,module,exports){
 require('./_wks-define')('observable');
-},{"./_wks-define":102}],120:[function(require,module,exports){
+},{"./_wks-define":106}],124:[function(require,module,exports){
 require('./es6.array.iterator');
 var global        = require('./_global')
   , hide          = require('./_hide')
@@ -5428,7 +5563,7 @@ for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList'
   if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
   Iterators[NAME] = Iterators.Array;
 }
-},{"./_global":62,"./_hide":64,"./_iterators":73,"./_wks":104,"./es6.array.iterator":105}],121:[function(require,module,exports){
+},{"./_global":66,"./_hide":68,"./_iterators":77,"./_wks":108,"./es6.array.iterator":109}],125:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -15244,7 +15379,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],122:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 //! moment.js
 //! version : 2.16.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -19544,7 +19679,7 @@ return hooks;
 
 })));
 
-},{}],123:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -19726,12 +19861,12 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],124:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib')
 
-},{"./lib":129}],125:[function(require,module,exports){
+},{"./lib":133}],129:[function(require,module,exports){
 'use strict';
 
 var asap = require('asap/raw');
@@ -19946,7 +20081,7 @@ function doResolve(fn, promise) {
   }
 }
 
-},{"asap/raw":19}],126:[function(require,module,exports){
+},{"asap/raw":23}],130:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -19961,7 +20096,7 @@ Promise.prototype.done = function (onFulfilled, onRejected) {
   });
 };
 
-},{"./core.js":125}],127:[function(require,module,exports){
+},{"./core.js":129}],131:[function(require,module,exports){
 'use strict';
 
 //This file contains the ES6 extensions to the core Promises/A+ API
@@ -20070,7 +20205,7 @@ Promise.prototype['catch'] = function (onRejected) {
   return this.then(null, onRejected);
 };
 
-},{"./core.js":125}],128:[function(require,module,exports){
+},{"./core.js":129}],132:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -20088,7 +20223,7 @@ Promise.prototype['finally'] = function (f) {
   });
 };
 
-},{"./core.js":125}],129:[function(require,module,exports){
+},{"./core.js":129}],133:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./core.js');
@@ -20098,7 +20233,7 @@ require('./es6-extensions.js');
 require('./node-extensions.js');
 require('./synchronous.js');
 
-},{"./core.js":125,"./done.js":126,"./es6-extensions.js":127,"./finally.js":128,"./node-extensions.js":130,"./synchronous.js":131}],130:[function(require,module,exports){
+},{"./core.js":129,"./done.js":130,"./es6-extensions.js":131,"./finally.js":132,"./node-extensions.js":134,"./synchronous.js":135}],134:[function(require,module,exports){
 'use strict';
 
 // This file contains then/promise specific extensions that are only useful
@@ -20230,7 +20365,7 @@ Promise.prototype.nodeify = function (callback, ctx) {
   });
 }
 
-},{"./core.js":125,"asap":18}],131:[function(require,module,exports){
+},{"./core.js":129,"asap":22}],135:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -20294,7 +20429,7 @@ Promise.disableSynchronous = function() {
   Promise.prototype.getState = undefined;
 };
 
-},{"./core.js":125}],132:[function(require,module,exports){
+},{"./core.js":129}],136:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -21844,7 +21979,7 @@ Promise.disableSynchronous = function() {
   }
 }.call(this));
 
-},{}],133:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 /**
  * Service for sending network requests.
  */
@@ -22006,7 +22141,7 @@ module.exports = function (_) {
     return _.http = Http;
 };
 
-},{"./lib/jsonp":135,"./lib/promise":136,"./lib/xhr":138}],134:[function(require,module,exports){
+},{"./lib/jsonp":139,"./lib/promise":140,"./lib/xhr":142}],138:[function(require,module,exports){
 /**
  * Install plugin.
  */
@@ -22047,7 +22182,7 @@ if (window.Vue) {
 }
 
 module.exports = install;
-},{"./http":133,"./lib/util":137,"./resource":139,"./url":140}],135:[function(require,module,exports){
+},{"./http":137,"./lib/util":141,"./resource":143,"./url":144}],139:[function(require,module,exports){
 /**
  * JSONP request.
  */
@@ -22099,7 +22234,7 @@ module.exports = function (_, options) {
 
 };
 
-},{"./promise":136}],136:[function(require,module,exports){
+},{"./promise":140}],140:[function(require,module,exports){
 /**
  * Promises/A+ polyfill v1.1.0 (https://github.com/bramstein/promis)
  */
@@ -22311,7 +22446,7 @@ if (window.MutationObserver) {
 
 module.exports = window.Promise || Promise;
 
-},{}],137:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 /**
  * Utility functions.
  */
@@ -22393,7 +22528,7 @@ module.exports = function (Vue) {
     return _;
 };
 
-},{}],138:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 /**
  * XMLHttp request.
  */
@@ -22446,7 +22581,7 @@ module.exports = function (_, options) {
     return promise;
 };
 
-},{"./promise":136}],139:[function(require,module,exports){
+},{"./promise":140}],143:[function(require,module,exports){
 /**
  * Service for interacting with RESTful services.
  */
@@ -22559,7 +22694,7 @@ module.exports = function (_) {
     return _.resource = Resource;
 };
 
-},{}],140:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 /**
  * Service for URL templating.
  */
@@ -22718,7 +22853,7 @@ module.exports = function (_) {
     return _.url = Url;
 };
 
-},{}],141:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 "use strict";
 
 var _stringify = require("babel-runtime/core-js/json/stringify");
@@ -23666,7 +23801,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   }]);
 });
 
-},{"babel-runtime/core-js/json/stringify":20,"babel-runtime/core-js/object/create":21,"babel-runtime/core-js/object/define-properties":22,"babel-runtime/core-js/object/define-property":23,"babel-runtime/core-js/object/get-own-property-descriptor":24,"babel-runtime/core-js/object/get-own-property-names":25,"babel-runtime/core-js/object/get-own-property-symbols":26,"babel-runtime/core-js/object/get-prototype-of":27,"babel-runtime/core-js/object/is-extensible":28,"babel-runtime/core-js/object/keys":29,"babel-runtime/core-js/object/prevent-extensions":30,"babel-runtime/helpers/typeof":33}],142:[function(require,module,exports){
+},{"babel-runtime/core-js/json/stringify":24,"babel-runtime/core-js/object/create":25,"babel-runtime/core-js/object/define-properties":26,"babel-runtime/core-js/object/define-property":27,"babel-runtime/core-js/object/get-own-property-descriptor":28,"babel-runtime/core-js/object/get-own-property-names":29,"babel-runtime/core-js/object/get-own-property-symbols":30,"babel-runtime/core-js/object/get-prototype-of":31,"babel-runtime/core-js/object/is-extensible":32,"babel-runtime/core-js/object/keys":33,"babel-runtime/core-js/object/prevent-extensions":34,"babel-runtime/helpers/typeof":37}],146:[function(require,module,exports){
 (function (process){
 /*!
  * Vue.js v1.0.28
@@ -33907,7 +34042,7 @@ setTimeout(function () {
 
 module.exports = Vue;
 }).call(this,require('_process'))
-},{"_process":123}],143:[function(require,module,exports){
+},{"_process":127}],147:[function(require,module,exports){
 'use strict';
 
 /*
@@ -33929,7 +34064,7 @@ require('./core/bootstrap');
 
 new Vue(require('./spark'));
 
-},{"./core/bootstrap":148,"./spark":173}],144:[function(require,module,exports){
+},{"./core/bootstrap":152,"./spark":179}],148:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-simple-registration-screen', {
@@ -34008,7 +34143,7 @@ Vue.component('spark-simple-registration-screen', {
     }
 });
 
-},{}],145:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-subscription-register-screen', {
@@ -34375,7 +34510,7 @@ Vue.component('spark-subscription-register-screen', {
     }
 });
 
-},{}],146:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 'use strict';
 
 /*
@@ -34402,7 +34537,7 @@ Vue.component('spark-error-alert', {
             </div></div>"
 });
 
-},{}],147:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 'use strict';
 
 window.NotificationStore = {
@@ -34469,7 +34604,7 @@ Vue.transition('fade', {
   leaveClass: 'fadeOutDown' // class of animate.css
 });
 
-},{}],148:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 'use strict';
 
 var _vueSelect = require('vue-select');
@@ -34552,7 +34687,7 @@ Spark.components = {
  */
 require('./../forms/bootstrap');
 
-},{"./../common/notifications":147,"./../forms/bootstrap":150,"bootstrap-sass/assets/javascripts/bootstrap":34,"jquery":121,"moment":122,"promise":124,"underscore":132,"vue":142,"vue-resource":134,"vue-select":141}],149:[function(require,module,exports){
+},{"./../common/notifications":151,"./../forms/bootstrap":154,"bootstrap-sass/assets/javascripts/bootstrap":38,"jquery":125,"moment":126,"promise":128,"underscore":136,"vue":146,"vue-resource":138,"vue-select":145}],153:[function(require,module,exports){
 'use strict';
 
 /**
@@ -34579,13 +34714,15 @@ require('./../settings/team/location/manage-team-facility');
 require('./../settings/team/location/manage-team-facilitygroup');
 require('./../settings/team/membership');
 require('./../settings/team/membership/edit-team-member');
+require('./../settings/team/device');
+require('./../settings/team/user');
 
 /**
  * Module Components
  */
 require('./../../../../app/Gfcare/Core/Modules');
 
-},{"./../../../../app/Gfcare/Core/Modules":1,"./../auth/registration/simple":144,"./../auth/registration/subscription":145,"./../common/errors":146,"./../nav/dropdown":155,"./../nav/topbar":156,"./../settings/dashboard":157,"./../settings/dashboard/profile/basics":158,"./../settings/dashboard/security/password":159,"./../settings/dashboard/security/two-factor":160,"./../settings/dashboard/subscription":161,"./../settings/dashboard/teams":162,"./../settings/team":163,"./../settings/team/location":164,"./../settings/team/location/add-team-location":165,"./../settings/team/location/edit-team-location":166,"./../settings/team/location/manage-team-facility":167,"./../settings/team/location/manage-team-facilitygroup":168,"./../settings/team/membership":169,"./../settings/team/membership/edit-team-member":170,"./../settings/team/module":171,"./../settings/team/owner/basics":172}],150:[function(require,module,exports){
+},{"./../../../../app/Gfcare/Core/Modules":1,"./../auth/registration/simple":148,"./../auth/registration/subscription":149,"./../common/errors":150,"./../nav/dropdown":159,"./../nav/topbar":160,"./../settings/dashboard":161,"./../settings/dashboard/profile/basics":162,"./../settings/dashboard/security/password":163,"./../settings/dashboard/security/two-factor":164,"./../settings/dashboard/subscription":165,"./../settings/dashboard/teams":166,"./../settings/team":167,"./../settings/team/device":168,"./../settings/team/location":169,"./../settings/team/location/add-team-location":170,"./../settings/team/location/edit-team-location":171,"./../settings/team/location/manage-team-facility":172,"./../settings/team/location/manage-team-facilitygroup":173,"./../settings/team/membership":174,"./../settings/team/membership/edit-team-member":175,"./../settings/team/module":176,"./../settings/team/owner/basics":177,"./../settings/team/user":178}],154:[function(require,module,exports){
 'use strict';
 
 /**
@@ -34617,7 +34754,7 @@ $.extend(Spark, require('./http'));
  */
 require('./components');
 
-},{"./components":151,"./errors":152,"./http":153,"./instance":154}],151:[function(require,module,exports){
+},{"./components":155,"./errors":156,"./http":157,"./instance":158}],155:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-text', {
@@ -34909,7 +35046,7 @@ Vue.component('spark-facility-select', {
     }
 });
 
-},{}],152:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -34976,7 +35113,7 @@ window.SparkFormErrors = function () {
     };
 };
 
-},{}],153:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -35018,7 +35155,7 @@ module.exports = {
     }
 };
 
-},{}],154:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 "use strict";
 
 /**
@@ -35045,7 +35182,7 @@ window.SparkForm = function (data) {
     };
 };
 
-},{}],155:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-nav-bar-dropdown', $.extend(true, {
@@ -35081,7 +35218,7 @@ Vue.component('spark-nav-bar-dropdown', $.extend(true, {
     }
 }, Spark.components.navDropdown));
 
-},{}],156:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-nav-bar-topbar', $.extend(true, {
@@ -35129,7 +35266,7 @@ Vue.component('spark-nav-bar-topbar', $.extend(true, {
 
 }, Spark.components.navTopbar));
 
-},{}],157:[function(require,module,exports){
+},{}],161:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-settings-screen', {
@@ -35141,7 +35278,7 @@ Vue.component('spark-settings-screen', {
     }
 });
 
-},{}],158:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-settings-profile-basics-screen', $.extend(true, {
@@ -35203,7 +35340,7 @@ Vue.component('spark-settings-profile-basics-screen', $.extend(true, {
     }
 }, Spark.components.profileBasics));
 
-},{}],159:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-settings-security-password-screen', {
@@ -35258,7 +35395,7 @@ Vue.component('spark-settings-security-password-screen', {
     }
 });
 
-},{}],160:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-settings-security-two-factor-screen', {
@@ -35338,7 +35475,7 @@ Vue.component('spark-settings-security-two-factor-screen', {
     }
 });
 
-},{}],161:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 'use strict';
 
 var settingsSubscriptionScreenForms = {
@@ -35889,7 +36026,7 @@ Vue.component('spark-settings-subscription-screen', {
     }
 });
 
-},{}],162:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-settings-teams-screen', {
@@ -36045,25 +36182,22 @@ Vue.component('spark-settings-teams-screen', {
     }
 });
 
-},{}],163:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-screen', {
     props: ['teamId'],
 
-    /*
-     * Bootstrap the component. Load the initial data.
-     */
     ready: function ready() {
         this.getTeam();
+        this.getUsers();
+        this.getDevices();
+        this.getFacilities();
         this.getRoles();
         this.getModules();
         this.getLocationTypes();
     },
 
-    /*
-     * Initial state of the component's data.
-     */
     data: function data() {
         return {
             team: null
@@ -36071,11 +36205,20 @@ Vue.component('spark-team-settings-screen', {
     },
 
     events: {
-        /*
-         * Handle the "updateTeam" event. Re-retrieve the team.
-         */
         updateTeam: function updateTeam() {
             this.getTeam();
+            return true;
+        },
+        updateUsers: function updateUsers() {
+            this.getUsers();
+            return true;
+        },
+        updateDevices: function updateDevices() {
+            this.getDevices();
+            return true;
+        },
+        updateFacilities: function updateFacilities() {
+            this.getFacilities();
             return true;
         }
     },
@@ -36083,9 +36226,6 @@ Vue.component('spark-team-settings-screen', {
     computed: {},
 
     methods: {
-        /*
-         * Get the team from the API.
-         */
         getTeam: function getTeam() {
             this.$http.get('/gfcare/api/teams/' + this.teamId).success(function (team) {
                 this.team = team;
@@ -36093,9 +36233,27 @@ Vue.component('spark-team-settings-screen', {
             });
         },
 
-        /**
-         * Get all of the roles that may be assigned to users.
-         */
+        getUsers: function getUsers() {
+            var self = this;
+            this.$http.get('/gfcare/api/teams/' + this.teamId + '/users').success(function (users) {
+                self.users = users;
+                self.$broadcast('usersRetrieved', self.users);
+            });
+        },
+
+        getDevices: function getDevices() {
+            var self = this;
+            this.$http.get('/gfcare/api/teams/' + this.teamId + '/devices').success(function (devices) {
+                self.devices = devices;
+                self.devices.sort(function (a, b) {
+                    var x = a.type.toLowerCase();
+                    var y = b.type.toLowerCase();
+                    return x < y ? -1 : x > y ? 1 : 0;
+                });
+                self.$broadcast('devicesRetrieved', self.devices);
+            });
+        },
+
         getRoles: function getRoles() {
             this.$http.get('/gfcare/api/teams/roles').success(function (roles) {
                 this.roles = roles;
@@ -36103,9 +36261,6 @@ Vue.component('spark-team-settings-screen', {
             });
         },
 
-        /**
-         * Get all of the modules that may be assigned to teams.
-         */
         getModules: function getModules() {
             this.$http.get('/gfcare/api/teams/modules').success(function (modules) {
                 this.modules = modules;
@@ -36113,9 +36268,14 @@ Vue.component('spark-team-settings-screen', {
             });
         },
 
-        /**
-         * Get all of the locations that may be assigned to teams.
-         */
+        getFacilities: function getFacilities() {
+            var self = this;
+            this.$http.get('/gfcare/api/teams/' + this.teamId + '/facilities').success(function (facilities) {
+                self.facilities = facilities;
+                self.$broadcast('facilitiesRetrieved', self.facilities);
+            });
+        },
+
         getLocationTypes: function getLocationTypes() {
             this.$http.get('/gfcare/api/teams/locationtypes').success(function (types) {
                 this.$broadcast('locationTypesRetrieved', types);
@@ -36124,7 +36284,155 @@ Vue.component('spark-team-settings-screen', {
     }
 });
 
-},{}],164:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
+'use strict';
+
+Vue.component('spark-team-settings-device-screen', {
+
+    ready: function ready() {},
+
+    data: function data() {
+        return {
+            users: [],
+            devices: [],
+            editingDevice: { 'name': 'none' },
+            removingDeviceId: null,
+
+            yesNoOptions: [{ 'text': 'Yes', value: 1 }, { 'text': 'No', 'value': 0 }],
+
+            deviceOptions: [],
+
+            deviceStatusOptions: [{ 'text': 'Unallocated', 'value': 'unallocated' }, { 'text': 'In active use', 'value': 'active' }, { 'text': 'Under repair', 'value': 'repair' }, { 'text': 'Deactivated', 'value': 'deactivated' }, { 'text': 'Damaged', 'value': 'damaged' }, { 'text': 'Lost or stolen', 'value': 'lost_stolen' }, { 'text': 'Unknown', 'value': 'unknown' }],
+
+            forms: {
+                addDevice: new SparkForm({
+                    type: '',
+                    tag: '',
+                    color: '',
+                    imei: ''
+                }),
+
+                updateDevice: new SparkForm({
+                    type: '',
+                    tag: '',
+                    color: '',
+                    imei: '',
+                    status: ''
+                })
+            }
+        };
+    },
+
+    events: {
+        devicesRetrieved: function devicesRetrieved(devices) {
+            this.devices = devices;
+            this.deviceOptions = [];
+            for (var i = 0; i < devices.length; ++i) {
+                if (devices[i].status == 'unallocated') {
+                    this.deviceOptions.push({ 'text': devices[i].type + ' (' + devices[i].tag + ' - ' + devices[i].imei + ')',
+                        'value': devices[i].id });
+                }
+            }
+            return true;
+        },
+
+        usersRetrieved: function usersRetrieved(users) {
+            this.users = users;
+            return true;
+        }
+    },
+
+    computed: {},
+
+    methods: {
+        addDevice: function addDevice() {
+            this.forms.addDevice.type = '';
+            this.forms.addDevice.tag = '';
+            this.forms.addDevice.color = '';
+            this.forms.addDevice.imei = '';
+            $('#modal-add-device').modal('show');
+        },
+
+        editDevice: function editDevice(d) {
+            this.editingDevice = d;
+            this.forms.updateDevice.type = d.type;
+            this.forms.updateDevice.tag = d.tag;
+            this.forms.updateDevice.color = d.color;
+            this.forms.updateDevice.imei = d.imei;
+            this.forms.updateDevice.status = d.status;
+            $('#modal-edit-device').modal('show');
+        },
+
+        removingDevice: function removingDevice(id) {
+            return this.removingDeviceId == id;
+        },
+
+        removeFromList: function removeFromList(list, item) {
+            return _.reject(list, function (i) {
+                return i.id === item.id;
+            });
+        },
+
+        // Ajax calls
+        addNewDevice: function addNewDevice() {
+            var self = this;
+            Spark.post('/gfcare/settings/teams/devices', this.forms.addDevice).then(function () {
+                $('#modal-add-device').modal('hide');
+                self.$dispatch('updateDevices');
+            });
+        },
+
+        updateDevice: function updateDevice() {
+            var self = this;
+            Spark.put('/gfcare/settings/teams/devices/' + this.editingDevice.id, this.forms.updateDevice).then(function () {
+                $('#modal-edit-device').modal('hide');
+                self.$dispatch('updateDevices');
+            });
+        },
+
+        removeDevice: function removeDevice(device) {
+            var self = this;
+            self.removingDeviceId = device.id;
+
+            this.$http.delete('/gfcare/settings/teams/devices/' + device.id).success(function () {
+                self.removingDeviceId = 0;
+                self.devices = self.removeFromList(this.devices, device);
+                self.$dispatch('updateDevices');
+            }).error(function (resp) {
+                self.removingDeviceId = 0;
+                NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000 });
+            });
+        }
+
+    },
+
+    filters: {
+        device_owner: function device_owner(user_id) {
+            var l = null;
+            var f = null;
+            if (user_id != 0) {
+                l = _.find(this.users, function (u) {
+                    return u.id == user_id;
+                });
+                if (l != null) {
+                    f = _.find(l.facility, function (fac) {
+                        return fac.primary == 1;
+                    });
+                }
+            }
+            return l == null ? 'Not assigned' : l.name + (f == null ? '' : ' (' + f.facility.name + ')');
+        },
+
+        device_status: function device_status(status) {
+            var l = _.find(this.deviceStatusOptions, function (opt) {
+                return opt['value'] == status;
+            });
+            return l == null ? 'No status' : l['text'];
+        }
+    }
+});
+
+},{}],169:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-location-screen', {
@@ -36198,6 +36506,7 @@ Vue.component('spark-team-settings-location-screen', {
                 this.team.locations = self.removeFromList(this.team.locations, location);
                 self.$dispatch('updateTeam');
                 self.$dispatch('updateTeams');
+                self.$dispatch('updateFacilties');
             }).error(function (resp) {
                 self.removingLocationId = 0;
                 NotificationStore.addNotification({
@@ -36227,6 +36536,7 @@ Vue.component('spark-team-settings-location-screen', {
                 this.team.facilities = self.removeFromList(this.team.facilities, facility);
                 self.$dispatch('updateTeam');
                 self.$dispatch('updateTeams');
+                self.$dispatch('updateFacilties');
             }).error(function (resp) {
                 self.removingFacilityId = 0;
                 NotificationStore.addNotification({
@@ -36256,6 +36566,7 @@ Vue.component('spark-team-settings-location-screen', {
                 this.team.facilitygroups = self.removeFromList(this.team.facilitygroup, fg);
                 self.$dispatch('updateTeam');
                 self.$dispatch('updateTeams');
+                self.$dispatch('updateFacilties');
             }).error(function (resp) {
                 self.removingFacilityGroupId = 0;
                 NotificationStore.addNotification({
@@ -36362,7 +36673,7 @@ Vue.component('spark-team-settings-location-screen', {
     }
 });
 
-},{}],165:[function(require,module,exports){
+},{}],170:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-add-team-location-screen', $.extend(true, {
@@ -36418,6 +36729,7 @@ Vue.component('spark-team-settings-add-team-location-screen', $.extend(true, {
             var self = this;
             Spark.post('/gfcare/settings/teams/' + this.team.id + '/locations', this.forms.addTeamLocation).then(function () {
                 $('#modal-add-team-location').modal('hide');
+                self.$dispatch('updateFacilties');
                 self.$dispatch('updateTeam');
             });
         },
@@ -36473,7 +36785,7 @@ Vue.component('spark-team-settings-add-team-location-screen', $.extend(true, {
     }
 }, Spark.components.addTeamLocation));
 
-},{}],166:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-edit-team-location-screen', $.extend(true, {
@@ -36516,12 +36828,13 @@ Vue.component('spark-team-settings-edit-team-location-screen', $.extend(true, {
             Spark.put('/gfcare/settings/teams/' + this.team.id + '/locations/' + this.teamLocation.id, this.forms.updateTeamLocation).then(function () {
                 $('#modal-edit-team-location').modal('hide');
                 self.$dispatch('updateTeam');
+                self.$dispatch('updateFacilties');
             });
         }
     }
 }, Spark.components.editTeamLocation));
 
-},{}],167:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-add-team-facility-screen', $.extend(true, {
@@ -36578,6 +36891,7 @@ Vue.component('spark-team-settings-add-team-facility-screen', $.extend(true, {
             Spark.post('/gfcare/settings/teams/' + this.team.id + '/facilities', this.forms.addTeamFacility).then(function () {
                 $('#modal-add-team-facility').modal('hide');
                 self.$dispatch('updateTeam');
+                self.$dispatch('updateFacilties');
             });
         },
 
@@ -36651,13 +36965,14 @@ Vue.component('spark-team-settings-edit-team-facility-screen', $.extend(true, {
             var self = this;
             Spark.put('/gfcare/settings/teams/' + this.team.id + '/facilities/' + this.teamLocation.id, this.forms.updateTeamFacility).then(function () {
                 $('#modal-edit-team-facility').modal('hide');
+                self.$dispatch('updateFacilties');
                 self.$dispatch('updateTeam');
             });
         }
     }
 }, Spark.components.editTeamFacility));
 
-},{}],168:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-add-team-facilitygroup-screen', $.extend(true, {
@@ -36708,6 +37023,7 @@ Vue.component('spark-team-settings-add-team-facilitygroup-screen', $.extend(true
             Spark.post('/gfcare/settings/teams/' + this.team.id + '/facilitygroups', this.forms.addTeamFacilityGroup).then(function () {
                 $('#modal-add-team-facilitygroup').modal('hide');
                 self.$dispatch('updateTeam');
+                self.$dispatch('updateFacilties');
             });
         },
 
@@ -36766,12 +37082,13 @@ Vue.component('spark-team-settings-edit-team-facilitygroup-screen', $.extend(tru
             Spark.put('/gfcare/settings/teams/' + this.team.id + '/facilitygroup/' + this.teamLocation.id, this.forms.updateTeamFacilityGroup).then(function () {
                 $('#modal-edit-team-facilitygroup').modal('hide');
                 self.$dispatch('updateTeam');
+                self.$dispatch('updateFacilties');
             });
         }
     }
 }, Spark.components.editTeamFacilityGroup));
 
-},{}],169:[function(require,module,exports){
+},{}],174:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-membership-screen', {
@@ -36949,7 +37266,7 @@ Vue.component('spark-team-settings-membership-screen', {
     }
 });
 
-},{}],170:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-edit-team-member-screen', $.extend(true, {
@@ -37034,7 +37351,7 @@ Vue.component('spark-team-settings-edit-team-member-screen', $.extend(true, {
     }
 }, Spark.components.editTeamMember));
 
-},{}],171:[function(require,module,exports){
+},{}],176:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-module-screen', {
@@ -37197,7 +37514,7 @@ Vue.component('spark-team-settings-module-screen', {
     }
 });
 
-},{}],172:[function(require,module,exports){
+},{}],177:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-owner-basics-screen', $.extend(true, {
@@ -37258,7 +37575,242 @@ Vue.component('spark-team-settings-owner-basics-screen', $.extend(true, {
     }
 }, Spark.components.teamOwnerBasics));
 
-},{}],173:[function(require,module,exports){
+},{}],178:[function(require,module,exports){
+'use strict';
+
+Vue.component('spark-team-settings-user-screen', {
+
+    ready: function ready() {},
+
+    data: function data() {
+        return {
+            users: null,
+            facilities: null,
+
+            editingUser: { 'name': 'none' },
+
+            removingRoleId: null,
+
+            facOptions: [],
+            deviceOptions: [],
+            yesNoOptions: [{ 'text': 'Yes', value: 1 }, { 'text': 'No', 'value': 0 }],
+
+            genderOptions: [{ 'text': 'Female', 'value': 'female' }, { 'text': 'Male', 'value': 'male' }, { 'text': 'Transgender', 'value': 'transgender' }, { 'text': 'Un Specified', 'value': 'unspecified' }],
+
+            statusOptions: [{ 'text': 'Active', 'value': 'ACTIVE' }, { 'text': 'In-Active', 'value': 'INACTIVE' }, { 'text': 'Test', 'value': 'TEST' }],
+
+            forms: {
+                addUser: new SparkForm({
+                    name: '',
+                    email: '',
+                    password: '',
+                    phone_number: '',
+                    gender: '',
+                    title: '',
+                    ischn: '',
+                    status: '',
+                    device: '',
+                    primary_facility: '',
+                    supervised_facility: []
+                }),
+
+                updateUser: new SparkForm({
+                    name: '',
+                    email: '',
+                    password: '',
+                    current_password: '',
+                    device: '',
+                    phone_number: '',
+                    gender: '',
+                    title: '',
+                    ischn: '',
+                    status: '',
+                    primary_facility: '',
+                    supervised_facility: []
+                })
+            }
+        };
+    },
+
+    events: {
+        usersRetrieved: function usersRetrieved(users) {
+            this.users = users;
+            return true;
+        },
+
+        devicesRetrieved: function devicesRetrieved(devices) {
+            this.deviceOptions = [];
+            for (var i = 0; i < devices.length; ++i) {
+                if (devices[i].status == 'unallocated') {
+                    this.deviceOptions.push({ 'text': devices[i].type + ' (' + devices[i].tag + ' - ' + devices[i].imei + ')',
+                        'value': devices[i].id });
+                }
+            }
+        },
+
+        facilitiesRetrieved: function facilitiesRetrieved(facs) {
+            this.facilities = facs.slice(0);
+            this.facilities.sort(function (a, b) {
+                var x = a.type.toLowerCase();
+                var y = b.type.toLowerCase();
+                return x < y ? -1 : x > y ? 1 : 0;
+            });
+
+            for (var i = 0; i < this.facilities.length; ++i) {
+                this.facOptions.push({ 'text': this.facilities[i].type + ': ' + this.facilities[i].name,
+                    'value': this.facilities[i].id });
+            }
+            return true;
+        }
+    },
+
+    computed: {
+        everythingIsLoaded: function everythingIsLoaded() {
+            return this.users.length > 0 && this.facilities.length > 0;
+        }
+    },
+
+    methods: {
+        addUser: function addUser() {
+            this.forms.addUser.name = '';
+            this.forms.addUser.email = '';
+            this.forms.addUser.password = '';
+            this.forms.addUser.phone_number = '';
+            this.forms.addUser.gender = '';
+            this.forms.addUser.title = '';
+            this.forms.addUser.ischn = 0;
+            this.forms.addUser.status = '';
+            this.forms.addUser.device = '';
+            this.forms.addUser.primary_facility = '';
+            this.forms.addUser.supervised_facility = [];
+            $('#modal-add-user').modal('show');
+        },
+
+        editUser: function editUser(user) {
+            this.editingUser = user;
+            this.forms.updateUser.name = user.name;
+            this.forms.updateUser.email = user.email;
+            this.forms.updateUser.password = '';
+            this.forms.updateUser.phone_number = user.phone_number;
+            this.forms.updateUser.gender = user.info.gender;
+            this.forms.updateUser.title = user.info.title;
+            this.forms.updateUser.ischn = user.info.ischn;
+            this.forms.updateUser.status = user.info.status;
+            this.forms.updateUser.device = user.device !== null ? user.device.id : '';
+            this.forms.updateUser.primary_facility = this.primaryFacilityId(user.facility);
+            this.forms.updateUser.supervised_facility = this.supervisedFacilities(user.facility);
+            $('#modal-edit-user').modal('show');
+        },
+
+        removingUser: function removingUser(id) {
+            return this.removingUserId == id;
+        },
+
+        removeFromList: function removeFromList(list, item) {
+            return _.reject(list, function (i) {
+                return i.id === item.id;
+            });
+        },
+
+        moduleUsers: function moduleUsers() {
+            return this.users == null ? [] : this.users.filter(function (u) {
+                return u.user_type === 'User';
+            });
+        },
+
+        systemUsers: function systemUsers() {
+            return this.users == null ? [] : this.users.filter(function (u) {
+                return u.user_type != 'User';
+            });
+        },
+
+        primaryFacilityId: function primaryFacilityId(facs) {
+            if (facs.length > 0) {
+                var l = _.find(facs, function (fac) {
+                    return fac.primary == 1;
+                });
+                return l == null ? 0 : l.facility.id;
+            } else {
+                return 0;
+            }
+        },
+
+        supervisedFacilities: function supervisedFacilities(facs) {
+            if (facs.length > 0) {
+                var l = _.find(facs, function (fac) {
+                    return fac.supervised == 1;
+                });
+                if (l == null) {
+                    return [];
+                }
+                var f = [];
+                for (var i = 0; i < l.length; i++) {
+                    f.push(l[i].facility);
+                }
+                return f;
+            } else {
+                return [];
+            }
+        },
+
+        // Ajax calls
+        addNewUser: function addNewUser() {
+            var self = this;
+            Spark.post('/gfcare/settings/teams/users', this.forms.addUser).then(function () {
+                $('#modal-add-user').modal('hide');
+                self.$dispatch('updateUsers');
+            });
+        },
+
+        updateUser: function updateUser() {
+            var self = this;
+            Spark.put('/gfcare/settings/teams/users/' + this.editingUser.id, this.forms.updateUser).then(function () {
+                $('#modal-edit-user').modal('hide');
+                self.$dispatch('updateUsers');
+                self.$dispatch('updateDevices');
+            });
+        },
+
+        removeUser: function removeUser(user) {
+            var self = this;
+            self.removingUserId = user.id;
+
+            this.$http.delete('/gfcare/settings/teams/users/' + user.id).success(function () {
+                self.removingUserId = 0;
+                self.users = self.removeFromList(this.users, user);
+                self.$dispatch('updateUsers');
+            }).error(function (resp) {
+                self.removingUserId = 0;
+                NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000 });
+            });
+        }
+    },
+
+    filters: {
+        user_details_facilities: function user_details_facilities(user) {
+            var l = _.find(user.facility, function (fac) {
+                return fac.primary == 1;
+            });
+            return l == null ? 'None' : l.facility.name;
+        },
+
+        user_details_supervised: function user_details_supervised(user) {
+            var names = "";
+            for (var i = 0; i < user.facility.length; i++) {
+                if (user.facility[i].supervised) {
+                    names = names + (names == "" ? '' : ', ') + user.facility[i].facility.name;
+                }
+            }
+            return names == "" ? "No facilities" : names;
+        },
+
+        user_details_devices: function user_details_devices(user) {
+            return user.device == null ? 'None issued' : user.device.type + ' (' + user.device.imei + ')';
+        }
+    }
+});
+
+},{}],179:[function(require,module,exports){
 'use strict';
 
 /*
@@ -37331,6 +37883,6 @@ module.exports = {
     }
 };
 
-},{"./core/components":149}]},{},[143]);
+},{"./core/components":153}]},{},[147]);
 
 //# sourceMappingURL=app.js.map

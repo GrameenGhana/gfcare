@@ -38,6 +38,14 @@ Route::group(['middleware' => 'web'], function ($router) {
         $router->post('settings/teams/{id}/modules', 'Settings\ModuleController@store');
         $router->delete('settings/teams/{id}/modules/{mid}', 'Settings\ModuleController@destroy');
         $router->get('settings/teams/{id}/modules/{mid}/switch', 'Settings\ModuleController@toggleModuleStatus');
+
+        $router->post('settings/teams/{id}/devices',     'Settings\DeviceController@store');
+        $router->put('settings/teams/{id}/devices/{did}', 'Settings\DeviceController@update');
+        $router->delete('settings/teams/{id}/devices/{did}', 'Settings\DeviceController@destroy');
+
+        $router->post('settings/teams/{id}/users',        'Settings\ProjectUserController@store');
+        $router->put('settings/teams/{id}/users/{uid}',    'Settings\ProjectUserController@update');
+        $router->delete('settings/teams/{id}/users/{uid}', 'Settings\ProjectUserController@destroy');
         
         $router->post('settings/teams/{id}/locations', 'Settings\LocationController@storeLocation');
         $router->put('settings/teams/{id}/locations/{lid}', 'Settings\LocationController@updateLocation');
@@ -93,6 +101,8 @@ Route::group(['middleware' => 'web'], function ($router) {
         $router->get('api/teams/{id}/facilities', 'API\TeamController@getTeamFacilities');
         $router->get('api/teams/{id}/facilities/{lid}', 'API\TeamController@getTeamFacilitiesByLocation');
 
+        $router->get('api/teams/{id}/devices', 'API\TeamController@getTeamDevices');
+        $router->get('api/teams/{id}/users', 'API\TeamController@getTeamProjectUsers');
 
         $router->get('api/teams/{id}', 'API\TeamController@getTeam');
         $router->get('api/teams', 'API\TeamController@getAllTeamsForUser');

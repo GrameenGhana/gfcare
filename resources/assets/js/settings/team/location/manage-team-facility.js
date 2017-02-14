@@ -53,6 +53,7 @@ Vue.component('spark-team-settings-add-team-facility-screen', $.extend(true, {
                 .then(function () {
                     $('#modal-add-team-facility').modal('hide');
                     self.$dispatch('updateTeam');
+                    self.$dispatch('updateFacilties');
                 });
         },
         
@@ -129,6 +130,7 @@ Vue.component('spark-team-settings-edit-team-facility-screen', $.extend(true, {
             Spark.put('/gfcare/settings/teams/' + this.team.id + '/facilities/' + this.teamLocation.id, this.forms.updateTeamFacility)
                 .then(function () {
                     $('#modal-edit-team-facility').modal('hide');
+                    self.$dispatch('updateFacilties');
                     self.$dispatch('updateTeam');
                 });
         }

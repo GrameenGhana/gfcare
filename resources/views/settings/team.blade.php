@@ -11,7 +11,7 @@
     <div id="spark-team-settings-screen" class="container spark-screen">
         <div class="row">
             <!-- Tabs -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="panel panel-default panel-flush">
                     <div class="panel-heading" v-if="team">
                         Project Settings
@@ -46,7 +46,7 @@
             </div>
 
             <!-- Tab Panes -->
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <div class="tab-content">
                     @foreach (Spark::teamSettingsTabs()->displayable($team, Auth::user()) as $tab)
                         <div role="tabpanel" class="tab-pane{{ $tab->key == $activeTab ? ' active' : '' }}" id="{{ $tab->key }}">

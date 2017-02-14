@@ -71,6 +71,7 @@ Vue.component('spark-team-settings-location-screen', {
                     this.team.locations = self.removeFromList(this.team.locations, location);
                     self.$dispatch('updateTeam');
                     self.$dispatch('updateTeams');
+                    self.$dispatch('updateFacilties');
                 })
                 .error(function(resp) {
                     self.removingLocationId = 0;
@@ -102,6 +103,7 @@ Vue.component('spark-team-settings-location-screen', {
                     this.team.facilities = self.removeFromList(this.team.facilities, facility);
                     self.$dispatch('updateTeam');
                     self.$dispatch('updateTeams');
+                    self.$dispatch('updateFacilties');
                 })
                 .error(function(resp) {
                     self.removingFacilityId = 0;
@@ -133,6 +135,7 @@ Vue.component('spark-team-settings-location-screen', {
                     this.team.facilitygroups = self.removeFromList(this.team.facilitygroup, fg);
                     self.$dispatch('updateTeam');
                     self.$dispatch('updateTeams');
+                    self.$dispatch('updateFacilties');
                 })
                 .error(function(resp) {
                     self.removingFacilityGroupId = 0;

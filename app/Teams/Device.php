@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Gfcare\src\CCH\Models;
+namespace App\Teams;
 
 use App\Spark;
 use App\User;
@@ -13,7 +13,7 @@ class Device extends Model
 {
     use TeamScopeTrait;
     
-    protected $table = 'mod_cch_devices';
+    protected $table = 'devices';
 
     protected $guarded = [];
 

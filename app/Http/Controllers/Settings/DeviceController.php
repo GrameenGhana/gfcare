@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Gfcare\src\CCH\Controllers;
+namespace App\Http\Controllers\Settings;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 
-use App\GfCare\src\CCH\Models\Device;
+use App\Teams\Device;
 
 class DeviceController extends Controller
 {
@@ -45,7 +45,7 @@ class DeviceController extends Controller
             $device->save();
         }
         
-        return $this->getRoles($user->current_team_id); 
+        return $device; 
     }
 
     public function update(Request $request, $deviceId)

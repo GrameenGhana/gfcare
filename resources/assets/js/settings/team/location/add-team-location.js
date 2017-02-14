@@ -52,6 +52,7 @@ Vue.component('spark-team-settings-add-team-location-screen', $.extend(true, {
             Spark.post('/gfcare/settings/teams/' + this.team.id + '/locations', this.forms.addTeamLocation)
                 .then(function () {
                     $('#modal-add-team-location').modal('hide');
+                    self.$dispatch('updateFacilties');
                     self.$dispatch('updateTeam');
                 });
         },

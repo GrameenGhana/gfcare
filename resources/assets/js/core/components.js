@@ -22,6 +22,8 @@ require('./../settings/team/location/manage-team-facility')
 require('./../settings/team/location/manage-team-facilitygroup')
 require('./../settings/team/membership');
 require('./../settings/team/membership/edit-team-member')
+require('./../settings/team/device')
+require('./../settings/team/user')
 
 /**
  * Module Components

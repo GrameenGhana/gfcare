@@ -23,7 +23,7 @@ class TeamTabs extends Tabs
      */
     public function membership()
     {
-        return new Tab('Membership', 'settings.team.tabs.membership', 'fa-users');
+        return new Tab('Project Team', 'settings.team.tabs.membership', 'fa-users');
     }
     
     /**
@@ -34,6 +34,30 @@ class TeamTabs extends Tabs
     public function module()
     {
         return new Tab('Module Settings', 'settings.team.tabs.module', 'fa-gears', function ($team, $user) {
+            return $user->ownsTeam($team);
+        });
+    }
+
+    /**
+     * Get the tab configuration for the "User" tab.
+     *
+     * @return \App\Ux\Settings\Tab
+     */
+    public function user()
+    {
+        return new Tab('Project Users', 'settings.team.tabs.user', 'fa-group', function ($team, $user) {
+            return $user->ownsTeam($team);
+        });
+    }
+
+    /**
+     * Get the tab configuration for the "Device" tab.
+     *
+     * @return \App\Ux\Settings\Tab
+     */
+    public function device()
+    {
+        return new Tab('Device Settings', 'settings.team.tabs.device', 'fa-mobile-phone', function ($team, $user) {
             return $user->ownsTeam($team);
         });
     }

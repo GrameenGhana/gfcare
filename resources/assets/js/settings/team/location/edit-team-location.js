@@ -39,6 +39,7 @@ Vue.component('spark-team-settings-edit-team-location-screen', $.extend(true, {
                 .then(function () {
                     $('#modal-edit-team-location').modal('hide');
                     self.$dispatch('updateTeam');
+                    self.$dispatch('updateFacilties');
                 });
         }
     }

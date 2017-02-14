@@ -3,7 +3,7 @@ Vue.component('gfcare-cch-screen', {
 
     ready: function() {
         this.getUsers();
-        this.getFacilities();
+        this.getCCHRoles();
         this.getSections();
         this.getSubSections();
     },
@@ -13,13 +13,16 @@ Vue.component('gfcare-cch-screen', {
             user: null,
             team: null,
             users: null,
-            facilities: null,
         };
     },
     
     events: {
         updateUsers: function() {
             this.getUsers();
+            return true;
+        },
+        updateRoles: function () {
+            this.getCCHRoles();
             return true;
         },
         updateSections: function() {
@@ -51,14 +54,14 @@ Vue.component('gfcare-cch-screen', {
                     self.$broadcast('cchUsersRetrieved', self.users);
                 });
         },
-        getFacilities: function () {
-            var self = this;
-            this.$http.get('/gfcare/api/teams/' + this.teamId + '/facilities')
-                .success(function (facilities) {
-                    self.facilities = facilities;
-                    self.$broadcast('facilitiesRetrieved', self.facilities);
+
+        getCCHRoles: function () {
+            this.$http.get('/gfcare/chn-on-the-go/system/roles')
+                .success(function (roles) {
+                    this.$broadcast('cchRolesRetrieved', roles);
                 });
         },
+
         getSections: function () {
             var self = this;
             this.$http.get('/gfcare/chn-on-the-go/content/poc/sections')

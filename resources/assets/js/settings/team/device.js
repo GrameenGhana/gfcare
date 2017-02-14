@@ -1,7 +1,6 @@
-Vue.component('gfcare-cch-system-device-screen', {
+Vue.component('spark-team-settings-device-screen', {
 
     ready: function() {
-        this.getCCHDevices();
     },
 
     data: function() {
@@ -45,11 +44,20 @@ Vue.component('gfcare-cch-system-device-screen', {
     },
     
     events: {
-        updateDevices: function () {
-            this.getCCHDevices();
-            return true;
+        devicesRetrieved: function(devices) {
+             this.devices = devices;
+             this.deviceOptions =[]; 
+             for(var i=0; i < devices.length; ++i) {
+                 if (devices[i].status=='unallocated') {
+                     this.deviceOptions.push({'text': devices[i].type + ' (' + 
+                                                      devices[i].tag + ' - ' + devices[i].imei + ')', 
+                                              'value':devices[i].id});
+                 }
+             }
+             return true;
         },
-        cchUsersRetrieved: function(users) {
+
+        usersRetrieved: function(users) {
             this.users = users;
             return true;
         },
@@ -87,7 +95,7 @@ Vue.component('gfcare-cch-system-device-screen', {
         // Ajax calls
         addNewDevice: function () {
             var self = this;
-            Spark.post('/gfcare/chn-on-the-go/system/devices', this.forms.addDevice)
+            Spark.post('/gfcare/settings/teams/devices', this.forms.addDevice)
                 .then(function () {
                     $('#modal-add-device').modal('hide');
                     self.$dispatch('updateDevices');
@@ -96,7 +104,7 @@ Vue.component('gfcare-cch-system-device-screen', {
 
         updateDevice: function () {
             var self = this;
-            Spark.put('/gfcare/chn-on-the-go/system/devices/' + this.editingDevice.id, this.forms.updateDevice)
+            Spark.put('/gfcare/settings/teams/devices/' + this.editingDevice.id, this.forms.updateDevice)
                 .then(function () {
                     $('#modal-edit-device').modal('hide');
                     self.$dispatch('updateDevices');
@@ -107,7 +115,7 @@ Vue.component('gfcare-cch-system-device-screen', {
             var self = this;
             self.removingDeviceId = device.id;
             
-            this.$http.delete('/gfcare/chn-on-the-go/system/devices/' + device.id)
+            this.$http.delete('/gfcare/settings/teams/devices/' + device.id)
                 .success(function () {
                     self.removingDeviceId = 0;
                     self.devices = self.removeFromList(this.devices, device);
@@ -119,19 +127,6 @@ Vue.component('gfcare-cch-system-device-screen', {
                 });
         },
         
-        getCCHDevices: function () {
-            var self = this;
-            this.$http.get('/gfcare/chn-on-the-go/system/devices')
-                .success(function (devices) {
-                    self.devices = devices;
-                    self.devices.sort(function(a,b) { 
-                        var x = a.type.toLowerCase();
-                        var y = b.type.toLowerCase();
-                        return (x < y) ? -1 : ((x > y) ? 1 : 0);
-                    });
-                    self.$broadcast('cchDevicesRetrieved', self.devices);
-                });
-        },
     },
     
     filters: {
