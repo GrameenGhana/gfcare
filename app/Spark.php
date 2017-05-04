@@ -14,7 +14,15 @@ class Spark
 {
     use Gfcare;
     
+    protected static $defaultLatitude;
+
+    protected static $defaultLongitude;
+    
     protected static $defaultPhoneCode;
+    
+    protected static $defaultSMSLink;
+    
+    protected static $defaultVoiceLink;
     
     /**
      * The default role that is assigned to new team members.
@@ -225,6 +233,43 @@ class Spark
             return static::$defaultPhoneCode;
         } else {
             static::$defaultPhoneCode = $code;
+        }
+    }
+    
+    public static function defaultSMSLink($url = null)
+    {
+        if (is_null($url)) {
+            return static::$defaultSMSLink;
+        } else {
+            static::$defaultSMSLink = $url;
+        }
+    }
+    
+    public static function defaultVoiceLink($url = null)
+    {
+        if (is_null($url)) {
+            return static::$defaultVoiceLink;
+        } else {
+            static::$defaultVoiceLink = $url;
+        }
+    }
+    
+    
+    public static function defaultLatitude($code = null)
+    {
+        if (is_null($code)) {
+            return static::$defaultLatitude;
+        } else {
+            static::$defaultLatitude = $code;
+        }
+    }
+    
+    public static function defaultLongitude($code = null)
+    {
+        if (is_null($code)) {
+            return static::$defaultLongitude;
+        } else {
+            static::$defaultLongitude = $code;
         }
     }
 

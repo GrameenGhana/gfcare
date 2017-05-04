@@ -31,8 +31,7 @@ Vue.component('gfcare-cch-content-poc-section-screen', {
         },
     },
 
-    computed: {
-    },
+    computed: {},
 
     methods: {
         

@@ -17,12 +17,6 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'mobihealth'], function 
     $router->delete('system/referrals/{id}', $cpath.'\ReferralController@destroy');
 
     
-    $router->get('system/roles', $cpath.'\RoleController@show');
-    $router->get('system/roles/{role}', $cpath.'\RoleController@getUsers');
-    //$router->put('system/roles/{id}', $cpath.'\RoleController@update');
-    //$router->post('system/roles',     $cpath.'\RoleController@store');
-    //$router->delete('system/roles/{id}', $cpath.'\RoleController@destroy');
-    
     // APIs
     $router->get('/api/messageplaycountbysubmodule', $cpath.'\ApiController@getMessagePlayCountBySubModule');
 

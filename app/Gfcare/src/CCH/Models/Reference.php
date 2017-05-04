@@ -9,6 +9,6 @@ class Reference extends Model
     use TeamScopeTrait; 
 
 	protected $table = 'mod_cch_content_references';
-	protected $fillable = array('reference_desc','shortname','reference_url','size');
+	protected $fillable = array('reference_desc','shortname','file_url','size');
 
 }

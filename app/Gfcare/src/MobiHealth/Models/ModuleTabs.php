@@ -28,7 +28,7 @@ class ModuleTabs extends Tabs
                     function ($team, $user) { return $user->belongsToModule($team); }),
         ]; 
     }
-
+/*
     // Group
     public function groups()
     {
@@ -54,7 +54,7 @@ class ModuleTabs extends Tabs
                     function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[1]->name),
         ];
     }
-    
+ */  
     // System
     public function system()
     {

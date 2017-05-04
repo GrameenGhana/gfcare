@@ -61,7 +61,7 @@ class TeamController extends Controller
         $team = $this->teams->create(
             $user, ['name' => $request->name]
         );
-
+        
         event(new TeamCreated($team));
 
         return $this->teams->getAllTeamsForUser($user);
@@ -294,6 +294,8 @@ class TeamController extends Controller
         $team = $request->user()->teams()
                 ->where('owner_id', $user->id)
                 ->findOrFail($teamId);
+        
+       $team->removeMMConfig();
 
         event(new DeletingTeam($team));
 

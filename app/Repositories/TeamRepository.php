@@ -24,11 +24,14 @@ class TeamRepository implements Contract
         $team->owner_id = $user->id;
 
         $team->save();
+        
+        // add mobile midwife config
+        $team->addMMConfig();
 
         $team = $user->teams()->attach(
             $team, ['role' => 'owner']
         );
-
+        
         return $team;
     }
 

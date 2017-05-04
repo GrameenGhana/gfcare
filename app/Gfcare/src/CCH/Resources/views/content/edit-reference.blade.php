@@ -35,8 +35,8 @@
                     
                     <fieldset>
                        <legend>Uploads</legend> 
-                        <div class="panel-body" v-if="editingReference.reference_url">
-                            File name: @{{ editingReference.reference_url }}
+                        <div class="panel-body" v-if="editingReference.file_url">
+                            File name: @{{ editingReference.file_url }}
                         </div>
                         <div v-else class="panel-body">
                             No uploads found.

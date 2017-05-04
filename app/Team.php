@@ -10,6 +10,7 @@ use App\Teams\Facility;
 use App\Teams\FacilityGroup;
 use App\Teams\Device;
 use App\Teams\ProjectUser;
+use App\Gfcare\src\MobileMidwife\Models\Config;
 
 class Team extends BaseTeam
 {
@@ -94,6 +95,16 @@ class Team extends BaseTeam
     public function projectusers()
     {
         return $this->belongsToMany(ProjectUser::class,'user_teams','team_id','user_id')->where('user_type','User')->orderBy('name', 'asc');
+    }
+    
+    public function addMMConfig()
+    {
+        Config::addConfig($this->id); 
+    }
+    
+    public function removeMMConfig()
+    {
+        return Config::removeConfig($this->id);
     }
     
     

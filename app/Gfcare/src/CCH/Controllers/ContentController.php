@@ -62,7 +62,7 @@ class ContentController extends Controller
             $reference->team_id = $user->current_team_id;
             $reference->reference_desc = $request->reference_desc;
             $reference->shortname = $request->shortname;
-            $reference->reference_url =  Storage::disk('public')->url('cch/references/'.$name);
+            $reference->file_url =  Storage::disk('public')->url('cch/references/'.$name);
             $reference->size = $this->formatSizeUnits(Storage::disk('public')->size('cch/references/'.$name));
             $reference->modified_by = $user->id;
             $reference->save();
@@ -174,7 +174,7 @@ class ContentController extends Controller
         if ($request->reference_file<>'') {
             $name = $request->shortname.'.pdf';
             $path = Storage::disk('public')->put('cch/references/'.$name, $request->reference_file);
-            $i->reference_url =  Storage::disk('public')->url('cch/references/'.$name);
+            $i->file_url =  Storage::disk('public')->url('cch/references/'.$name);
             $i->size = $this->formatSizeUnits(Storage::disk('public')->size('cch/references/'.$name));
         }
         
@@ -259,7 +259,7 @@ class ContentController extends Controller
     public function destroyLCReference(Request $request, $id)
     {
         $i = Reference::findOrFail($id); 
-        Storage::disk('public')->delete(preg_replace('/storage\//','',$i->reference_url));
+        Storage::disk('public')->delete(preg_replace('/storage\//','',$i->file_url));
         $i->delete();
         return response()->json(['data' => 'Ok'], 200);
     }

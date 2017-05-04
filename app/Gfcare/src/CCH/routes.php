@@ -44,6 +44,10 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'chn-on-the-go'], functi
 Route::group(['middleware' => ['api','jwt.auth'], 'prefix'=>'api/chn-on-the-go'], function ($router) {
     $cpath = 'App\Gfcare\src\CCH\Controllers';    
 
+    $router->get('clients', $cpath.'\ClientsController@index');
+    $router->post('clients/register', $cpath.'\ClientsController@store');
+    $router->post('clients/enroll', $cpath.'\ClientsController@enroll');
+
     $router->get('content/references', $cpath.'\ContentController@getLCReferences');
     $router->get('content/poc/sections', $cpath.'\ContentController@getPOCSections');
     $router->get('content/poc/subsections', $cpath.'\ContentController@getPOCSubSections');

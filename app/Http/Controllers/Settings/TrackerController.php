@@ -27,8 +27,6 @@ class TrackerController extends Controller
                 'module_id' => 'required|exists:modules,module_id',
                 'user_id' => 'required|numeric',
                 'data' => 'required',
-                'start_time' =>'required|numeric',
-                'end_time'=>'required|numeric'        
                ];
         
         $validator = Validator::make($request->all(), $rules);
@@ -42,9 +40,6 @@ class TrackerController extends Controller
         $i->module_id = $request->module_id;
         $i->user_id = $request->user_id;
         $i->data = $request->data;
-        $i->start_time = $request->start_time;
-        $i->end_time = $request->end_time;
-        $i->time_taken = $request->end_time - $request->start_time;
         $i->modified_by = $request->user_id;
         $i->save();
         

@@ -1,25 +1,19 @@
 <?php
-
 namespace App\Gfcare\src\MobiHealth\Models;
 
-use App\User;
+use App\Teams\ProjectUser;
 use App\Scopes\UsersModuleScopeTrait;
 
-class MobiUser extends User
+class MobiUser extends ProjectUser
 {
     use UsersModuleScopeTrait;
-    
+
     public function __construct()
     {
         parent::__construct();
-        $this->with = array_merge($this->with, ['info','facility','referral']);
+        $this->with = array_merge($this->with, ['referral']);
     }
     
-    public function info() 
-    {
-        return $this->hasOne('App\Gfcare\src\MobiHealth\Models\UserInfo','user_id','id');
-    }
-
     public function referral() 
     {
         if ($this->role=='Volunteer') {
@@ -27,10 +21,5 @@ class MobiUser extends User
         } else {
             return $this->hasOne('App\Gfcare\src\MobiHealth\Models\Referral', 'supervisor', 'id');
         }
-    }
-
-    public function facility()
-    {
-        return $this->hasMany('App\Gfcare\src\MobiHealth\Models\UserFacility','user_id');
     }
 }

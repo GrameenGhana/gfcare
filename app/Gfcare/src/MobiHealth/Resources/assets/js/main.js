@@ -2,59 +2,44 @@ Vue.component('gfcare-mobi-screen', {
     props: ['teamId'],
 
     ready: function() {
-        this.getTeam();
         this.getUsers();
-        this.getFacilities();
     },
 
     data: function() {
         return {
+            user: null,
             team: null,
             users: null,
-            facilities: null,
         };
     },
     
     events: {
-        updateTeam: function () {
-            this.getTeam();
-            return true;
-        },
-        
         updateUsers: function() {
             this.getUsers();
             return true;
         },
+        userRetrieved: function(user) {
+            this.user = user;
+            return true;
+        },
+        currentTeamRetrieved: function(team) {
+            this.team = team;
+            return true;
+        },
     },
 
-    computed: {
-    },
+    computed: { },
 
     methods: {
-        getTeam: function () {
-            this.$http.get('/gfcare/api/teams/' + this.teamId)
-                .success(function (team) {
-                    this.team = team;
-                    this.$broadcast('teamRetrieved', team);
-                });
-        },
-        getFacilities: function () {
-            this.$http.get('/gfcare/api/teams/' + this.teamId + '/facilities')
-                .success(function (facilities) {
-                    this.facilities = facilities;
-                    this.$broadcast('facilitiesRetrieved', facilities);
-                });
-        },
         getUsers: function () {
+            var self = this;
             this.$http.get('/gfcare/mobihealth/system/users')
                 .success(function (users) {
-                    this.users = users;
-                    this.$broadcast('mobiUsersRetrieved', users);
-                });
+                    self.users = users;
+                    self.$broadcast('mobihealthUsersRetrieved', self.users);
+            });
         },
     },
     
-    filters: {
-
-    },
+    filters: { },
 });

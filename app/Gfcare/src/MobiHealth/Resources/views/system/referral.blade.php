@@ -1,4 +1,4 @@
-<gfcare-mobi-system-screen inline-template>
+<gfcare-mobi-system-referral-screen inline-template>
 
     <!-- Referrals -->
     <div class="panel panel-default">
@@ -9,7 +9,7 @@
             </button> 
         </div>
 
-        <div class="panel-body" v-if="user && referrals.length > 0">
+        <div class="panel-body" v-if="referrals.length > 0">
             <table class="table table-responsive">
                 <thead>
                     <tr>
@@ -21,8 +21,8 @@
                 <tbody>
                     <tr v-for="referral in referrals">
 
-                        <td class="spark-table-pad">@{{ referral.mhv | user_name }}</td>
-                        <td class="spark-table-pad">@{{ referral.supervisor | user_name }}</td>
+                        <td class="spark-table-pad">@{{ referral.volunteer_name  }}</td>
+                        <td class="spark-table-pad">@{{ referral.supervisor_name  }}</td>
 
                         <td class="spark-table-pad">
 
@@ -52,4 +52,4 @@
     @include('MobiHealth::system.add-referral')
     @include('MobiHealth::system.edit-referral')
 
-</gfcare-mobi-system-screen>
+</gfcare-mobi-system-referral-screen>

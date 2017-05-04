@@ -36,6 +36,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Spark::defaultPhoneCode('233');
+        
+        // set default to Accra
+        Spark::defaultLatitude('5.6037');
+        Spark::defaultLongitude('0.1870');
+        
+        Spark::defaultSMSLink('http://localhost/gfcare/mobile-midwife/messages/sms/?content=[CONTENT]&to=[TO]');
+        Spark::defaultVoiceLink('http://localhost/gfcare/mobile-midwife/messages/voice/?content=[CONTENT]&to=[TO]');
 
         $this->app['validator']->resolver(function ($translator, $data, $rules, $messages) {
             return new \App\Validators\LocationParentValidator($translator, $data, $rules, $messages);
@@ -233,7 +240,7 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function customizeToolModules()
     {
-        Spark::module('Mobile Midwife', 'gfcare-module-1')->hidden()
+        Spark::module('Mobile Midwife', 'gfcare-module-1')
                         ->description("A maternal and child health behaviour change messaging platform.")
                         ->module_path('MobileMidwife')
                         ->menu_name('Mobile Midwife');

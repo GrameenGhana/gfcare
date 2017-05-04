@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Gfcare\src\MobileMidwife\Models;
+
+use App\Scopes\TeamScopeTrait;
+use Illuminate\Database\Eloquent\Model;
+
+use App\GfCare\src\MobileMidwife\Models\Program;
+
+class Subscription extends Model
+{
+    protected $table = 'mod_mm_subscriptions';
+
+    protected $guarded = [];
+
+    protected $hidden = [];
+
+    public function subscriber()
+    {
+        return $this->belongsTo('\App\Gfcare\src\MobileMidwife\Models\Subscriber');
+    }
+
+    public function program()
+    {
+        return $this->belongsTo('\App\Gfcare\src\MobileMidwife\Models\Program');
+    }
+    
+    public function canBeActive()
+    {
+        return (strototime($this->end_date) > strototime(date('Y-m-d')));
+    }
+    
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        $this->save();
+    }
+    
+    public function activate()  { $this->setStatus('Active'); }
+
+    public function pause() {  $this->setStatus('Paused'); }
+    
+    public function cancel() { $this->setStatus('Cancel'); }
+    
+    public function expire() { $this->setStatus('Expired'); }
+
+    public function complete() { $this->setStatus('Completed'); }
+
+    public function unpause() 
+    {
+        if ($this->canBeActive()) { $this->activate(); } else { $this->expire(); }
+    }
+    
+    public static function subscribe($client)
+    {
+        $p = Program::find($client->program_id);
+        if ($p) {
+            $channel = Program::validateChannel($client->channel);
+            
+            if ($channel=='both') {
+                Subscription::add($client, $program, 'sms');  
+                Subscription::add($client, $program, 'voice');   
+            } else {
+                Subscription::add($client, $program, $channel);   
+            }
+        }
+    }
+                                
+    public static function add($client, $p, $channel)
+    {               
+        $i = new Subscription();
+        $i->team_id = $client->id;
+        $i->module_id = $client->module_id;
+        $i->program_id = $client->program_id;
+        $i->client_id = $client->id;
+        $i->channel = $channel;
+        $i->start_week = $client->start_week;
+        $i->current_week = $client->start_week;
+        $i->start_date = date('Y-m-d', strtotime(date('Y-m-d').' +1 week')); 
+        $i->end_date = date('Y-m-d', strtotime($i->start_date.' +'.$p->end_week.' week'));
+        $i->status = 'Pending';
+        $i->registered_by = $client->registered_by;
+        $i->modified_by = $client->modified_by;
+        $i->save();     
+    }
+}

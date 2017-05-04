@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Gfcare\src\MobiHealth\Controllers;
+namespace App\Gfcare\src\CCH\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -8,15 +8,10 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 
-use App\GfCare\src\MobiHealth\Models\Role;
+use App\GfCare\src\CCH\Models\Role;
 
-class RoleController extends Controller
+class ClientController extends Controller
 {
-    /**
-     * Show roles for current team and module.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function show(Request $request)
     {
         return response()->json($this->getRoles());
@@ -28,11 +23,6 @@ class RoleController extends Controller
         return response()->json($r->users());
     }
 
-    /**
-     * Create a new role.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $user = $request->user();
@@ -52,13 +42,6 @@ class RoleController extends Controller
         return $this->getRoles(); 
     }
 
-    /**
-     * Update the role's owner information.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $roleId
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $roleId)
     {
         $role = Role::findOrFail($roleId);
@@ -72,13 +55,6 @@ class RoleController extends Controller
         return $role; 
     }
 
-    /**
-     * Destroy the given role.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $roleId
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Request $request, $roleId)
     {
         $role = Role::findOrFail($roleId);         
@@ -87,11 +63,6 @@ class RoleController extends Controller
         return $this->getRoles(); 
     }
 
-    /**
-     * Show roles for current team and module.
-     *
-     * @return \App\Gfcare\src\MobiHealth\Models\Role
-     */
     private function getRoles()
     {
         return Role::orderBy('name')->get();

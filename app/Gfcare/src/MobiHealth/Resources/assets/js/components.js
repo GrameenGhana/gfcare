@@ -1,5 +1,6 @@
 require('./main');
 require('./dashboard');
-require('./system');
+require('./system-users');
+require('./system-referrals');
 require('./content');
 require('./group');
