@@ -28,7 +28,11 @@
     <div class="row splash-nav">
         <div class="col-md-10 col-md-offset-1">
             <div class="pull-left splash-brand">
+<<<<<<< HEAD
                 <i class="fa fa-btn fa-medkit"></i>DIGIAFYA
+=======
+                <i class="fa fa-btn fa-medkit"></i>GF+Care
+>>>>>>> 7221f69a66e4223a16ad6208730fbcfff74f742d
             </div>
 
             <div class="navbar-header">

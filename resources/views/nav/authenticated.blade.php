@@ -13,7 +13,11 @@
 
             <!-- Branding Image -->
             <a class="navbar-brand" href="{{ url('/') }}">
+<<<<<<< HEAD
                <i class="fa fa-btn fa-medkit"></i> DIGIAFYA
+=======
+               <i class="fa fa-btn fa-medkit"></i> GF+Care 
+>>>>>>> 7221f69a66e4223a16ad6208730fbcfff74f742d
             </a>
         </div>
 

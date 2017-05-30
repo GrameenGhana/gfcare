@@ -4,7 +4,10 @@
     </IfModule>
 
     RewriteEngine On
+<<<<<<< HEAD
    
+=======
+>>>>>>> 7221f69a66e4223a16ad6208730fbcfff74f742d
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d

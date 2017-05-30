@@ -18,7 +18,11 @@
             <div class="col-md-3">
                 <div class="panel panel-default panel-flush">
                     <div class="panel-heading" v-if="team">
+<<<<<<< HEAD
                         DigiTunza Volunteer 
+=======
+                        MobiHealth Volunteer 
+>>>>>>> 7221f69a66e4223a16ad6208730fbcfff74f742d
                     </div>
                     <div class="panel-heading" v-else>
                         Loading &nbsp;&nbsp; <i class="fa fa-spinner fa-spin"></i>

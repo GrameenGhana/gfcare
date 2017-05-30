@@ -6,7 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<<<<<<< HEAD
     <title>DIGIAFYA: mHealth Suite</title>
+=======
+    <title>GF+Care: mHealth Suite</title>
+>>>>>>> 7221f69a66e4223a16ad6208730fbcfff74f742d
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}"/>
     
     <!-- Fonts -->

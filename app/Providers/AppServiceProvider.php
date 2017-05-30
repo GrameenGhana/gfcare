@@ -248,8 +248,12 @@ class AppServiceProvider extends ServiceProvider
         Spark::module('CHN On The Go', 'gfcare-module-2')
                         ->description("A health provider mlearning tool and job aid tool.")
                         ->module_path('CCH')
+<<<<<<< HEAD
                         ->menu_name("CHN-On-The-Go")
                         ->menu_slug("chn-on-the-go");
+=======
+                        ->menu_name("CHN-On-The-Go");
+>>>>>>> 7221f69a66e4223a16ad6208730fbcfff74f742d
         
         Spark::module('MobiHealth Volunteer', 'gfcare-module-3')
                         ->description("A health provider mlearning tool and job aid tool.")
