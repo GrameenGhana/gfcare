@@ -36,6 +36,7 @@ class AppUserController extends Controller
         //
         $appuser = new AppUser();
         $appdata =  $request->app_data;
+        $afya = $request->afya;
 
        
  
@@ -45,12 +46,18 @@ class AppUserController extends Controller
          $appuser->lastname = $request->lastname;
          $appuser->DOB = $request->dob;
          $appuser->gender = $request->gender;
+         $appuser->phonenumber =  $request->phonenumber;
          $appuser->app_data = "tz";
          $appuser->user_gen_id = "NA";
          $appuser->client_type = $request->client_type;
          $appuser->insured = $request->insured;
          $appuser->national_id = $request->national_id;
-         $appuser->afya_phonenumber =  $request->afya_phonenumber;
+         if($afya=="yes")
+         {
+         	 $appuser->start_week =  $request->afya_phonenumber;
+         	 $appuser->afya_channel = $request->afya_channel;
+         }
+        
 
          $appuser -> save();
          return response()->json('Ok');
@@ -61,20 +68,47 @@ class AppUserController extends Controller
          $appuser->lastname = $request->lastname;
          $appuser->DOB = $request->dob;
          $appuser->gender = $request->gender;
-         $appuser->app_data = "tz";
+         $appuser->phonenumber =  $request->phonenumber;
+         $appuser->app_data = "kj";
          $appuser->user_gen_id = "NA";
          $appuser->client_type = $request->client_type;
-         $appuser->insured = $request->insured;
+        // $appuser->insured = $request->insured;
          $appuser->national_id = $request->national_id;
-         $appuser->afya_phonenumber =  $request->afya_phonenumber;
          $appuser->language =  $request->language;
          $appuser->location =  $request->location;
+
+          if($afya=="yes")
+         {
+         	 $appuser->start_week =  $request->afya_phonenumber;
+         	 $appuser->afya_channel = $request->afya_channel;
+         }
+        
+
          $appuser -> save();
          return response()->json('Ok');
        }
        else if($appdata=="ml")
        	{
           
+         $appuser->firstname = $request->firstname;
+         $appuser->lastname = $request->lastname;
+         $appuser->DOB = $request->dob;
+         $appuser->gender = $request->gender;
+         $appuser->phonenumber =  $request->phonenumber;
+         $appuser->app_data = "ml";
+         $appuser->user_gen_id = "NA";
+         $appuser->client_type = $request->client_type;
+        // $appuser->insured = $request->insured;
+         $appuser->national_id = $request->national_id;
+       
+        if($afya=="yes")
+         {
+         	 $appuser->start_week =  $request->afya_phonenumber;
+         	 $appuser->afya_channel = $request->afya_channel;
+         }
+        
+         $appuser -> save();
+         return response()->json('Ok');
 
        	}
        	else

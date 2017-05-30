@@ -121,5 +121,5 @@ Route::group(['middleware' => 'web'], function ($router) {
 Route::group(['middleware' => ['api'],'prefix'=>'api'], function ($router) {
     $router->post('/users/login', 'API\LoginController@authenticate');
     $router->post('/users/context/{uid}/{tid}/{mid}', 'API\LoginController@setCurrentContext');
-    $router->post('/users/register/tunza', 'AppUserController@storeTunza');
+    $router->post('/users/register/appuser', 'AppUserController@store');
 });
