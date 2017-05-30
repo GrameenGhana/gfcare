@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/Core/BaseController.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Providers/SparkServiceProvider.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/Modules.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Spark.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/.env</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/src/MobiHealth/Controllers/HomeController.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/Module.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/resources/views/welcome.blade.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/Gfcare.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/resources/views/layouts/app.blade.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/src/MobiHealth/Controllers/ReferralController.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/resources/views/nav/settings.blade.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/public/js/app.js</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/Core/TabGroup.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/bootstrap/autoload.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/src/CCH/Controllers/RoleController.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/composer.json</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/public/index.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/config/jwt.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/src/Linda/routes.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Http/routes.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Repositories/TeamRepository.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/config/database.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/src/MobiHealth/Controllers/ContentController.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/src/MobiHealth/Controllers/ApiController.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/InteractsWithSparkHooks.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/resources/views/home.blade.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/app/Gfcare/src/CCH/Controllers/UserController.php</file>
+            <file>file:/home/spomega/Downloads/gfcare-master/resources/views/scripts/globals.blade.php</file>
+        </group>
+    </open-files>
+</project-private>
