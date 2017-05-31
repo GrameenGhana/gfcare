@@ -36,6 +36,7 @@ class AppUsers extends Migration
             $table->string('language')->nullable();
             $table->string('location')->nullable();
             $table->string('education')->nullable();
+            $table->string('uuid')->nullable();
             $table->string('relative_phonenumber')->nullable();
             $table->timestamps();
         });

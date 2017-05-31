@@ -26,6 +26,16 @@ class AppUserController extends Controller
         
     }
 
+    public function show()
+    {
+        # code...
+        $appusers = AppUser::all();
+
+         return view('tempview.appuserview',  compact('appusers'));
+
+
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -51,6 +61,7 @@ class AppUserController extends Controller
          $appuser->user_gen_id = "NA";
          $appuser->client_type = $request->client_type;
          $appuser->insured = $request->insured;
+         $appuser->program = $request->program;
          $appuser->national_id = $request->national_id;
          $appuser->uuid = $request->uuid;
 
@@ -59,7 +70,8 @@ class AppUserController extends Controller
          	 $appuser->start_week =  $request->afya_phonenumber;
          	 $appuser->afya_channel = $request->afya_channel;
          }
-        
+       
+
 
          $appuser -> save();
          return response()->json('Ok');
@@ -75,6 +87,7 @@ class AppUserController extends Controller
          $appuser->user_gen_id = "NA";
          $appuser->client_type = $request->client_type;
         // $appuser->insured = $request->insured;
+         $appuser->program = $request->program;
          $appuser->national_id = $request->national_id;
          $appuser->language =  $request->language;
          $appuser->location =  $request->location;
@@ -101,6 +114,7 @@ class AppUserController extends Controller
          $appuser->app_data = "ml";
          $appuser->user_gen_id = "NA";
          $appuser->client_type = $request->client_type;
+         $appuser->program = $request->program;
         // $appuser->insured = $request->insured;
          $appuser->national_id = $request->national_id;
          $appuser->uuid = $request->uuid;

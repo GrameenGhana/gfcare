@@ -9,6 +9,8 @@ Route::group(['middleware' => 'web'], function ($router) {
     // Profile Dashboard
     $router->get('home', 'HomeController@show');
 
+    $router->get('/appusers','AppUserController@show');
+
     // Terms Routes...
     $router->get('terms', 'TermsController@show');
 
