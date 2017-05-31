@@ -52,6 +52,8 @@ class AppUserController extends Controller
          $appuser->client_type = $request->client_type;
          $appuser->insured = $request->insured;
          $appuser->national_id = $request->national_id;
+         $appuser->uuid = $request->uuid;
+
          if($afya=="yes")
          {
          	 $appuser->start_week =  $request->afya_phonenumber;
@@ -76,6 +78,7 @@ class AppUserController extends Controller
          $appuser->national_id = $request->national_id;
          $appuser->language =  $request->language;
          $appuser->location =  $request->location;
+         $appuser->uuid = $request->uuid;
 
           if($afya=="yes")
          {
@@ -100,6 +103,7 @@ class AppUserController extends Controller
          $appuser->client_type = $request->client_type;
         // $appuser->insured = $request->insured;
          $appuser->national_id = $request->national_id;
+         $appuser->uuid = $request->uuid;
        
         if($afya=="yes")
          {
