@@ -25,8 +25,8 @@ class AppUsers extends Migration
             $table->string('app_data');
             $table->string('user_gen_id')->nullable();
             $table->string('client_type')->nullable();
-            $table->string('afya_phonenumber')->nullable();
-            $table->string('afya_sms')->nullable();
+            $table->string('phonenumber')->nullable();
+            $table->string('afya_channel')->nullable();
             $table->string('start_week')->nullable();
             $table->string('program')->nullable();
             $table->string('facility_id')->nullable();

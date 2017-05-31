@@ -29,11 +29,7 @@
                     <div class="panel-heading">Dashboard</div>
 
                     <div class="panel-body">
-<<<<<<< HEAD
-                        Your Dashboard.I am here
-=======
                         Your Dashboard.
->>>>>>> 7221f69a66e4223a16ad6208730fbcfff74f742d
                     </div>
                 </div>
             </div>
