@@ -46,6 +46,7 @@ Route::group(['middleware' => 'web'], function ($router) {
         $router->delete('settings/teams/{id}/devices/{did}', 'Settings\DeviceController@destroy');
 
         $router->post('settings/teams/{id}/users',        'Settings\ProjectUserController@store');
+       // $router->get('settings/teams/{id}/users',        'Settings\ProjectUserController@store');
         $router->put('settings/teams/{id}/users/{uid}',    'Settings\ProjectUserController@update');
         $router->delete('settings/teams/{id}/users/{uid}', 'Settings\ProjectUserController@destroy');
         

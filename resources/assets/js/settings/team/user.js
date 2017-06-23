@@ -177,7 +177,7 @@ Vue.component('spark-team-settings-user-screen', {
         // Ajax calls
         addNewUser: function () {
             var self = this;
-            Spark.post('/gfcare/settings/teams/users', this.forms.addUser)
+            Spark.post('/gfcare/settings/teams/3/users', this.forms.addUser)
                 .then(function () {
                     $('#modal-add-user').modal('hide');
                     self.$dispatch('updateUsers');

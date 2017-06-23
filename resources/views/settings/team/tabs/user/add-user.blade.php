@@ -11,7 +11,7 @@
                     <spark-error-alert :form="forms.addUser"></spark-error-alert>
 
                     <!-- Add Form -->
-                    <form class="form-horizontal" role="form">  
+                    <form class="form-horizontal" role="form" >  
                        
                         <div class="row">
                             <div class="col-md-5">
@@ -82,14 +82,14 @@
                                                    :input.sync="forms.addUser.primary_facility">
                                     </spark-select>
                                     
-                                    <spark-multi-select :display="'Supervised Facilities'"
+                                 <!--   <spark-multi-select :display="'Supervised Facilities'"
                                                    :form="forms.addUser"
                                                    :name="'supervised_facility'"
                                                    :items="facilities"
                                                    :fieldlabel="'name'",
                                                    :placetext="'Select facilities'",
                                                    :input.sync="forms.addUser.supervised_facility">
-                                    </spark-multi-select>
+                                    </spark-multi-select>-->
                    
                             </div>
                         </div>                     
