@@ -68,6 +68,12 @@ Vue.component('spark-team-settings-user-screen', {
             return true;
         },
 
+          teamRetrieved: function (team) {
+            this.team = team;
+            return true;
+        },
+
+
         devicesRetrieved: function(devices) {
              this.deviceOptions =[]; 
              for(var i=0; i < devices.length; ++i) {
@@ -177,7 +183,8 @@ Vue.component('spark-team-settings-user-screen', {
         // Ajax calls
         addNewUser: function () {
             var self = this;
-            Spark.post('/gfcare/settings/teams/3/users', this.forms.addUser)
+           
+            Spark.post('/gfcare/settings/teams/'+this.team.id +'/users', this.forms.addUser)
                 .then(function () {
                     $('#modal-add-user').modal('hide');
                     self.$dispatch('updateUsers');
@@ -186,7 +193,7 @@ Vue.component('spark-team-settings-user-screen', {
 
         updateUser: function () {
             var self = this;
-            Spark.put('/gfcare/settings/teams/users/' + this.editingUser.id, this.forms.updateUser)
+            Spark.put('/gfcare/settings/teams'+this.team.id +'/users/' + this.editingUser.id, this.forms.updateUser)
                 .then(function () {
                     $('#modal-edit-user').modal('hide');
                     self.$dispatch('updateUsers');
@@ -198,7 +205,7 @@ Vue.component('spark-team-settings-user-screen', {
             var self = this;
             self.removingUserId = user.id;
             
-            this.$http.delete('/gfcare/settings/teams/users/' + user.id)
+            this.$http.delete('/gfcare/settings/teams'+this.team.id +'/users/' + user.id)
                 .success(function () {
                     self.removingUserId = 0;
                     self.users = self.removeFromList(this.users, user);

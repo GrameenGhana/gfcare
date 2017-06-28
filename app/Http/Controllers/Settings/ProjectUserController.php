@@ -98,17 +98,17 @@ class ProjectUserController extends Controller
                 'lastname' => substr($uname,strpos($uname,' ')));
             
             Log::info('hello' .$postdata['firstname'] . " " .$postdata['lastname']);
-           // $url = 'http://localhost/cb/content/lc/api/v1/register/';
-            $url = 'http://188.166.30.140/cb/content/lc/api/v1/register/';
+            $url = 'http://localhost/cb/content/lc/api/v1/register/';
+           // $url = 'http://188.166.30.140/cb/content/lc/api/v1/register/';
                                                                            
             $data_string = json_encode($postdata);                                                                                                                                                                          
             $ch = curl_init( $url);                                                                      
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: ' . strlen($data_string)));                                                                                                                   
+           curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: ' . strlen($data_string)));                                                                                                                   
                                                                                                                      
-              $result = curl_exec($ch);
+             $result = curl_exec($ch);
 
               Log::info("Response -> " . $result);
             return ProjectUser::find($u->id);
@@ -127,18 +127,18 @@ class ProjectUserController extends Controller
         $user = $request->user();
         $u= ProjectUser::findOrFail($userId);
         
-        $this->validate($request, ['email' => 'required|email',
-                           'name' => 'required|max:255',
-                           'current_password' => 'required_with:password|min:6',
-                           'password' => 'min:6',
-                           'gender' => 'required',
-                           'role' => 'required',
-                           'title' => 'required',
-                           'phone_number' => 'digits_between:7,16',
-                           'primary_facility' => 'required',
-                           'status'=> 'required',
-                          ]
-                        );
+      //  $this->validate($request, ['email' => 'required|email',
+                          // 'name' => 'required|max:255',
+                       / //   'current_password' => 'required_with:password|min:6',
+                         //  'password' => 'min:6',
+                          // 'gender' => 'required',
+                          // 'role' => 'required',
+                          // 'title' => 'required',
+                          // 'phone_number' => 'digits_between:7,16',
+                         //  'primary_facility' => 'required',
+                         //  'status'=> 'required',
+                         // ]
+                     //   );
         
         if ($request->password<>'') {
             if (! Hash::check($request->current_password, $u->password)) {
