@@ -30,7 +30,6 @@ class ProjectUserController extends Controller
 
        $user = $request->user();
 
-    Log::info('This is some useful information. ' . $user->id );
 
 
         //$this->validate($request, ['email' => 'required|email',
