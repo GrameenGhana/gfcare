@@ -6,10 +6,16 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\AppUser;
+use App\ModMmSubscriber;
+use App\GfCare\src\MobileMidwife\Models\Subscriber;
+use App\GfCare\src\MobileMidwife\Models\Subscription;
 
 class AppUserController extends Controller
 {
     //
+        
+     
+       
 
 
 
@@ -31,7 +37,7 @@ class AppUserController extends Controller
         # code...
         $appusers = AppUser::all();
 
-         return view('tempview.appuserview',  compact('appusers'));
+        return view('tempview.appuserview',  compact('appusers'));
 
 
     }
@@ -45,13 +51,17 @@ class AppUserController extends Controller
     {
         //
         $appuser = new AppUser();
+        $mmclient = new Subscriber();
         $appdata =  $request->app_data;
         $afya = $request->afya;
-
+        
+        $name = $request->firstname ." ". $request->lastname;
        
  
         if($appdata=="tz")
         {
+
+        
          $appuser->firstname = $request->firstname;
          $appuser->lastname = $request->lastname;
          $appuser->DOB = $request->dob;
@@ -67,9 +77,12 @@ class AppUserController extends Controller
 
          if($afya=="yes")
          {
-         	 $appuser->start_week =  $request->afya_phonenumber;
-         	 $appuser->afya_channel = $request->afya_channel;
+            if(!$this->storeMobileMidwifeClient($mmclient,$request,$name))
+                 Log::info('mobile midwife client created');
+          
          }
+
+         
        
 
 
@@ -95,8 +108,9 @@ class AppUserController extends Controller
 
           if($afya=="yes")
          {
-         	 $appuser->start_week =  $request->afya_phonenumber;
-         	 $appuser->afya_channel = $request->afya_channel;
+         	    if(!$this->storeMobileMidwifeClient($mmclient,$request,$name))
+                 Log::info('mobile midwife client created');
+          }
          }
         
 
@@ -114,15 +128,16 @@ class AppUserController extends Controller
          $appuser->app_data = "ml";
          $appuser->user_gen_id = "NA";
          $appuser->client_type = $request->client_type;
-         $appuser->program = $request->program;
+         $appuser->program = $request->program_id;
         // $appuser->insured = $request->insured;
          $appuser->national_id = $request->national_id;
          $appuser->uuid = $request->uuid;
        
         if($afya=="yes")
          {
-         	 $appuser->start_week =  $request->afya_phonenumber;
-         	 $appuser->afya_channel = $request->afya_channel;
+             if(!$this->storeMobileMidwifeClient($mmclient,$request,$name))
+                 Log::info('mobile midwife client created');
+          }
          }
         
          $appuser -> save();
@@ -136,4 +151,36 @@ class AppUserController extends Controller
          
          
     }
+
+
+
+    public function storeMobileMidwifeClient(Subscriber $mmclient,Request $request,$name)
+    {
+       // $mmclient= Subscriber::whereRaw('name=? and program_id=? and channel=?',array($name,$request->program_id,$request->afya_channel))->first();
+
+          // if(!$mmclient)
+           //{
+            $mmclient->start_week = $request->start_week;
+            $mmclient->channel = $request->afya_channel;
+            $mmclient->team_id = 3;
+            $mmclient->module_id =1;
+            $mmclient->program_id = $request->program_id;
+            $mmclient->name = $name;
+            $mmclient->phone =  $request->phonenumber;
+            $mmclient->dob = $request->dob;
+            $mmclient->gender = $request->gender;
+            $mmclient->language = $request->language;
+            $mmclient->registered_by = $request->uuid;
+            $mmclient->modified_by = $request->uuid;
+            $mmclient->education = (isset($request->education)) ? $request->education : '';
+            $mmclient->location = (isset($request->location)) ? $request->location : '';
+            $mmclient->client_type = (isset($request->client_type)) ? $request->client_type : '';
+            $mmclient->save();
+
+              // Sign up for program
+             Subscription::subscribe($mmclient);
+
+             return $mmclient;
+    //}
+   }
 }

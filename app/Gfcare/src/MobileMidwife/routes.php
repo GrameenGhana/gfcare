@@ -16,6 +16,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'mobile-midwife'], funct
     
     
     $router->get('campaigns',       $cpath.'\ServiceController@showCampaigns');
+    $router->post('campaigns',       $cpath.'\ServiceController@showCampaigns');
 
 
     $router->get('system/config',            $cpath.'\ConfigController@show');
@@ -60,6 +61,8 @@ Route::group(['middleware' => ['api','jwt.auth'], 'prefix'=>'api/mobile-midwife'
     $router->get('clients', $cpath.'\ClientsController@index');
     $router->post('clients/register', $cpath.'\ClientsController@store');
     $router->post('clients/enroll', $cpath.'\ClientsController@enroll');
+
+    $router->post('program', $cpath.'\ProgramController@show');
 
     $router->get('content/references', $cpath.'\ContentController@getLCReferences');
     $router->get('content/poc/sections', $cpath.'\ContentController@getPOCSections');
