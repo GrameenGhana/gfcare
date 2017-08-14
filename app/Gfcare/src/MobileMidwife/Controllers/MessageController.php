@@ -18,6 +18,12 @@ class MessageController extends Controller
         $i = Message::all();
         return response()->json($i);
     }
+
+
+    public function storeMessageContent(Request $request)
+    {
+        
+    }
     
     public function storeSMS(Request $request)
     {

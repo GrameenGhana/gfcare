@@ -10,6 +10,7 @@ data : function()
 
      user: null,
      campaigns :[],
+     editingCampaign: {'name':'none'},
 
       forms: {
                 addCampaign: new SparkForm ({
@@ -20,7 +21,7 @@ data : function()
                    
                 }),
                 
-                updateCampaign: new SparkForm ({
+                editCampaign: new SparkForm ({
                     name: '',
                     description: '',
                     start_date: '',
@@ -64,17 +65,34 @@ data : function()
             $('#modal-edit-campaign').modal('show'); 
         },
        
+        removingCampaign: function(id) { return (this.removingCampaignId == id); },
+
+        removeFromList: function (list, item) {
+            return _.reject(list, function (i) {
+                return i.id === item.id;
+            });
+        },
 
        //Ajax Calls
        addNewCampaign: function () {
             var self = this;
-           
-            Spark.post('/gfcare/mobile-midwife/campaign', this.forms.addCampaign)
+            console.log("in campaign save");
+            Spark.post('/gfcare/mobile-midwife/campaigns', this.forms.addCampaign)
                 .then(function () {
                     $('#modal-add-campaign').modal('hide');
-                    self.$dispatch('updateCampaign');
+                    self.$dispatch('updateCampaigns');
                 });
         }, 
+
+
+         updateCampaign: function () {
+            var self = this;
+            Spark.put('/gfcare/mobile-midwife/campaigns' + this.editingCampaign.id, this.forms.UpdateCampaign)
+                .then(function () {
+                    $('#modal-edit-campaign').modal('hide');
+                    self.$dispatch('updateCampaigns');
+                });
+        },              
 
 
          getMobileMidwifeCampaigns: function () {
@@ -83,11 +101,11 @@ data : function()
                 .success(function (campaigns) {
                     self.campaigns = campaigns;
                     self.campaigns.sort(function(a,b) { 
-                        var x = a.type.toLowerCase();
-                        var y = b.type.toLowerCase();
+                        var x = a.name.toLowerCase();
+                        var y = b.name.toLowerCase();
                         return (x < y) ? -1 : ((x > y) ? 1 : 0);
                     });
-                    self.$broadcast('mmCampaignsRetrieved', self.clients);
+                    self.$broadcast('mmCampaignsRetrieved', self.campaigns);
                 });
         },      
 

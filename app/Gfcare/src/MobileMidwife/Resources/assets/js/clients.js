@@ -115,8 +115,8 @@ Vue.component('gfcare-mm-client-screen', {
                 .success(function (clients) {
                     self.clients = clients;
                     self.clients.sort(function(a,b) { 
-                        var x = a.type.toLowerCase();
-                        var y = b.type.toLowerCase();
+                        var x = a.name.toLowerCase();
+                        var y = b.name.toLowerCase();
                         return (x < y) ? -1 : ((x > y) ? 1 : 0);
                     });
                     self.$broadcast('mmClientsRetrieved', self.clients);

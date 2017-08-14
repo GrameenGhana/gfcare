@@ -32,7 +32,7 @@
 		                        <td class="spark-table-pad">@{{ i.name }}</td>
 		                        <td class="spark-table-pad">@{{ i.week }}</td>
 		                        <td class="spark-table-pad">@{{ i.file_url }}</td>
-		                        <td class="spark-table-pad"> </td>
+		                        <td class="spark-table-pad">@{{ i.sms_message }} </td>
 		                    </tr>
 		                </tbody>
 		            </table>

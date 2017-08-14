@@ -6,7 +6,7 @@ require('./../src/MobiHealth/Resources/assets/js/components.js');
 require('./../src/Noyawa/Resources/assets/js/components.js');
 require('./../src/MobileMidwife/Resources/assets/js/components.js');
 
-},{"./../src/CCH/Resources/assets/js/components.js":2,"./../src/MobiHealth/Resources/assets/js/components.js":11,"./../src/MobileMidwife/Resources/assets/js/components.js":19,"./../src/Noyawa/Resources/assets/js/components.js":26}],2:[function(require,module,exports){
+},{"./../src/CCH/Resources/assets/js/components.js":2,"./../src/MobiHealth/Resources/assets/js/components.js":11,"./../src/MobileMidwife/Resources/assets/js/components.js":20,"./../src/Noyawa/Resources/assets/js/components.js":28}],2:[function(require,module,exports){
 'use strict';
 
 require('./main');
@@ -1356,6 +1356,118 @@ Vue.component('gfcare-mobi-system-user-screen', {
 },{}],18:[function(require,module,exports){
 'use strict';
 
+Vue.component('gfcare-mm-campaign-screen', {
+
+    ready: function ready() {
+        this.getMobileMidwifeCampaigns();
+    },
+
+    data: function data() {
+        return {
+
+            user: null,
+            campaigns: [],
+            editingCampaign: { 'name': 'none' },
+
+            forms: {
+                addCampaign: new SparkForm({
+                    name: '',
+                    description: '',
+                    start_date: '',
+                    end_date: ''
+
+                }),
+
+                editCampaign: new SparkForm({
+                    name: '',
+                    description: '',
+                    start_date: '',
+                    end_date: ''
+                })
+            }
+
+        };
+    },
+
+    events: {
+        usersRetrieved: function usersRetrieved(users) {
+            this.users = users;
+            return true;
+        },
+
+        teamRetrieved: function teamRetrieved(team) {
+            this.team = team;
+            return true;
+        }
+
+    },
+
+    methods: {
+
+        addCampaign: function addCampaign() {
+            this.forms.addCampaign.name = '';
+            this.forms.addCampaign.description = '';
+            this.forms.addCampaign.start_date = '';
+            this.forms.addCampaign.end_date = '';
+            $('#modal-add-campaign').modal('show');
+        },
+
+        editCampaign: function editCampaign(campaign) {
+            this.forms.addCampaign.name = '';
+            this.forms.addCampaign.description = '';
+            this.forms.addCampaign.start_date = '';
+            this.forms.addCampaign.end_date = '';
+            $('#modal-edit-campaign').modal('show');
+        },
+
+        removingCampaign: function removingCampaign(id) {
+            return this.removingCampaignId == id;
+        },
+
+        removeFromList: function removeFromList(list, item) {
+            return _.reject(list, function (i) {
+                return i.id === item.id;
+            });
+        },
+
+        //Ajax Calls
+        addNewCampaign: function addNewCampaign() {
+            var self = this;
+            console.log("in campaign save");
+            Spark.post('/gfcare/mobile-midwife/campaigns', this.forms.addCampaign).then(function () {
+                $('#modal-add-campaign').modal('hide');
+                self.$dispatch('updateCampaigns');
+            });
+        },
+
+        updateCampaign: function updateCampaign() {
+            var self = this;
+            Spark.put('/gfcare/mobile-midwife/campaigns' + this.editingCampaign.id, this.forms.UpdateCampaign).then(function () {
+                $('#modal-edit-campaign').modal('hide');
+                self.$dispatch('updateCampaigns');
+            });
+        },
+
+        getMobileMidwifeCampaigns: function getMobileMidwifeCampaigns() {
+            var self = this;
+            this.$http.get('/gfcare/mobile-midwife/campaigns').success(function (campaigns) {
+                self.campaigns = campaigns;
+                self.campaigns.sort(function (a, b) {
+                    var x = a.name.toLowerCase();
+                    var y = b.name.toLowerCase();
+                    return x < y ? -1 : x > y ? 1 : 0;
+                });
+                self.$broadcast('mmCampaignsRetrieved', self.campaigns);
+            });
+        }
+
+    }
+
+});
+
+},{}],19:[function(require,module,exports){
+'use strict';
+
 Vue.component('gfcare-mm-client-screen', {
 
     ready: function ready() {
@@ -1470,8 +1582,8 @@ Vue.component('gfcare-mm-client-screen', {
             this.$http.get('/gfcare/mobile-midwife/clients').success(function (clients) {
                 self.clients = clients;
                 self.clients.sort(function (a, b) {
-                    var x = a.type.toLowerCase();
-                    var y = b.type.toLowerCase();
+                    var x = a.name.toLowerCase();
+                    var y = b.name.toLowerCase();
                     return x < y ? -1 : x > y ? 1 : 0;
                 });
                 self.$broadcast('mmClientsRetrieved', self.clients);
@@ -1490,7 +1602,7 @@ Vue.component('gfcare-mm-client-screen', {
     }
 });
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 require('./main');
@@ -1499,8 +1611,10 @@ require('./service-content');
 require('./system-users');
 require('./system-config');
 require('./clients');
+require('./campaign');
+require('./program');
 
-},{"./clients":18,"./dashboard":20,"./main":21,"./service-content":22,"./system-config":23,"./system-users":24}],20:[function(require,module,exports){
+},{"./campaign":18,"./clients":19,"./dashboard":21,"./main":22,"./program":23,"./service-content":24,"./system-config":25,"./system-users":26}],21:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-mm-dashboard', {
@@ -1510,7 +1624,7 @@ Vue.component('gfcare-mm-dashboard', {
     }
 });
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-mm-screen', {
@@ -1558,7 +1672,134 @@ Vue.component('gfcare-mm-screen', {
     filters: {}
 });
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
+'use strict';
+
+Vue.component('gfcare-mm-program-screen', {
+    ready: function ready() {
+        this.getMobileMidwifePrograms();
+        this.getCampaigns();
+    },
+
+    data: function data() {
+        return {
+            user: null,
+            programs: [],
+            campaigns: [],
+            editingProgram: { 'name': 'none' },
+            channelOptions: [{ 'text': 'sms', 'value': 'sms' }, { 'text': 'voice', 'value': 'voice' }, { 'text': 'both', 'value': 'both' }],
+            campaignOptions: [],
+
+            forms: {
+                addProgram: new SparkForm({
+                    name: '',
+                    campaign: '',
+                    channel: '',
+                    start_week: '',
+                    end_week: ''
+
+                }),
+
+                editingProgram: new SparkForm({
+                    name: '',
+                    campaign: '',
+                    channel: '',
+                    start_week: '',
+                    end_week: ''
+                })
+            }
+
+        };
+    },
+    methods: {
+
+        getMobileMidwifePrograms: function getMobileMidwifePrograms() {
+            var self = this;
+            this.$http.get('/gfcare/mobile-midwife/programs').success(function (programs) {
+                self.programs = programs;
+                self.programs.sort(function (a, b) {
+                    var x = a.name.toLowerCase();
+                    var y = b.name.toLowerCase();
+                    return x < y ? -1 : x > y ? 1 : 0;
+                });
+                self.$broadcast('mmProgramsRetrieved', self.programs);
+            });
+        },
+
+        getCampaigns: function getCampaigns() {
+            var self = this;
+            this.$http.get('/gfcare/mobile-midwife/campaigns').success(function (res) {
+                if (res.length > 0) {
+                    self.campaigns = res;
+                    this.campaignOptions = [];
+                    for (var i = 0; i < this.campaigns.length; ++i) {
+                        this.campaignOptions.push({ 'text': this.campaigns[i].name,
+                            'value': this.campaigns[i].id });
+                    }
+                }
+            });
+        },
+
+        addProgram: function addProgram() {
+            this.forms.addProgram.name = '';
+            this.forms.addProgram.channel = '';
+            this.forms.addProgram.start_week = '';
+            this.forms.addProgram.end_week = '';
+            $('#modal-add-program').modal('show');
+        },
+
+        editingProgram: function editingProgram(program) {
+            this.forms.addProgram.name = '';
+            this.forms.addProgram.channel = '';
+            this.forms.addProgram.start_week = '';
+            this.forms.addProgram.end_week = '';
+            $('#modal-edit-program').modal('show');
+        },
+
+        removingProgram: function removingProgram(id) {
+            return this.removingProgramId == id;
+        },
+
+        removeFromList: function removeFromList(list, item) {
+            return _.reject(list, function (i) {
+                return i.id === item.id;
+            });
+        },
+
+        //Ajax Calls
+        addNewProgram: function addNewProgram() {
+            var self = this;
+            console.log("in program save");
+            Spark.post('/gfcare/mobile-midwife/programs', this.forms.addProgram).then(function () {
+                $('#modal-add-program').modal('hide');
+                self.$dispatch('updatePrograms');
+            });
+        },
+
+        updateProgram: function updateProgram() {
+            var self = this;
+            Spark.put('/gfcare/mobile-midwife/programs' + this.editingProgram.id, this.forms.UpdateProgram).then(function () {
+                $('#modal-edit-program').modal('hide');
+                self.$dispatch('updatePrograms');
+            });
+        }
+
+    },
+    events: {
+
+        campaignsRetrieved: function campaignsRetrieved(campaigns) {
+            this.campaignOptions = [];
+            for (var i = 0; i < this.campaigns.length; ++i) {
+                this.campaignOptions.push({ 'text': this.campaigns[i].name,
+                    'value': this.campaigns[i].id });
+            }
+        }
+
+    }
+
+});
+
+},{}],24:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-mm-service-content-screen', {
@@ -1729,7 +1970,7 @@ Vue.component('gfcare-mm-content-dropdown', {
     filters: {}
 });
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-mm-system-config-screen', {
@@ -1783,7 +2024,7 @@ Vue.component('gfcare-mm-system-config-screen', {
     filters: {}
 });
 
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-mm-system-user-screen', {
@@ -1954,7 +2195,7 @@ Vue.component('gfcare-mm-system-user-screen', {
     }
 });
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-noyawa-client-screen', {
@@ -2091,7 +2332,7 @@ Vue.component('gfcare-noyawa-client-screen', {
     }
 });
 
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 require('./main');
@@ -2099,7 +2340,7 @@ require('./dashboard');
 require('./system-users');
 require('./clients');
 
-},{"./clients":25,"./dashboard":27,"./main":28,"./system-users":29}],27:[function(require,module,exports){
+},{"./clients":27,"./dashboard":29,"./main":30,"./system-users":31}],29:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-noyawa-dashboard', {
@@ -2109,7 +2350,7 @@ Vue.component('gfcare-noyawa-dashboard', {
     }
 });
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-noyawa-screen', {
@@ -2157,7 +2398,7 @@ Vue.component('gfcare-noyawa-screen', {
     filters: {}
 });
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 Vue.component('gfcare-noyawa-system-user-screen', {
@@ -2328,7 +2569,7 @@ Vue.component('gfcare-noyawa-system-user-screen', {
     }
 });
 
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 "use strict";
 
 // rawAsap provides everything we need except exception management.
@@ -2396,7 +2637,7 @@ RawTask.prototype.call = function () {
     }
 };
 
-},{"./raw":31}],31:[function(require,module,exports){
+},{"./raw":33}],33:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -2623,7 +2864,7 @@ rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
 // https://github.com/tildeio/rsvp.js/blob/cddf7232546a9cf858524b75cde6f9edf72620a7/lib/rsvp/asap.js
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.
@@ -5002,7 +5243,7 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -14818,7 +15059,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 //! moment.js
 //! version : 2.18.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -19283,7 +19524,7 @@ return hooks;
 
 })));
 
-},{}],35:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -19469,12 +19710,12 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib')
 
-},{"./lib":41}],37:[function(require,module,exports){
+},{"./lib":43}],39:[function(require,module,exports){
 'use strict';
 
 var asap = require('asap/raw');
@@ -19689,7 +19930,7 @@ function doResolve(fn, promise) {
   }
 }
 
-},{"asap/raw":31}],38:[function(require,module,exports){
+},{"asap/raw":33}],40:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -19704,7 +19945,7 @@ Promise.prototype.done = function (onFulfilled, onRejected) {
   });
 };
 
-},{"./core.js":37}],39:[function(require,module,exports){
+},{"./core.js":39}],41:[function(require,module,exports){
 'use strict';
 
 //This file contains the ES6 extensions to the core Promises/A+ API
@@ -19813,7 +20054,7 @@ Promise.prototype['catch'] = function (onRejected) {
   return this.then(null, onRejected);
 };
 
-},{"./core.js":37}],40:[function(require,module,exports){
+},{"./core.js":39}],42:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -19831,7 +20072,7 @@ Promise.prototype['finally'] = function (f) {
   });
 };
 
-},{"./core.js":37}],41:[function(require,module,exports){
+},{"./core.js":39}],43:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./core.js');
@@ -19841,7 +20082,7 @@ require('./es6-extensions.js');
 require('./node-extensions.js');
 require('./synchronous.js');
 
-},{"./core.js":37,"./done.js":38,"./es6-extensions.js":39,"./finally.js":40,"./node-extensions.js":42,"./synchronous.js":43}],42:[function(require,module,exports){
+},{"./core.js":39,"./done.js":40,"./es6-extensions.js":41,"./finally.js":42,"./node-extensions.js":44,"./synchronous.js":45}],44:[function(require,module,exports){
 'use strict';
 
 // This file contains then/promise specific extensions that are only useful
@@ -19973,7 +20214,7 @@ Promise.prototype.nodeify = function (callback, ctx) {
   });
 };
 
-},{"./core.js":37,"asap":30}],43:[function(require,module,exports){
+},{"./core.js":39,"asap":32}],45:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -20037,7 +20278,7 @@ Promise.disableSynchronous = function() {
   Promise.prototype.getState = undefined;
 };
 
-},{"./core.js":37}],44:[function(require,module,exports){
+},{"./core.js":39}],46:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -21587,7 +21828,7 @@ Promise.disableSynchronous = function() {
   }
 }.call(this));
 
-},{}],45:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /**
  * Service for sending network requests.
  */
@@ -21749,7 +21990,7 @@ module.exports = function (_) {
     return _.http = Http;
 };
 
-},{"./lib/jsonp":47,"./lib/promise":48,"./lib/xhr":50}],46:[function(require,module,exports){
+},{"./lib/jsonp":49,"./lib/promise":50,"./lib/xhr":52}],48:[function(require,module,exports){
 /**
  * Install plugin.
  */
@@ -21790,7 +22031,7 @@ if (window.Vue) {
 }
 
 module.exports = install;
-},{"./http":45,"./lib/util":49,"./resource":51,"./url":52}],47:[function(require,module,exports){
+},{"./http":47,"./lib/util":51,"./resource":53,"./url":54}],49:[function(require,module,exports){
 /**
  * JSONP request.
  */
@@ -21842,7 +22083,7 @@ module.exports = function (_, options) {
 
 };
 
-},{"./promise":48}],48:[function(require,module,exports){
+},{"./promise":50}],50:[function(require,module,exports){
 /**
  * Promises/A+ polyfill v1.1.0 (https://github.com/bramstein/promis)
  */
@@ -22054,7 +22295,7 @@ if (window.MutationObserver) {
 
 module.exports = window.Promise || Promise;
 
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /**
  * Utility functions.
  */
@@ -22136,7 +22377,7 @@ module.exports = function (Vue) {
     return _;
 };
 
-},{}],50:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /**
  * XMLHttp request.
  */
@@ -22189,7 +22430,7 @@ module.exports = function (_, options) {
     return promise;
 };
 
-},{"./promise":48}],51:[function(require,module,exports){
+},{"./promise":50}],53:[function(require,module,exports){
 /**
  * Service for interacting with RESTful services.
  */
@@ -22302,7 +22543,7 @@ module.exports = function (_) {
     return _.resource = Resource;
 };
 
-},{}],52:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /**
  * Service for URL templating.
  */
@@ -22461,9 +22702,9 @@ module.exports = function (_) {
     return _.url = Url;
 };
 
-},{}],53:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 module.exports = '<div class="select" v-class="select--invalid: isInvalid">\n	<div class="select__input">\n		<input v-if="showSearch" type="text" \n			v-model="term" \n			v-on="keydown:choose($event) | key 13, keydown:goUp($event) | key 38, keydown:goDown($event) | key 40">\n	</div>\n	<a class="select__btn ellipsis" href="#" v-on="click: open($event)">{{ currentSelection.name }}</a>\n	<div class="select__dropdown" v-show="dropdownOpen">\n		<ul>\n			<li v-repeat="option: filteredOptions">\n				<a href="#" \n					v-on="click: setValue(option, $event)" \n					v-class="select__highlight: option.value == currentValue">\n					{{ option.name }}\n				</a>\n			</li>\n		</ul>\n	</div>\n</div>';
-},{}],54:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 (function (global){
 var Vue = require('vue')
 var _ = Vue.util
@@ -22646,7 +22887,7 @@ module.exports = {
     }
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./select.html":53,"vue":55}],55:[function(require,module,exports){
+},{"./select.html":55,"vue":57}],57:[function(require,module,exports){
 (function (process){
 /*!
  * Vue.js v1.0.28
@@ -32887,7 +33128,7 @@ setTimeout(function () {
 
 module.exports = Vue;
 }).call(this,require('_process'))
-},{"_process":35}],56:[function(require,module,exports){
+},{"_process":37}],58:[function(require,module,exports){
 'use strict';
 
 /*
@@ -32909,7 +33150,7 @@ require('./core/bootstrap');
 
 new Vue(require('./spark'));
 
-},{"./core/bootstrap":61,"./spark":88}],57:[function(require,module,exports){
+},{"./core/bootstrap":63,"./spark":90}],59:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-simple-registration-screen', {
@@ -32988,7 +33229,7 @@ Vue.component('spark-simple-registration-screen', {
     }
 });
 
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-subscription-register-screen', {
@@ -33355,7 +33596,7 @@ Vue.component('spark-subscription-register-screen', {
     }
 });
 
-},{}],59:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 'use strict';
 
 /*
@@ -33382,7 +33623,7 @@ Vue.component('spark-error-alert', {
             </div></div>"
 });
 
-},{}],60:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 'use strict';
 
 window.NotificationStore = {
@@ -33449,7 +33690,7 @@ Vue.transition('fade', {
   leaveClass: 'fadeOutDown' // class of animate.css
 });
 
-},{}],61:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 'use strict';
 
 var _vueSelect = require('vue-select');
@@ -33532,7 +33773,7 @@ Spark.components = {
  */
 require('./../forms/bootstrap');
 
-},{"./../common/notifications":60,"./../forms/bootstrap":63,"bootstrap-sass/assets/javascripts/bootstrap":32,"jquery":33,"moment":34,"promise":36,"underscore":44,"vue":55,"vue-resource":46,"vue-select":54}],62:[function(require,module,exports){
+},{"./../common/notifications":62,"./../forms/bootstrap":65,"bootstrap-sass/assets/javascripts/bootstrap":34,"jquery":35,"moment":36,"promise":38,"underscore":46,"vue":57,"vue-resource":48,"vue-select":56}],64:[function(require,module,exports){
 'use strict';
 
 /**
@@ -33567,7 +33808,7 @@ require('./../settings/team/user');
  */
 require('./../../../../app/Gfcare/Core/Modules');
 
-},{"./../../../../app/Gfcare/Core/Modules":1,"./../auth/registration/simple":57,"./../auth/registration/subscription":58,"./../common/errors":59,"./../nav/dropdown":68,"./../nav/topbar":69,"./../settings/dashboard":70,"./../settings/dashboard/profile/basics":71,"./../settings/dashboard/security/password":72,"./../settings/dashboard/security/two-factor":73,"./../settings/dashboard/subscription":74,"./../settings/dashboard/teams":75,"./../settings/team":76,"./../settings/team/device":77,"./../settings/team/location":78,"./../settings/team/location/add-team-location":79,"./../settings/team/location/edit-team-location":80,"./../settings/team/location/manage-team-facility":81,"./../settings/team/location/manage-team-facilitygroup":82,"./../settings/team/membership":83,"./../settings/team/membership/edit-team-member":84,"./../settings/team/module":85,"./../settings/team/owner/basics":86,"./../settings/team/user":87}],63:[function(require,module,exports){
+},{"./../../../../app/Gfcare/Core/Modules":1,"./../auth/registration/simple":59,"./../auth/registration/subscription":60,"./../common/errors":61,"./../nav/dropdown":70,"./../nav/topbar":71,"./../settings/dashboard":72,"./../settings/dashboard/profile/basics":73,"./../settings/dashboard/security/password":74,"./../settings/dashboard/security/two-factor":75,"./../settings/dashboard/subscription":76,"./../settings/dashboard/teams":77,"./../settings/team":78,"./../settings/team/device":79,"./../settings/team/location":80,"./../settings/team/location/add-team-location":81,"./../settings/team/location/edit-team-location":82,"./../settings/team/location/manage-team-facility":83,"./../settings/team/location/manage-team-facilitygroup":84,"./../settings/team/membership":85,"./../settings/team/membership/edit-team-member":86,"./../settings/team/module":87,"./../settings/team/owner/basics":88,"./../settings/team/user":89}],65:[function(require,module,exports){
 'use strict';
 
 /**
@@ -33599,7 +33840,7 @@ $.extend(Spark, require('./http'));
  */
 require('./components');
 
-},{"./components":64,"./errors":65,"./http":66,"./instance":67}],64:[function(require,module,exports){
+},{"./components":66,"./errors":67,"./http":68,"./instance":69}],66:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-text', {
@@ -33891,7 +34132,7 @@ Vue.component('spark-facility-select', {
     }
 });
 
-},{}],65:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -33958,7 +34199,7 @@ window.SparkFormErrors = function () {
     };
 };
 
-},{}],66:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -34000,7 +34241,7 @@ module.exports = {
     }
 };
 
-},{}],67:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 "use strict";
 
 /**
@@ -34027,7 +34268,7 @@ window.SparkForm = function (data) {
     };
 };
 
-},{}],68:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-nav-bar-dropdown', $.extend(true, {
@@ -34063,7 +34304,7 @@ Vue.component('spark-nav-bar-dropdown', $.extend(true, {
     }
 }, Spark.components.navDropdown));
 
-},{}],69:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-nav-bar-topbar', $.extend(true, {
@@ -34111,7 +34352,7 @@ Vue.component('spark-nav-bar-topbar', $.extend(true, {
 
 }, Spark.components.navTopbar));
 
-},{}],70:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-settings-screen', {
@@ -34123,7 +34364,7 @@ Vue.component('spark-settings-screen', {
     }
 });
 
-},{}],71:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-settings-profile-basics-screen', $.extend(true, {
@@ -34185,7 +34426,7 @@ Vue.component('spark-settings-profile-basics-screen', $.extend(true, {
     }
 }, Spark.components.profileBasics));
 
-},{}],72:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-settings-security-password-screen', {
@@ -34240,7 +34481,7 @@ Vue.component('spark-settings-security-password-screen', {
     }
 });
 
-},{}],73:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-settings-security-two-factor-screen', {
@@ -34320,7 +34561,7 @@ Vue.component('spark-settings-security-two-factor-screen', {
     }
 });
 
-},{}],74:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 
 var settingsSubscriptionScreenForms = {
@@ -34871,7 +35112,7 @@ Vue.component('spark-settings-subscription-screen', {
     }
 });
 
-},{}],75:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-settings-teams-screen', {
@@ -35027,7 +35268,7 @@ Vue.component('spark-settings-teams-screen', {
     }
 });
 
-},{}],76:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-screen', {
@@ -35129,7 +35370,7 @@ Vue.component('spark-team-settings-screen', {
     }
 });
 
-},{}],77:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-device-screen', {
@@ -35277,7 +35518,7 @@ Vue.component('spark-team-settings-device-screen', {
     }
 });
 
-},{}],78:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-location-screen', {
@@ -35518,7 +35759,7 @@ Vue.component('spark-team-settings-location-screen', {
     }
 });
 
-},{}],79:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-add-team-location-screen', $.extend(true, {
@@ -35630,7 +35871,7 @@ Vue.component('spark-team-settings-add-team-location-screen', $.extend(true, {
     }
 }, Spark.components.addTeamLocation));
 
-},{}],80:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-edit-team-location-screen', $.extend(true, {
@@ -35679,7 +35920,7 @@ Vue.component('spark-team-settings-edit-team-location-screen', $.extend(true, {
     }
 }, Spark.components.editTeamLocation));
 
-},{}],81:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-add-team-facility-screen', $.extend(true, {
@@ -35817,7 +36058,7 @@ Vue.component('spark-team-settings-edit-team-facility-screen', $.extend(true, {
     }
 }, Spark.components.editTeamFacility));
 
-},{}],82:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-add-team-facilitygroup-screen', $.extend(true, {
@@ -35933,7 +36174,7 @@ Vue.component('spark-team-settings-edit-team-facilitygroup-screen', $.extend(tru
     }
 }, Spark.components.editTeamFacilityGroup));
 
-},{}],83:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-membership-screen', {
@@ -36111,7 +36352,7 @@ Vue.component('spark-team-settings-membership-screen', {
     }
 });
 
-},{}],84:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-edit-team-member-screen', $.extend(true, {
@@ -36196,7 +36437,7 @@ Vue.component('spark-team-settings-edit-team-member-screen', $.extend(true, {
     }
 }, Spark.components.editTeamMember));
 
-},{}],85:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-module-screen', {
@@ -36359,7 +36600,7 @@ Vue.component('spark-team-settings-module-screen', {
     }
 });
 
-},{}],86:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-owner-basics-screen', $.extend(true, {
@@ -36420,7 +36661,7 @@ Vue.component('spark-team-settings-owner-basics-screen', $.extend(true, {
     }
 }, Spark.components.teamOwnerBasics));
 
-},{}],87:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 'use strict';
 
 Vue.component('spark-team-settings-user-screen', {
@@ -36661,7 +36902,7 @@ Vue.component('spark-team-settings-user-screen', {
     }
 });
 
-},{}],88:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 'use strict';
 
 /*
@@ -36734,6 +36975,6 @@ module.exports = {
     }
 };
 
-},{"./core/components":62}]},{},[56]);
+},{"./core/components":64}]},{},[58]);
 
 //# sourceMappingURL=app.js.map
