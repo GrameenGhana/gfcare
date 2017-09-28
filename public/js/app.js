@@ -1793,6 +1793,12 @@ Vue.component('gfcare-mm-program-screen', {
                 this.campaignOptions.push({ 'text': this.campaigns[i].name,
                     'value': this.campaigns[i].id });
             }
+        },
+
+        mmProgramsRetrieved: function mmProgramsRetrieved(c) {
+            console.log(c);
+            this.programs = c;
+            return true;
         }
 
     }
@@ -1805,11 +1811,35 @@ Vue.component('gfcare-mm-program-screen', {
 Vue.component('gfcare-mm-service-content-screen', {
     props: ['teamId'],
 
-    ready: function ready() {},
+    ready: function ready() {
+        this.getContent();
+    },
 
     data: function data() {
         return {
-            content: []
+            content: [],
+            contentOptions: [{ 'text': 'sms', 'value': 'sms' }, { 'text': 'voice', 'value': 'voice' }],
+
+            forms: {
+
+                addContent: new SparkForm({
+                    name: '',
+                    week: '',
+                    content_type: '',
+                    sms_message: ''
+                }),
+
+                updateContent: new SparkForm({
+
+                    name: '',
+                    week: '',
+                    content_type: '',
+                    sms_message: ''
+
+                })
+
+            }
+
         };
     },
 
@@ -1824,7 +1854,24 @@ Vue.component('gfcare-mm-service-content-screen', {
     },
 
     computed: {},
-    methods: {},
+    methods: {
+        getContent: function getContent() {
+            var self = this;
+            this.$http.get('/gfcare/mobile-midwife/content').success(function (res) {
+                if (res.length > 0) {
+                    self.content = res;
+                }
+            });
+        },
+        addContent: function addContent() {
+            this.forms.addContent.name = '';
+            this.forms.addContent.week = '';
+            this.forms.addContent.content_type = '';
+            this.forms.addContent.sms_message = '';
+            $('#modal-add-content').modal('show');
+        }
+
+    },
     filters: {}
 });
 

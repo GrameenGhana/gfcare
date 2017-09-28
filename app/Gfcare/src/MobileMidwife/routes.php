@@ -9,6 +9,10 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'mobile-midwife'], funct
     $router->get('messages/sms',   $cpath.'\MessageController@storeSMS');
     $router->get('messages/voice', $cpath.'\MessageController@storeVoice');
 
+
+    $router->get('content', $cpath.'\ContentController@showContent');
+    $router->post('content', $cpath.'\ContentController@storeContent');
+
     $router->get('clients', $cpath.'\SubscriberController@show');
     $router->put('clients/{id}', $cpath.'\SubscriberController@update');
     $router->post('clients',     $cpath.'\SubscriberController@store');

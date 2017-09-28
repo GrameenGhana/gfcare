@@ -9,7 +9,7 @@ Vue.component('gfcare-mm-program-screen',{
    	return{
    		user:null,
    		programs:[],
-      campaigns:[],
+        campaigns:[],
    		editingProgram:{'name':'none'},
    		channelOptions: [
                 {'text': 'sms', 'value':'sms'}, 
@@ -133,6 +133,14 @@ methods:{
 
 
         },
+
+
+        mmProgramsRetrieved: function(c) {
+            console.log(c);
+            this.programs = c;
+            return true;
+        },
+  
 
  }
 

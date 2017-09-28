@@ -1,11 +1,35 @@
 Vue.component('gfcare-mm-service-content-screen', {
     props: ['teamId'],
 
-    ready: function() { },
+    ready: function() { 
+        this.getContent();    
+    },
 
     data: function() {
         return {
 			content: [],
+            contentOptions:[{'text': 'sms', 'value':'sms'},{'text': 'voice', 'value':'voice'}],
+
+            forms : {
+
+                addContent: new SparkForm({
+                    name:'',
+                    week:'',
+                    content_type:'',
+                    sms_message:''
+                }),
+
+                updateContent : new SparkForm({
+                    
+                    name:'',
+                    week:'',
+                    content_type:'',
+                    sms_message:''
+
+                })
+                
+            }
+
         };
     },
 
@@ -20,7 +44,25 @@ Vue.component('gfcare-mm-service-content-screen', {
 	},
 
     computed: { },
-    methods: { },
+    methods: { 
+        getContent: function () {
+            var self = this;
+            this.$http.get('/gfcare/mobile-midwife/content')
+                .success(function (res) {
+                    if (res.length>0) { 
+                      self.content = res;  
+             }
+            });
+        },
+          addContent: function () {  
+            this.forms.addContent.name = '';
+            this.forms.addContent.week = '';
+            this.forms.addContent.content_type = '';
+            this.forms.addContent.sms_message = '';
+            $('#modal-add-content').modal('show');  
+        },  
+
+    },
     filters: { },
 });
 

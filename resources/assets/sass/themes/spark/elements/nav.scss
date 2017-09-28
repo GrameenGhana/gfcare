@@ -1,5 +1,5 @@
 .navbar {
-  background-color: white;
+  background-color: #CC0033;
   font-size: 16px;
   font-weight: 300;
   margin-bottom: 40px;
@@ -8,7 +8,8 @@
     font-size: 28px;
 
     i {
-      color: $brand-primary;
+     // color: $brand-primary;
+       color: white;
     }
   }
 
@@ -22,7 +23,7 @@
     }
 
     > li > a.module {
-        color: #336699;
+        color: white; //#336699;
     } 
   }
 

@@ -86,7 +86,7 @@
             <!-- Company Information -->
             <div class="col-md-10 col-md-offset-1 splash-footer">
                 <div class="pull-left splash-footer-company">
-                    Copyright © {{ Spark::company() }} - <a href="{{ url('terms') }}">Terms Of Service</a>
+                    Copyright © CBCC  Kenya - <a href="{{ url('terms') }}">Terms Of Service</a>
                 </div>
 
                 <!-- Social Icons -->
