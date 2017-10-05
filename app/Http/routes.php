@@ -41,12 +41,12 @@ Route::group(['middleware' => 'web'], function ($router) {
         $router->delete('settings/teams/{id}/modules/{mid}', 'Settings\ModuleController@destroy');
         $router->get('settings/teams/{id}/modules/{mid}/switch', 'Settings\ModuleController@toggleModuleStatus');
 
-        $router->post('settings/teams/{id}/devices',     'Settings\DeviceController@store');
+       // $router->post('settings/teams/{id}/devices',     'Settings\DeviceController@store');
+        $router->post('settings/teams/devices',     'Settings\DeviceController@store');
         $router->put('settings/teams/{id}/devices/{did}', 'Settings\DeviceController@update');
         $router->delete('settings/teams/{id}/devices/{did}', 'Settings\DeviceController@destroy');
 
         $router->post('settings/teams/{id}/users',        'Settings\ProjectUserController@store');
-       // $router->get('settings/teams/{id}/users',        'Settings\ProjectUserController@store');
         $router->put('settings/teams/{id}/users/{uid}',    'Settings\ProjectUserController@update');
         $router->delete('settings/teams/{id}/users/{uid}', 'Settings\ProjectUserController@destroy');
         

@@ -22,14 +22,14 @@ class DeviceController extends Controller
     {
         $user = $request->user();
 
-        $this->validate($request, [
+         $this->validate($request, [
                                    'type' => 'required|max:255',
                                    'tag' => 'required|max:255',
                                    'color' => 'required|max:255',
                                    'imei' => 'required|max:255',
-                                  ]);
+                                  ]); 
 
-        $device = Device::whereRaw('name=? and tag=?',array($request->type,$request->tag))->first();
+        $device = Device::whereRaw('type=? and tag=?',array($request->type,$request->tag))->first();
 
         if(!$device) {
             $device = new Device();
@@ -52,13 +52,13 @@ class DeviceController extends Controller
     {
         $user = $request->user();
         $device = Device::findOrFail($deviceId);
-        $this->validate($request, [
+      $this->validate($request, [
                                    'type' => 'required|max:255',
                                    'tag' => 'required|max:255',
                                    'color' => 'required|max:255',
                                    'imei' => 'required|max:255',
                                    'status' => 'required|max:255',
-                                  ]);
+                                  ]);  
 
         $device->type = $request->type;
         $device->tag = $request->tag;
