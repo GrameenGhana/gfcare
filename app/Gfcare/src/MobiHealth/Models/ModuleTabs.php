@@ -28,20 +28,21 @@ class ModuleTabs extends Tabs
                     function ($team, $user) { return $user->belongsToModule($team); }),
         ]; 
     }
-/*
+
     // Group
     public function groups()
     {
         return [
-                new Tab('Report', 'MobiHealth::group.report', 'fa-file-text-o', 
-                    function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[0]->name),
+                
             
                 new Tab('Groups', 'MobiHealth::group.group', 'fa-group', 
                     function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[0]->name),
+               // new Tab('Report', 'MobiHealth::group.report', 'fa-file-text-o', 
+                   // function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[0]->name),
                     
         ];
     }
-    
+  /*  
     
     // Content
     public function content()

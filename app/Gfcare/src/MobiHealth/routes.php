@@ -16,6 +16,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'mobihealth'], function 
     $router->post('system/referrals',     $cpath.'\ReferralController@store');
     $router->delete('system/referrals/{id}', $cpath.'\ReferralController@destroy');
 
+     $router->get('mobihealth/groups', $cpath.'\GroupController@show');
+
     
     // APIs
     $router->get('/api/messageplaycountbysubmodule', $cpath.'\ApiController@getMessagePlayCountBySubModule');

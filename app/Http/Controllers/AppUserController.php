@@ -110,13 +110,14 @@ class AppUserController extends Controller
          {
          	    if(!$this->storeMobileMidwifeClient($mmclient,$request,$name))
                  Log::info('mobile midwife client created');
-          }
          }
+         
         
 
          $appuser -> save();
          return response()->json('Ok');
        }
+
        else if($appdata=="ml")
        	{
           
@@ -137,8 +138,8 @@ class AppUserController extends Controller
          {
              if(!$this->storeMobileMidwifeClient($mmclient,$request,$name))
                  Log::info('mobile midwife client created');
-          }
          }
+         
         
          $appuser -> save();
          return response()->json('Ok');
