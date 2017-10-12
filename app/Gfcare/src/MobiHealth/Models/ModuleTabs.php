@@ -35,7 +35,7 @@ class ModuleTabs extends Tabs
         return [
                 
             
-                new Tab('Groups', 'MobiHealth::group.group', 'fa-group', 
+                new Tab('Groups Meeting', 'MobiHealth::group.group', 'fa-group', 
                     function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[0]->name),
                // new Tab('Report', 'MobiHealth::group.report', 'fa-file-text-o', 
                    // function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[0]->name),
