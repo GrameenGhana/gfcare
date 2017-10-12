@@ -60,7 +60,7 @@
     <div class="panel-heading">Digimlezi</div>
     <div class="panel-body">
         <div class="pull-left">
-          <p>Digimlezi is a mobile phone app.The app provides a platform for an easy to access decision support tool for patient diagnosis and care,a distance learning module to help nurses develop their capacity and a tool for enabling supervisors monitor nurses performance.This app supports nurses in the MCNH..</p>
+          <p>Digimlezi is a mobile phone app.The app provides a platform for an easy to access decision support tool for patient diagnosis and care,a distance learning module to help nurses develop their capacity and a tool for enabling supervisors monitor nurses performance.This app supports nurses in the MCNH.</p>
        </div>
     </div>
 </div>
