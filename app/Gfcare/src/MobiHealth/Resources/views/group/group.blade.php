@@ -14,6 +14,7 @@
           <select class="form-control" >
             <option>Meeting 1</option>
             <option>Meeting 2</option>
+            <option>Meeting 3</option>
           </select>
 					</div>
 				</div>
