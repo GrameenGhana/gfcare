@@ -74,6 +74,20 @@ class AppUserController extends Controller
          $appuser->program = $request->program;
          $appuser->national_id = $request->national_id;
          $appuser->uuid = $request->uuid;
+         $appuser->mother_smartphone = $request->mother_smartphone;
+         $appuser->mother_occupation = $request->mother_occupation;
+         $appuser->father_name = $request->father_name;
+         $appuser->father_smartphone = $request->father_smartphone;
+         $appuser->father_education = $request->father_education;
+         $appuser->pregnant_women_in_household = $request->pregnant_women_in_household;
+         $appuser->expected_date_of_delivery = $request->expected_date_of_delivery;
+         $appuser->number_of_times_gone_for_ANC = $request->number_of_times_gone_for_ANC;
+         $appuser->number_of_IFAS_taken = $request->number_of_IFAS_taken;
+         $appuser->planned_place_of_delivery = $request->planned_place_of_delivery;
+         $appuser->children_under_59_months = $request->children_under_59_months;
+         $appuser->date_of_birth = $request->date_of_birth;
+         $appuser->gender_of_child = $request->gender_of_child;
+         $appuser->booklet_present = $request->booklet_present;
 
          if($afya=="yes")
          {
@@ -105,6 +119,21 @@ class AppUserController extends Controller
          $appuser->language =  $request->language;
          $appuser->location =  $request->location;
          $appuser->uuid = $request->uuid;
+         $appuser->mother_smartphone = $request->mother_smartphone;
+         $appuser->mother_occupation = $request->mother_occupation;
+         $appuser->father_name = $request->father_name;
+         $appuser->father_smartphone = $request->father_smartphone;
+         $appuser->father_education = $request->father_education;
+         $appuser->pregnant_women_in_household = $request->pregnant_women_in_household;
+         $appuser->expected_date_of_delivery = $request->expected_date_of_delivery;
+         $appuser->number_of_times_gone_for_ANC = $request->number_of_times_gone_for_ANC;
+         $appuser->number_of_IFAS_taken = $request->number_of_IFAS_taken;
+         $appuser->planned_place_of_delivery = $request->planned_place_of_delivery;
+         $appuser->children_under_59_months = $request->children_under_59_months;
+         $appuser->date_of_birth = $request->date_of_birth;
+         $appuser->gender_of_child = $request->gender_of_child;
+         $appuser->booklet_present = $request->booklet_present;
+
 
           if($afya=="yes")
          {
@@ -133,6 +162,21 @@ class AppUserController extends Controller
         // $appuser->insured = $request->insured;
          $appuser->national_id = $request->national_id;
          $appuser->uuid = $request->uuid;
+         $appuser->mother_smartphone = $request->mother_smartphone;
+         $appuser->mother_occupation = $request->mother_occupation;
+         $appuser->father_name = $request->father_name;
+         $appuser->father_smartphone = $request->father_smartphone;
+         $appuser->father_education = $request->father_education;
+         $appuser->pregnant_women_in_household = $request->pregnant_women_in_household;
+         $appuser->expected_date_of_delivery = $request->expected_date_of_delivery;
+         $appuser->number_of_times_gone_for_ANC = $request->number_of_times_gone_for_ANC;
+         $appuser->number_of_IFAS_taken = $request->number_of_IFAS_taken;
+         $appuser->planned_place_of_delivery = $request->planned_place_of_delivery;
+         $appuser->children_under_59_months = $request->children_under_59_months;
+         $appuser->date_of_birth = $request->date_of_birth;
+         $appuser->gender_of_child = $request->gender_of_child;
+         $appuser->booklet_present = $request->booklet_present;
+
        
         if($afya=="yes")
          {

@@ -4,6 +4,11 @@ namespace App\Ux\Settings;
 
 class TeamTabs extends Tabs
 {
+
+    
+
+
+
     /**
      * Get the tab configuration for the "Owner Settings" tab.
      *
@@ -48,6 +53,9 @@ class TeamTabs extends Tabs
         return new Tab('Project Users', 'settings.team.tabs.user', 'fa-group', function ($team, $user) {
             return $user->ownsTeam($team);
         });
+        // return new Tab('User Logs', 'settings.team.tabs.location', 'fa-gears', function ($team, $user) {
+            //return $user->ownsTeam($team);
+      //  });
     }
 
     /**
@@ -70,6 +78,19 @@ class TeamTabs extends Tabs
     public function location()
     {
         return new Tab('Location Settings', 'settings.team.tabs.location', 'fa-map-marker', function ($team, $user) {
+            return $user->ownsTeam($team);
+        });
+    }
+
+
+    /**
+     * Get the tab configuration for the "Location" tab.
+     *
+     * @return \App\Ux\Settings\Tab
+     */
+    public function userLog()
+    {
+        return new Tab('User Logs', 'settings.team.tabs.userlog', 'fa-gears', function ($team, $user) {
             return $user->ownsTeam($team);
         });
     }

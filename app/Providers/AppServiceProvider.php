@@ -183,6 +183,7 @@ class AppServiceProvider extends ServiceProvider
                 $tabs->device(),
                 $tabs->location(),
                 $tabs->module(),
+                $tabs->userLog()
                 // $tabs->make('Name', 'view', 'fa-icon'),
             ];
         });
