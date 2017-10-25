@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
-
+use App\AppUser;
 use App\GfCare\src\MobiHealth\Models\MobiUser;
 
 
@@ -15,6 +15,18 @@ class UserController extends Controller
     public function show(Request $request, $teamId=null)
     {
         $users = MobiUser::all();
+        return response()->json($users);
+    }
+
+    public function showTunza(Request $request, $teamId=null)
+    {
+        $users = AppUser::where('app_data','tz')->get();
+        return response()->json($users);
+    }
+
+     public function showKijana(Request $request, $teamId=null)
+    {
+        $users = AppUser::where('app_data','kj')->get();
         return response()->json($users);
     }
     

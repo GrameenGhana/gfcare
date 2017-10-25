@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
-
+use App\AppUser;
 use App\GfCare\src\Noyawa\Models\Client;
 
 class ClientController extends Controller
@@ -18,6 +18,11 @@ class ClientController extends Controller
         return response()->json($clients);
     }
     
+       public function showKijana(Request $request, $teamId=null)
+    {
+        $users = AppUser::where('app_data','kj')->get();
+        return response()->json($users);
+    }
     public function store(Request $request)
     {
         $user = $request->user();

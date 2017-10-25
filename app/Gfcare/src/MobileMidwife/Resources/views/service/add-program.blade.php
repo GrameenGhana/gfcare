@@ -25,11 +25,11 @@
                               :input.sync="forms.addProgram.campaign">
                         </spark-select>
                     
-                          <spark-select :display="'Channel'"
-                                                   :form="forms.addProgram"
-                                                   :name="'channel'"
-                                                   :items="channelOptions"
-                                                   :input.sync="forms.addProgram.channel">
+                        <spark-select :display="'Channel'"
+                                      :form="forms.addProgram"
+                                      :name="'channel'"
+                                      :items="channelOptions"
+                                      :input.sync="forms.addProgram.channel">
                         </spark-select>
 
                          <spark-text :display="'Start Week'"

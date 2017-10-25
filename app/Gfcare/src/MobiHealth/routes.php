@@ -10,13 +10,18 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'mobihealth'], function 
     $router->put('system/users/{id}', $cpath.'\UserController@update');
     $router->post('system/users',     $cpath.'\UserController@store');
     $router->delete('system/users/{id}', $cpath.'\UserController@destroy');
+    $router->get('community/users',$cpath.'\UserController@showTunza');
+    $router->get('community/users/kj',$cpath.'\UserController@showKijana');
+    $router->get('community/meetings',$cpath.'\MeetingController@show');
+
 
     $router->get('system/referrals', $cpath.'\ReferralController@show');
     $router->put('system/referrals/{id}', $cpath.'\ReferralController@update');
     $router->post('system/referrals',     $cpath.'\ReferralController@store');
     $router->delete('system/referrals/{id}', $cpath.'\ReferralController@destroy');
 
-     $router->get('mobihealth/groups', $cpath.'\GroupController@show');
+     $router->get('community/groups', $cpath.'\GroupController@show');
+
 
     
     // APIs

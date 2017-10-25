@@ -1,24 +1,17 @@
+<gfcare-mobi-group-screen  :team-id="{{ $team->id }}" inline-template>
 
- <div class="panel panel-default">
-<div class="panel-body">
-				<div class="row">
-					<div class="col-md-4">
-          <label>CHV: </label>
-					<select class="form-control spark-first-field" >
-            <option>Harry Baiden</option>
-            <option>Sarah Supervisor</option>
-          </select>
-					</div>
-					<div class="col-md-4" >
-						<label>Meetings : </label>
-          <select class="form-control" >
-            <option>Meeting 1</option>
-            <option>Meeting 2</option>
-            <option>Meeting 3</option>
-          </select>
-					</div>
-				</div>
-  </div>
+<div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+        <div class="panel-body">
+                  <gfcare-mm-mobihealth-dropdown></gfcare-mm-mobihealth-dropdown>
+        </div>
+            </div>
+        </div>
+</div>
+<div class="row">
+<div class="panel panel-default">
+
     <div class="panel-body">
             <div class="panel-heading">
              Meeting Attendees
@@ -48,4 +41,6 @@
         </div>
 
   </div>
+  </div>
 
+</gfcare-mm-campaign-screen inline-template>

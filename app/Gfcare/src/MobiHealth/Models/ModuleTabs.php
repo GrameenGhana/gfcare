@@ -26,6 +26,8 @@ class ModuleTabs extends Tabs
             
              new Tab('Indicators', 'MobiHealth::dashboard', 'fa-dashboard',
                     function ($team, $user) { return $user->belongsToModule($team); }),
+              new Tab('Clients', 'MobiHealth::mobiuser', 'fa-users',
+                    function ($team, $user) { return $user->belongsToModule($team); }),
         ]; 
     }
 
@@ -35,10 +37,11 @@ class ModuleTabs extends Tabs
         return [
                 
             
+                 new Tab('Meetings', 'MobiHealth::group.meeting', 'fa-file-text-o', 
+                    function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[0]->name),
                 new Tab('Groups Meeting', 'MobiHealth::group.group', 'fa-group', 
                     function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[0]->name),
-               // new Tab('Report', 'MobiHealth::group.report', 'fa-file-text-o', 
-                   // function ($team, $user) { return $user->belongsToModule($team); }, $this->tabGroups[0]->name),
+               
                     
         ];
     }

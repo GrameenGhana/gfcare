@@ -22,6 +22,14 @@ class ProjectUserController extends Controller
         $users = ProjectUser::all();
         return response()->json($users);
     }
+
+    public function showCHV(Request $request, $teamId=null)
+    {
+        $users = ProjectUser::whereHas('info', function ($query) {
+                $query->where('ischn', '=', '1');
+                     })->get();
+        return response()->json($users);
+    }
     
     public function store(Request $request)
     {

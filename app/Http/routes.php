@@ -11,6 +11,8 @@ Route::group(['middleware' => 'web'], function ($router) {
 
     $router->get('/appusers','AppUserController@show');
 
+    $router->get('settings/users',  'Settings\ProjectUserController@showCHV');
+
     // Terms Routes...
     $router->get('terms', 'TermsController@show');
 

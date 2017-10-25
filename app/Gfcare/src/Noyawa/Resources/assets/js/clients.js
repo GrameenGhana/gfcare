@@ -114,14 +114,16 @@ Vue.component('gfcare-noyawa-client-screen', {
             this.$http.get('/gfcare/noyawa/clients')
                 .success(function (clients) {
                     self.clients = clients;
+                    console.log(clients);
                     self.clients.sort(function(a,b) { 
-                        var x = a.type.toLowerCase();
-                        var y = b.type.toLowerCase();
+                        var x = a.lastname.toLowerCase();
+                        var y = b.lastname.toLowerCase();
                         return (x < y) ? -1 : ((x > y) ? 1 : 0);
                     });
                     self.$broadcast('noyawaClientsRetrieved', self.clients);
                 });
         },
+
     },
     
     filters: { 

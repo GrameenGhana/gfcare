@@ -17,6 +17,13 @@ class UserController extends Controller
         $users = NoyawaUser::all();
         return response()->json($users);
     }
+
+
+     public function showKijana(Request $request, $teamId=null)
+    {
+        $users = AppUser::where('app_data','kj')->get();
+        return response()->json($users);
+    }
     
     public function store(Request $request)
     {

@@ -132,9 +132,10 @@ Vue.component('gfcare-mm-content-dropdown', {
 				this.forms.updateForm.campaign = v[0]; 
 			}
         },
-
+ 
         'forms.updateForm.campaign': function(v) {
             this.programs = [];
+            console.log(v);
             if (v != null) { this.programs = v.programs; }
         },
 

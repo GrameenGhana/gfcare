@@ -6,7 +6,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'noyawa'], function ($ro
     $cpath = 'App\Gfcare\src\Noyawa\Controllers';    
     $router->get('/', $cpath.'\HomeController@show');
         
-    $router->get('clients', $cpath.'\ClientController@show');
+   // $router->get('clients', $cpath.'\ClientController@show');
+    $router->get('clients', $cpath.'\ClientController@showKijana');
     $router->put('clients/{id}', $cpath.'\ClientController@update');
     $router->post('clients',     $cpath.'\ClientController@store');
     $router->delete('clients/{id}', $cpath.'\ClientController@destroy');
