@@ -29,6 +29,13 @@ class UserController extends Controller
         $users = AppUser::where('app_data','kj')->get();
         return response()->json($users);
     }
+
+    public function communityUser(Request $request,$userId){
+         
+         $users = AppUser::where('uuid',$userId)->get();
+         echo $users;
+         return response()->json($users);
+    }
     
     public function store(Request $request)
     {

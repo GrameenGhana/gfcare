@@ -28,3 +28,4 @@ class Meeting extends Model
     }
 
 }
+

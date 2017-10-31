@@ -13,7 +13,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'mobihealth'], function 
     $router->get('community/users',$cpath.'\UserController@showTunza');
     $router->get('community/users/kj',$cpath.'\UserController@showKijana');
     $router->get('community/meetings',$cpath.'\MeetingController@show');
-
+    $router->post('community/meetings',$cpath.'\MeetingController@store');
 
     $router->get('system/referrals', $cpath.'\ReferralController@show');
     $router->put('system/referrals/{id}', $cpath.'\ReferralController@update');
@@ -30,5 +30,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'mobihealth'], function 
 });
 
 Route::group(['middleware' => ['api','jwt.auth'], 'prefix'=>'api/mobihealth'], function ($router) {
+       $cpath = 'App\Gfcare\src\MobiHealth\Controllers'; 
+        $router->post('community/meetings',$cpath.'\MeetingController@store');
+        $router->get('community/users/{id}',$cpath.'\UserController@communityUser');
 
 });
