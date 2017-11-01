@@ -988,13 +988,24 @@ Vue.component('gfcare-mobi-dashboard-screen', {
 
 Vue.component('gfcare-mobi-group-screen', {
     props: ['teamId'],
+
     ready: function ready() {},
 
     data: function data() {
-        return {};
+        return {
+            attendees: []
+        };
     },
 
-    events: {},
+    events: {
+
+        mmMeetingUpdated: function mmMeetingUpdated(c) {
+            console.log(c);
+            this.attendees = c;
+            return true;
+        }
+
+    },
 
     watch: {},
 
@@ -1070,11 +1081,11 @@ Vue.component('gfcare-mm-mobihealth-dropdown', {
         },
         'forms.loadOptions.chv': function formsLoadOptionsChv(v) {
             this.meetings = [];
-            console.log(v);
+            //console.log(v);
             if (v != null) {
                 this.meetings = v.meeting;
             }
-            console.log('meeting ' + this.meetings);
+            // console.log('meeting ' + this.meetings)
         },
 
         'meetings': function meetings(v) {
@@ -1091,10 +1102,10 @@ Vue.component('gfcare-mm-mobihealth-dropdown', {
 
         'forms.loadOptions.meeting': function formsLoadOptionsMeeting(v) {
             if (v != null) {
-                console.log(v);
+                // /console.log(v);
                 console.log(this.forms.loadOptions.meeting.attendance);
-                //var attendance = this.getContentByType(this.forms.updateForm.program.contents, v); 
-                //this.$broadcast('mmContentUpdated',contents);
+                var attendance = v.attendance;
+                this.$broadcast('mmMeetingUpdated', attendance);
             }
         }
 

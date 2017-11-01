@@ -11,33 +11,36 @@
 </div>
 <div class="row">
 <div class="panel panel-default">
-
-    <div class="panel-body">
-            <div class="panel-heading">
-             Meeting Attendees
+       <div class="col-md-12">
+                
+            <!-- Content -->
+            <div class="panel panel-default">
+                <div class="panel-heading">Meeting Attendance</div>
+                    
+        <div class="panel-body" v-if="attendees.length > 0">
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Person</th>
+                            <th>Contact</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="i in attendees">
+                            <td class="spark-table-pad">@{{ i.firstname }} @{{ i.lastname }}</td>
+                            <td class="spark-table-pad">@{{ i.phonenumber }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <table class="table table-responsive">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Contact Number</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="spark-table-pad"> Kofi Atta </td>
-                        <td class="spark-table-pad"> 233246005828</td>
-                        
-                    <tr>
-                        <td class="spark-table-pad"> Ama Atta Aidoo </td>
-                        <td class="spark-table-pad"> 233277407679</td>
-                    </tr>
-                    <tr>
-                        <td class="spark-table-pad"> Kwaku Manu</td>
-                        <td class="spark-table-pad"> 233200204578</td>
-                    </tr>
-                </tbody>
-            </table>
+    
+            <div v-else class="panel-body">
+                No content found.
+            </div>
+
+            </div>
+
         </div>
 
   </div>

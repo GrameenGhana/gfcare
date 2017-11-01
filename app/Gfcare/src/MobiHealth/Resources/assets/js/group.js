@@ -1,5 +1,7 @@
 Vue.component('gfcare-mobi-group-screen', {
      props: ['teamId'],
+
+
     ready: function() {
      
 
@@ -7,11 +9,17 @@ Vue.component('gfcare-mobi-group-screen', {
 
     data: function() {
         return {
-             
+             attendees:[],
         };
     },
     
     events: {
+
+      mmMeetingUpdated: function(c) {
+      console.log(c);
+      this.attendees = c;
+      return true;
+    }
 
     },
 
@@ -99,9 +107,9 @@ Vue.component('gfcare-mm-mobihealth-dropdown', {
         },
          'forms.loadOptions.chv': function(v) {
             this.meetings = [];
-            console.log(v);
+            //console.log(v);
             if (v != null) { this.meetings = v.meeting; }
-            console.log('meeting ' + this.meetings)
+           // console.log('meeting ' + this.meetings)
 
         },
 
@@ -118,10 +126,10 @@ Vue.component('gfcare-mm-mobihealth-dropdown', {
       
        'forms.loadOptions.meeting': function(v) {
             if (v != null) {
-        console.log(v);
+        // /console.log(v);
         console.log(this.forms.loadOptions.meeting.attendance);
-                //var attendance = this.getContentByType(this.forms.updateForm.program.contents, v); 
-                //this.$broadcast('mmContentUpdated',contents);
+                var attendance = v.attendance;
+                this.$broadcast('mmMeetingUpdated',attendance);
             }
         },
 

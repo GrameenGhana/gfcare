@@ -33,7 +33,7 @@ class UserController extends Controller
     public function communityUser(Request $request,$userId){
          
          $users = AppUser::where('uuid',$userId)->where('app_data',$request->app_data)->get();
-         echo $users;
+         //echo $users;
          return response()->json($users);
     }
 
