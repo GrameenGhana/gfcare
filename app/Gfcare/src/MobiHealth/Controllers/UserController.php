@@ -33,6 +33,7 @@ class UserController extends Controller
 
     public function communityUser(Request $request,$userId){
          
+          Log::info("Response -> " . $userId. " ".$request->app_data);
          $users = AppUser::where('uuid',$userId)->where('app_data',$request->app_data)->get();
         Log::info("Response -> " . $users);
          if($users==null)
