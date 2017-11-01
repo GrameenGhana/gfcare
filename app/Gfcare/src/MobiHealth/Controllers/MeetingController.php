@@ -18,7 +18,7 @@ class MeetingController extends Controller
         return response()->json($meetings);
     }
 
-
+    
 
 
     public function store(Request $request)
@@ -35,6 +35,8 @@ class MeetingController extends Controller
          $meeting->topic = $request->topic;
          $meeting->team_id = $user->current_team_id;
          $meeting->organised_by = $appuser->name;
+         $meeting->start_time = $request->start_time;
+         $meeting->end_time = $request->end_time;
 
          $meeting->save();
          return response()->json($meeting);

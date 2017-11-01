@@ -32,10 +32,12 @@ class UserController extends Controller
 
     public function communityUser(Request $request,$userId){
          
-         $users = AppUser::where('uuid',$userId)->get();
+         $users = AppUser::where('uuid',$userId)->where('app_data',$request->app_data)->get();
          echo $users;
          return response()->json($users);
     }
+
+
     
     public function store(Request $request)
     {
@@ -66,7 +68,8 @@ class UserController extends Controller
         return $u; 
     }
 
-    
+     
+
     public function destroy(Request $request, $userId)
     {
         $user = $request->user();
