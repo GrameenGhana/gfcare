@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\AppUser;
 use App\GfCare\src\MobiHealth\Models\MobiUser;
+use Illuminate\Support\Facades\Log;
 
 
 class UserController extends Controller
@@ -33,7 +34,12 @@ class UserController extends Controller
     public function communityUser(Request $request,$userId){
          
          $users = AppUser::where('uuid',$userId)->where('app_data',$request->app_data)->get();
-         //echo $users;
+        Log::info("Response -> " . $users);
+         if($users==null)
+         {
+              return response()->json(['error' => 'No user available'], 401);
+         }
+         else
          return response()->json($users);
     }
 
