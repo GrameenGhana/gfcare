@@ -6,19 +6,27 @@ use Illuminate\Http\Request;
 use App\GfCare\src\MobiHealth\Models\Meeting;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use Illuminate\Support\Facades\Log;
 
 
 class MeetingController extends Controller
 {
     //
 
-  public function show(Request $request)
+    public function show(Request $request)
     {
         $meetings = Meeting::all();
         return response()->json($meetings);
     }
 
-    
+     
+    public function meeting(Request $request,$userId)
+    {
+
+    	$meetings = Meeting::where('meeting_by',$userId)->get();
+    	 //Log::info($meetings);
+    	return response()->json($meetings);
+    }
 
 
     public function store(Request $request)

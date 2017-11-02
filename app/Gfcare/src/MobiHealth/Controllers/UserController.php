@@ -33,9 +33,8 @@ class UserController extends Controller
 
     public function communityUser(Request $request,$userId,$app){
          
-          Log::info("Response -> " . $userId. " ".$app);
+         
          $users = AppUser::where('uuid',$userId)->where('app_data',$app)->get();
-        Log::info("Response -> " . $users);
          if($users==null)
          {
               return response()->json(['error' => 'No user available'], 401);

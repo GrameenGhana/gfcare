@@ -9,5 +9,10 @@ class AppUser extends Model
     //
     protected $table = 'app_users';
 
+    protected $guarded = [];
+
+    protected $hidden = [];
+
+
      
 }

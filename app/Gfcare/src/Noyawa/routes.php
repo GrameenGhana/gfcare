@@ -19,5 +19,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'noyawa'], function ($ro
 });
 
 Route::group(['middleware' => ['api','jwt.auth'], 'prefix'=>'api/noyawa'], function ($router) {
-    $cpath = 'App\Gfcare\src\Noyawa\Controllers';    
+    $cpath = 'App\Gfcare\src\Noyawa\Controllers';  
+
+      
 });

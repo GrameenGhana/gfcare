@@ -1102,10 +1102,13 @@ Vue.component('gfcare-mm-mobihealth-dropdown', {
 
         'forms.loadOptions.meeting': function formsLoadOptionsMeeting(v) {
             if (v != null) {
-                // /console.log(v);
-                console.log(this.forms.loadOptions.meeting.attendance);
+                console.log(v);
                 var attendance = v.attendance;
-                this.$broadcast('mmMeetingUpdated', attendance);
+                console.log(attendance[0].person);
+
+                //var attendance = v.attendance.person;
+                // console.log( attendance);
+                // this.$broadcast('mmMeetingUpdated',attendance);
             }
         }
 

@@ -108,7 +108,7 @@ Vue.component('gfcare-mm-mobihealth-dropdown', {
          'forms.loadOptions.chv': function(v) {
             this.meetings = [];
             //console.log(v);
-            if (v != null) { this.meetings = v.meeting; }
+            if (v != null) { this.meetings = v.meeting;}
            // console.log('meeting ' + this.meetings)
 
         },
@@ -126,11 +126,17 @@ Vue.component('gfcare-mm-mobihealth-dropdown', {
       
        'forms.loadOptions.meeting': function(v) {
             if (v != null) {
-        // /console.log(v);
-        console.log(this.forms.loadOptions.meeting.attendance);
-                var attendance = v.attendance;
-                this.$broadcast('mmMeetingUpdated',attendance);
-            }
+              var person = [];
+             //console.log(v);
+             var attendance = v.attendance;
+             console.log(attendance.length);
+             var alength = attendance.length;
+          
+          //for(i=0;i<)
+                //var attendance = v.attendance.person;
+                // console.log( attendance);
+               // this.$broadcast('mmMeetingUpdated',attendance);
+           // }
         },
 
 
