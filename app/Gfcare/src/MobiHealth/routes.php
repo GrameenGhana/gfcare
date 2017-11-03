@@ -32,7 +32,9 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'mobihealth'], function 
 Route::group(['middleware' => ['api','jwt.auth'], 'prefix'=>'api/mobihealth'], function ($router) {
        $cpath = 'App\Gfcare\src\MobiHealth\Controllers'; 
         $router->post('community/meetings',$cpath.'\MeetingController@store');
+        $router->post('community/meetings/attendance',$cpath.'\MeetingController@attendance');
         $router->get('community/meetings/{id}',$cpath.'\MeetingController@meeting');
         $router->get('community/users/{id}/{app}',$cpath.'\UserController@communityUser');
+
 
 });

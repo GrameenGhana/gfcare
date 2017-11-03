@@ -19,7 +19,7 @@ class Attendance extends Model
 
    public function person()
    {
-         return $this->hasMany('\App\AppUser','id');
+         return $this->hasOne('\App\AppUser','id');
    }
     
 }

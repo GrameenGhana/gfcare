@@ -989,7 +989,20 @@ Vue.component('gfcare-mobi-dashboard-screen', {
 Vue.component('gfcare-mobi-group-screen', {
     props: ['teamId'],
 
-    ready: function ready() {},
+    ready: function ready() {
+        // this.$on('mmMeetingUpdated', function (msg) {
+        //  console.log(msg)
+        //  });
+
+    },
+
+    /*
+      created(){
+      this.$on('mmMeetingUpdated', function (msg) {
+           console.log(msg)
+           });
+      }, 
+      */
 
     data: function data() {
         return {
@@ -1102,13 +1115,20 @@ Vue.component('gfcare-mm-mobihealth-dropdown', {
 
         'forms.loadOptions.meeting': function formsLoadOptionsMeeting(v) {
             if (v != null) {
-                console.log(v);
+                var person = [];
+                //console.log(v);
                 var attendance = v.attendance;
-                console.log(attendance[0].person);
 
+                var alen = attendance.length;
+                //  console.log(alen);
+
+                for (var i = 0; i < alen; i++) {
+                    person.push(attendance[i].person);
+                }
                 //var attendance = v.attendance.person;
                 // console.log( attendance);
-                // this.$broadcast('mmMeetingUpdated',attendance);
+                //console.log(person);
+                this.$dispatch('mmMeetingUpdated', person);
             }
         }
 
@@ -1119,7 +1139,7 @@ Vue.component('gfcare-mm-mobihealth-dropdown', {
         usersRetrieved: function usersRetrieved(users) {
             this.users = users;
             // this.users = moduleUsers();
-            console.log(users);
+            // console.log(users);
             return true;
         }
     },

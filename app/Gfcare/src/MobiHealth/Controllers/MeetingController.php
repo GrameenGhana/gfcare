@@ -4,6 +4,7 @@ namespace App\Gfcare\src\MobiHealth\Controllers;
 
 use Illuminate\Http\Request;
 use App\GfCare\src\MobiHealth\Models\Meeting;
+use App\GfCare\src\MobiHealth\Models\Attendance;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Log;
@@ -48,6 +49,35 @@ class MeetingController extends Controller
 
          $meeting->save();
          return response()->json($meeting);
+
+    }
+
+
+    public function attendance(Request $request)
+    {
+          $data=$request->json()->all();
+           $user = $request->user();
+          Log::info($request->json()->all());
+
+           $meeting = $data['meeting'];
+           $attendance = $data['attendance'];
+          
+          
+           
+           foreach($attendance as $attend){
+              
+             Log::info($attend['id']);
+             $att  = new Attendance(); 
+              
+             $att->team_id = $user->current_team_id;
+             $att->meeting_id = $meeting;
+             $att->person_id = $attend['id'];
+
+             $att->save();
+
+           }
+
+          return response()->json('ok');
 
     }
 
