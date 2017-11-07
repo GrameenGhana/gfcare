@@ -33,8 +33,8 @@ class MeetingController extends Controller
     public function store(Request $request)
     {
     	 $user = $request->user();
-         
-
+         Log::info($request->meeting_by);
+        
          $meeting = new Meeting();
          $appuser = \App\User::where('id',$request->meeting_by)->first();
            Log::info($request->name);
