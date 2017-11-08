@@ -2256,7 +2256,7 @@ Vue.component('gfcare-mm-content-dropdown', {
                 console.log(v);
                 console.log(this.forms.updateForm.program.contents);
                 var contents = this.getContentByType(this.forms.updateForm.program.contents, v);
-                this.$broadcast('mmContentUpdated', contents);
+                this.$dispatch('mmContentUpdated', contents);
             }
         }
     },

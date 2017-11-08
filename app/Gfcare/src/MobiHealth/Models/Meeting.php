@@ -20,6 +20,7 @@ class Meeting extends Model
     public function attendance()
     {
        return $this->hasMany('\App\Gfcare\src\MobiHealth\Models\Attendance');
+       // return $this->hasOne('\App\Gfcare\src\MobiHealth\Models\Attendance');
     }
 
     public function user()

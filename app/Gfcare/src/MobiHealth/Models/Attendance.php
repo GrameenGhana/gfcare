@@ -16,10 +16,12 @@ class Attendance extends Model
     protected $hidden = [];
 
     protected $with = ['person'];
-
+  
    public function person()
    {
-         return $this->hasOne('\App\AppUser','id');
+       
+
+      return $this->belongsTo('\App\AppUser','person_id');
    }
     
 }
