@@ -37,13 +37,7 @@ class MeetingController extends Controller
         
          $meeting = new Meeting();
          $appuser = \App\User::where('id',$request->meeting_by)->first();
-           Log::info($request->name);
-            Log::info($appuser->name);
-
-             Log::info($user->current_team_id);
-              Log::info($request->start_time);
-               Log::info($request->end_time);
-                Log::info($request->meeting_by);
+           
          
          $meeting->name = $request->name;
          $meeting->team_id = $user->current_team_id;

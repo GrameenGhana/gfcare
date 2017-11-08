@@ -1006,7 +1006,9 @@ Vue.component('gfcare-mobi-group-screen', {
 
     data: function data() {
         return {
-            attendees: []
+            attendees: [],
+            persons: []
+
         };
     },
 
@@ -1439,8 +1441,8 @@ Vue.component('gfcare-mobi-system-referral-screen', {
             this.$http.get('/gfcare/mobihealth/system/referrals').success(function (referrals) {
                 self.referrals = referrals;
                 self.referrals.sort(function (a, b) {
-                    var x = a.mhv.toLowerCase();
-                    var y = b.mhv.toLowerCase();
+                    var x = a.volunteer_name.toLowerCase();
+                    var y = b.volunteer_name.toLowerCase();
                     return x < y ? -1 : x > y ? 1 : 0;
                 });
                 self.$broadcast('mobihealthReferralsRetrieved', self.referrals);
