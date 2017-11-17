@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Command;
 use App\Console\AfricasTalkingGateway;
+use App\GfCare\src\MobileMidwife\Models\Subscription;
+
 //require_once('App\Console\AfricasTalkingGateway.php');
 
 class GfcareCron extends Command
@@ -50,30 +52,38 @@ class GfcareCron extends Command
 
     $message = "hello hello testing mic";
 
+    $subscription = Subscription::where('status','Pending')->get();
 
+  
+     Log::info("Response -> " .$subscription);
 
+   // $Numbers
 // Create a new instance of our awesome gateway class
     $gateway = new AfricasTalkingGateway($username, $apikey);
           
           Log::info("Response -> ");
           $this->info('Demo:Cron Cummand Run successfully!');
 
+
+
+/*
           try {
        // Thats it, hit send and we'll take care of the rest. 
-      $results = $gateway->sendMessage('+233246005828', $message);
+     $results = $gateway->sendMessage('+233246005828', $message);
       // $results = $gateway->sendMessage('+254720988213', $message);
      //$results = $gateway->sendMessage('+254799847633', $message);
        foreach ($results as $result) {
            // status is either "Success" or "error message"
-           echo " Number: " . $result->number;
-           echo " Status: " . $result->status;
-           echo " MessageId: " . $result->messageId;
-           echo " Cost: " . $result->cost . "\n </br>";
+           Log::info( " Number: " . $result->number);
+           Log::info( " Status: " . $result->status);
+           Log::info( " MessageId: " . $result->messageId);
+           Log::info(" Cost: " . $result->cost . "\n </br>");
        }
+
    } catch (AfricasTalkingGatewayException $e) {
        echo "Encountered an error while sending: " . $e->getMessage();
    }
-
+*/
 
         // echo "Hi I dey here";
     }
