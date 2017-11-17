@@ -31,11 +31,11 @@ class ContentController extends Controller
 
 
           $content->team_id = $user->current_team_id;
-          $content->program_id = $request->program_id;
+          $content->program_id = $request->program;
           $content->content_type =$request->content_type;
           $content->week = $request->week;
           $content->name = $request->name;
-          $content->sms_message = $request->message;
+          $content->sms_message = $request->sms_message;
           $content->modified_by =$user->id;
 
 

@@ -9,16 +9,12 @@ use App\AppUser;
 use App\ModMmSubscriber;
 use App\GfCare\src\MobileMidwife\Models\Subscriber;
 use App\GfCare\src\MobileMidwife\Models\Subscription;
+use Illuminate\Support\Facades\Log;
 
 class AppUserController extends Controller
 {
     //
         
-     
-       
-
-
-
        /**
      * Display a listing of the resource.
      *
@@ -71,9 +67,10 @@ class AppUserController extends Controller
          $appuser->user_gen_id = "NA";
          $appuser->client_type = $request->client_type;
          $appuser->insured = $request->insured;
-         $appuser->program = $request->program;
+         $appuser->program = $request->program_id;
          $appuser->national_id = $request->national_id;
          $appuser->uuid = $request->uuid;
+         $appuser->start_week = $request->start_week;
          $appuser->mother_smartphone = $request->mother_smartphone;
          $appuser->mother_occupation = $request->mother_occupation;
          $appuser->father_name = $request->father_name;
@@ -89,9 +86,12 @@ class AppUserController extends Controller
          $appuser->gender_of_child = $request->gender_of_child;
          $appuser->booklet_present = $request->booklet_present;
 
+         $appuser->save();
+
          if($afya=="yes")
          {
-            if(!$this->storeMobileMidwifeClient($mmclient,$request,$name))
+             Log::info('----------------- ' .$appuser);
+            if(!$this->storeMobileMidwifeClient($appuser,$request,$name))
                  Log::info('mobile midwife client created');
           
          }
@@ -100,7 +100,7 @@ class AppUserController extends Controller
        
 
 
-         $appuser -> save();
+        
          return response()->json('Ok');
        }
        else if($appdata=="kj")
@@ -114,11 +114,12 @@ class AppUserController extends Controller
          $appuser->user_gen_id = "NA";
          $appuser->client_type = $request->client_type;
         // $appuser->insured = $request->insured;
-         $appuser->program = $request->program;
+         $appuser->program = $request->program_id;
          $appuser->national_id = $request->national_id;
          $appuser->language =  $request->language;
          $appuser->location =  $request->location;
          $appuser->uuid = $request->uuid;
+         $appuser->start_week = $request->start_week;
          $appuser->mother_smartphone = $request->mother_smartphone;
          $appuser->mother_occupation = $request->mother_occupation;
          $appuser->father_name = $request->father_name;
@@ -133,17 +134,15 @@ class AppUserController extends Controller
          $appuser->date_of_birth = $request->date_of_birth;
          $appuser->gender_of_child = $request->gender_of_child;
          $appuser->booklet_present = $request->booklet_present;
-
+         $appuser->save();
 
           if($afya=="yes")
          {
-         	    if(!$this->storeMobileMidwifeClient($mmclient,$request,$name))
+         	    if(!$this->storeMobileMidwifeClient($appuser,$request,$name))
                  Log::info('mobile midwife client created');
          }
          
-        
-
-         $appuser -> save();
+    
          return response()->json('Ok');
        }
 
@@ -162,6 +161,7 @@ class AppUserController extends Controller
         // $appuser->insured = $request->insured;
          $appuser->national_id = $request->national_id;
          $appuser->uuid = $request->uuid;
+         $appuser->start_week = $request->start_week;
          $appuser->mother_smartphone = $request->mother_smartphone;
          $appuser->mother_occupation = $request->mother_occupation;
          $appuser->father_name = $request->father_name;
@@ -176,17 +176,18 @@ class AppUserController extends Controller
          $appuser->date_of_birth = $request->date_of_birth;
          $appuser->gender_of_child = $request->gender_of_child;
          $appuser->booklet_present = $request->booklet_present;
-
+         $appuser->save();
        
         if($afya=="yes")
          {
-             if(!$this->storeMobileMidwifeClient($mmclient,$request,$name))
+
+             if(!$this->storeMobileMidwifeClient($appuser,$request,$name))
                  Log::info('mobile midwife client created');
          }
          
         
-         $appuser -> save();
-         return response()->json('Ok');
+        
+         return response()->json(ok);
 
        	}
        	else
@@ -199,12 +200,13 @@ class AppUserController extends Controller
 
 
 
-    public function storeMobileMidwifeClient(Subscriber $mmclient,Request $request,$name)
+    public function storeMobileMidwifeClient(AppUser $mmclient,Request $request,$name)
     {
        // $mmclient= Subscriber::whereRaw('name=? and program_id=? and channel=?',array($name,$request->program_id,$request->afya_channel))->first();
 
           // if(!$mmclient)
            //{
+        /*
             $mmclient->start_week = $request->start_week;
             $mmclient->channel = $request->afya_channel;
             $mmclient->team_id = 3;
@@ -214,18 +216,24 @@ class AppUserController extends Controller
             $mmclient->phone =  $request->phonenumber;
             $mmclient->dob = $request->dob;
             $mmclient->gender = $request->gender;
-            $mmclient->language = $request->language;
+             $mmclient->language = $request->language;
             $mmclient->registered_by = $request->uuid;
             $mmclient->modified_by = $request->uuid;
             $mmclient->education = (isset($request->education)) ? $request->education : '';
             $mmclient->location = (isset($request->location)) ? $request->location : '';
             $mmclient->client_type = (isset($request->client_type)) ? $request->client_type : '';
             $mmclient->save();
+        
 
+
+
+        ****/
               // Sign up for program
              Subscription::subscribe($mmclient);
 
              return $mmclient;
     //}
    }
+
+
 }

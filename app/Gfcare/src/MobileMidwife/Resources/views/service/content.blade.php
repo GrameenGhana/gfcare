@@ -49,5 +49,5 @@
 
         </div>
     </div>
-
+ @include('MobileMidwife::service.add-content')
 </gfcare-mm-service-content-screen>

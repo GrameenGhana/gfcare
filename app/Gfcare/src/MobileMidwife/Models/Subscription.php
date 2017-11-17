@@ -4,6 +4,7 @@ namespace App\Gfcare\src\MobileMidwife\Models;
 
 use App\Scopes\TeamScopeTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 use App\GfCare\src\MobileMidwife\Models\Program;
 
@@ -17,7 +18,8 @@ class Subscription extends Model
 
     public function subscriber()
     {
-        return $this->belongsTo('\App\Gfcare\src\MobileMidwife\Models\Subscriber');
+        //return $this->belongsTo('\App\Gfcare\src\MobileMidwife\Models\Subscriber');
+         return $this->belongsTo('\App\AppUser');
     }
 
     public function program()
@@ -53,25 +55,29 @@ class Subscription extends Model
     
     public static function subscribe($client)
     {
-        $p = Program::find($client->program_id);
-        if ($p) {
-            $channel = Program::validateChannel($client->channel);
+          
+          Log::info('find program ' .$client);
+         $p = Program::find($client->program);
+
+         
+        //if ($p) {
+          //  $channel = Program::validateChannel($client->channel);
             
-            if ($channel=='both') {
-                Subscription::add($client, $program, 'sms');  
-                Subscription::add($client, $program, 'voice');   
-            } else {
-                Subscription::add($client, $program, $channel);   
-            }
-        }
+            //if ($channel=='both') {
+               // Subscription::add($client, $program, 'sms');  
+           //     Subscription::add($client, $program, 'voice');   
+          //  } else {
+                Subscription::add($client, $p,'sms');   
+           // }
+       // }
     }
                                 
-    public static function add($client, $p, $channel)
+    public static function add($client, $p,$channel)
     {               
         $i = new Subscription();
         $i->team_id = $client->id;
-        $i->module_id = $client->module_id;
-        $i->program_id = $client->program_id;
+        $i->module_id = 1;
+        $i->program_id = $client->program;
         $i->client_id = $client->id;
         $i->channel = $channel;
         $i->start_week = $client->start_week;
@@ -79,8 +85,8 @@ class Subscription extends Model
         $i->start_date = date('Y-m-d', strtotime(date('Y-m-d').' +1 week')); 
         $i->end_date = date('Y-m-d', strtotime($i->start_date.' +'.$p->end_week.' week'));
         $i->status = 'Pending';
-        $i->registered_by = $client->registered_by;
-        $i->modified_by = $client->modified_by;
+        $i->registered_by = $client->uuid;
+        $i->modified_by = $client->uuid;
         $i->save();     
     }
 }

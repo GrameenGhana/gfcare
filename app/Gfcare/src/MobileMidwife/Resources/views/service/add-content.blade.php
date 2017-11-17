@@ -23,6 +23,13 @@
                             :input.sync="forms.addContent.week">
                         </spark-text>
 
+                        <spark-select :display="'Program'"
+                                                   :form="forms.addContent"
+                                                   :name="'program'"
+                                                   :items="programOptions"
+                                                   :input.sync="forms.addContent.program">
+                        </spark-select>  
+
                          <spark-select :display="'Content type'"
                                                    :form="forms.addContent"
                                                    :name="'content_type'"
@@ -41,7 +48,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 
-                    <button type="button" class="btn btn-primary" 
+                    <button type="button" class="btn btn-primary" @click.prevent="addNewContent"
                             :disabled="forms.addContent.busy">
                         <span v-if="forms.addContent.busy">
                             <i class="fa fa-btn fa-spinner fa-spin"></i> Adding

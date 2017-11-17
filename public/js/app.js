@@ -2084,18 +2084,22 @@ Vue.component('gfcare-mm-service-content-screen', {
 
     ready: function ready() {
         this.getContent();
+        this.getPrograms();
     },
 
     data: function data() {
         return {
             content: [],
+            programs: [],
             contentOptions: [{ 'text': 'sms', 'value': 'sms' }, { 'text': 'voice', 'value': 'voice' }],
+            programOptions: [],
 
             forms: {
 
                 addContent: new SparkForm({
                     name: '',
                     week: '',
+                    program: '',
                     content_type: '',
                     sms_message: ''
                 }),
@@ -2104,6 +2108,7 @@ Vue.component('gfcare-mm-service-content-screen', {
 
                     name: '',
                     week: '',
+                    program: '',
                     content_type: '',
                     sms_message: ''
 
@@ -2129,17 +2134,45 @@ Vue.component('gfcare-mm-service-content-screen', {
         getContent: function getContent() {
             var self = this;
             this.$http.get('/gfcare/mobile-midwife/content').success(function (res) {
+
                 if (res.length > 0) {
                     self.content = res;
+                    console.log(self.content);
                 }
             });
         },
+
+        getPrograms: function getPrograms() {
+            var self = this;
+            this.$http.get('/gfcare/mobile-midwife/programs').success(function (res) {
+                if (res.length > 0) {
+                    self.programs = res;
+                    this.programOptions = [];
+                    for (var i = 0; i < this.programs.length; ++i) {
+                        this.programOptions.push({ 'text': this.programs[i].name,
+                            'value': this.programs[i].id });
+                    }
+                }
+            });
+        },
+
         addContent: function addContent() {
             this.forms.addContent.name = '';
             this.forms.addContent.week = '';
+            this.forms.addContent.program = '';
             this.forms.addContent.content_type = '';
             this.forms.addContent.sms_message = '';
             $('#modal-add-content').modal('show');
+        },
+
+        //Ajax calls
+
+        addNewContent: function addNewContent() {
+            var self = this;
+            Spark.post('/gfcare/mobile-midwife/content', this.forms.addContent).then(function () {
+                $('#modal-add-content').modal('hide');
+                self.$dispatch('updateContents');
+            });
         }
 
     },
@@ -2217,9 +2250,10 @@ Vue.component('gfcare-mm-content-dropdown', {
 
         'forms.updateForm.campaign': function formsUpdateFormCampaign(v) {
             this.programs = [];
-            console.log(v);
+
             if (v != null) {
                 this.programs = v.programs;
+                console.log(this.programs);
             }
         },
 
@@ -2254,8 +2288,10 @@ Vue.component('gfcare-mm-content-dropdown', {
         'forms.updateForm.channel': function formsUpdateFormChannel(v) {
             if (v != null) {
                 console.log(v);
-                console.log(this.forms.updateForm.program.contents);
-                var contents = this.getContentByType(this.forms.updateForm.program.contents, v);
+                console.log(this.forms.updateForm.program);
+                // var contents =  this.forms.updateForm.program.contents
+                // if(null!=contents)
+                var contents = this.getContentByType(this.forms.updateForm.program.content, v);
                 this.$dispatch('mmContentUpdated', contents);
             }
         }

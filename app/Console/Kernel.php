@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         // Commands\Inspire::class,
-        Commands\GfcareCron::class
+        Commands\GfcareCron::class,
     ];
 
     /**
@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
 
-          $schedule->command('gfcare:cron')
-                   ->everyMinute();
+          $schedule->command('gfcare:cron')->everyFiveMinutes();
+                  // ->hourly();
     }
 }
