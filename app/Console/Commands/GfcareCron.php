@@ -69,7 +69,7 @@ class GfcareCron extends Command
           $this->info('Demo:Cron Cummand Run successfully!');
 
       
-
+/*
 
   try {
 
@@ -86,6 +86,7 @@ class GfcareCron extends Command
            Log::info( " Cost: " . $result->cost . "\n </br>");
        }
     }
+    */
 
     /*
      $results = $gateway->sendMessage('+233246005828', $message);
