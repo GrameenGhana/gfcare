@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
 
-          $schedule->command('gfcare:cron')->daily();
+          $schedule->command('gfcare:cron')->weekly();
                   // ->hourly();
     }
 }

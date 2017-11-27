@@ -37,6 +37,17 @@ class Subscription extends Model
         $this->status = $status;
         $this->save();
     }
+
+    public function increaseWeek($week)
+    {
+        Log::info('week ' .$week);
+        $this->current_week = (int)$week + 1;
+
+
+        Log::info('current week ' .$this->current_week);
+        $this->save();
+
+    }
     
     public function activate()  { $this->setStatus('Active'); }
 
