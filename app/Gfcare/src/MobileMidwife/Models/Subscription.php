@@ -38,14 +38,16 @@ class Subscription extends Model
         $this->save();
     }
 
-    public function increaseWeek($week)
+    public static function increaseWeek($week)
     {
         Log::info('week ' .$week);
-        $this->current_week = (int)$week + 1;
+      //  $this->current_week = (int)$week + 1;
+ 
+         $current_week = (int)$week + 1;
 
-
-        Log::info('current week ' .$this->current_week);
-        $this->save();
+        Log::info('current week ' .$current_week);
+        //$this->save();
+        return $current_week;
 
     }
     
@@ -68,7 +70,7 @@ class Subscription extends Model
     {
           
           Log::info('find program ' .$client);
-         $p = Program::find($client->program);
+          $p = Program::find($client->program);
 
          
         //if ($p) {
@@ -81,6 +83,25 @@ class Subscription extends Model
                 Subscription::add($client, $p,'sms');   
            // }
        // }
+    }
+
+    public static function addNew($client,$week)
+    {
+        $p = Program::find($client->program);
+        $i = new Subscription();
+        $i->team_id = $client->id;
+        $i->module_id = 1;
+        $i->program_id = $client->program;
+        $i->client_id = $client->id;
+        $i->channel = "sms";
+        $i->start_week = $client->start_week;
+        $i->current_week = $week;
+        $i->start_date = date('Y-m-d', strtotime(date('Y-m-d').' +1 week')); 
+        $i->end_date = date('Y-m-d', strtotime($i->start_date.' +'.$p->end_week.' week'));
+        $i->status = 'Pending';
+        $i->registered_by = $client->uuid;
+        $i->modified_by = $client->uuid;
+        $i->save();     
     }
                                 
     public static function add($client, $p,$channel)

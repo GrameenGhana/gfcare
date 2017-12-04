@@ -109,11 +109,19 @@ class GfcareCron extends Command
            Log::info( " MessageId: " . $result->messageId);
            Log::info( " Cost: " . $result->cost . "\n </br>");
 
-           if( $result->status=="Success")
+           if( $result->status =="Success")
            {
 
              $sub->complete();   
-             $sub->increaseWeek($sub->current_week);
+             
+            
+
+            // $sub->increaseWeek($sub->current_week);
+
+             Subscription::addNew($appuser,Subscription::increaseWeek($sub->current_week));
+             
+
+
            }
           } 
 //
