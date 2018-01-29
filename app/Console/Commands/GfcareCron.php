@@ -49,7 +49,8 @@ class GfcareCron extends Command
         //
     $username = "sammuchiri";
     $apikey = "173533f403c5c79928d95530c3514335f66297c4b31c617d47912d1344ad4523";
-
+    // Specify your AfricasTalking shortCode or sender id
+   $from = "Anzilisha";
 
     $message = "Hi,this message is a test for scheduled messages on digiafya.It should be recieved daily, regards Suzzane & Sam :)";
 
@@ -100,7 +101,7 @@ class GfcareCron extends Command
              Log::info("Message  " . $con->sms_message);
 
               // Thats it, hit send and we'll take care of the rest. 
-         $results = $gateway->sendMessage($appuser->phonenumber, $con->sms_message);
+         $results = $gateway->sendMessage($appuser->phonenumber, $con->sms_message,$from);
       
         foreach ($results as $result) {
             //status is either "Success" or "error message"
@@ -174,6 +175,8 @@ class GfcareCron extends Command
 
    } catch (AfricasTalkingGatewayException $e) {
        echo "Encountered an error while sending: " . $e->getMessage();
+
+         Log::info( "Encountered an error while sending: " . $e->getMessage());
    }
 
         // echo "Hi I dey here";

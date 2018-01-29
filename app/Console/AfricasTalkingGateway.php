@@ -17,6 +17,8 @@
 */
   namespace App\Console;
 
+  use  App\Console\AfricasTalkingGatewayException;
+  
 //class AfricasTalkingGatewayException extends Exception  {}
 
 class AfricasTalkingGateway
@@ -96,7 +98,7 @@ class AfricasTalkingGateway
     if ( $this->_responseInfo['http_code'] == self::HTTP_CODE_CREATED ) {
       $responseObject = json_decode($this->_responseBody);
       if(count($responseObject->SMSMessageData->Recipients) > 0)
-	return $responseObject->SMSMessageData->Recipients;
+	    return $responseObject->SMSMessageData->Recipients;
 	  
       throw new AfricasTalkingGatewayException($responseObject->SMSMessageData->Message);
     }
