@@ -305,6 +305,33 @@ class AppServiceProvider extends ServiceProvider
         // Location types in heirarichal order
         Spark::locationTypes([
             'Country',
+            'County',
+            'Sub-County',
+            //'Sub-District',
+            //'Type'
+        ]);
+
+        Spark::facilityTypes([
+            'CHPS',
+            'District Health Directorate',
+            'District Hospital',
+            'Health Center',
+            'National Health Directorate',
+            'Personal',
+            'Polyclinic',
+            'Regional Health Directorate',
+            //'Type'
+        ]);
+
+        Spark::facilityGroupTypes([ 'CHPS Zone']);
+    }
+
+
+    protected function customizeLocation1Types()
+    {
+        // Location types in heirarichal order
+        Spark::locationTypes([
+            'Country',
             'Region',
             'District',
             'Sub-District',
