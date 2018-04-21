@@ -9,17 +9,7 @@ Vue.component('gfcare-mobi-app-user-screen', {
   	return { 
        
        communityusers : [],
-       volunteers : [],
-       meetings : [],
       
-       form : {
-           
-                loadOptions: new SparkForm ({
-                    chv: null,
-                    meeting: null,
-                   
-                }),
-       }
 
   	};
 

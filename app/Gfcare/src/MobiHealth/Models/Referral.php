@@ -44,6 +44,15 @@ class Referral extends Model
 		return $u->name;
     }
 
+    public function getSupervisorNumber()
+    {
+        $u =  DB::table('users')
+                ->select(DB::raw('name'))
+                ->where('id',$this->supervisor)
+                ->first(); 
+        return $u->phone_number;
+    }
+
     public function volunteer()
     {
         return $this->belongsTo('\App\Gfcare\src\MobiHealth\Models\MobiUser','mhv');

@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Spark;
-
+use App\User;
 use Tymon\JWTAuth\JWTAuth;
-
+use Illuminate\Support\Facades\Log;
+use App\GfCare\src\MobiHealth\Models\Referral;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
@@ -38,6 +40,8 @@ class LoginController extends Controller
 
         $credentials = $request->only('email', 'password');
         $token = null;
+    
+
 
         try {
             $token = $this->jwtauth->attempt($credentials);
@@ -51,9 +55,22 @@ class LoginController extends Controller
 
             $user->projects = $this->getProjects($user, $module); 
 
-            if ($user->projects==null) {
+            $referral = Referral::where('mhv',$user->id)->first();
+          
+
+       if($referral)
+       {
+    
+         $supervisor = User::find($referral->supervisor);
+        
+        return response()->json(['token'=>$token, 'user'=>$user,'supervisor'=> $supervisor]);
+              
+       }
+
+           if ($user->projects==null) {
                 return response()->json(['error' => 'No access to module'], 401);
-            }
+           }
+             
 
             unset($user->teams);
             unset($user->modules);
@@ -62,10 +79,16 @@ class LoginController extends Controller
             unset($user->updated_at);
             unset($user->created_at);
 
+          
+             
         } catch (JWTAuthException $e) {
             return response()->json(['error'=>'failed_to_create_token'], 500);
         }
 
+         
+
+      
+        
         return response()->json(['token'=>$token, 'user'=>$user]);
     }
 

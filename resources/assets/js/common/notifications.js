@@ -56,7 +56,9 @@ window.Notifications = Vue.extend({
     }
 })
 
+
+
 Vue.transition('fade', {
   enterClass: 'fadeInDown', // class of animate.css
   leaveClass: 'fadeOutDown' // class of animate.css
-})
+}) 
