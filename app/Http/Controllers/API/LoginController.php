@@ -56,8 +56,9 @@ class LoginController extends Controller
             $user->projects = $this->getProjects($user, $module); 
 
             $referral = Referral::where('mhv',$user->id)->first();
-          
-
+           Log::info('user ' .$user->id );
+      
+           Log::info('Referral ' . $referral );
        if($referral)
        {
     
