@@ -16,6 +16,8 @@ class LoginController extends Controller
 {
     private $jwtauth;
 
+
+
     /**
      * Create a new authentication controller instance.
      *
@@ -40,6 +42,7 @@ class LoginController extends Controller
 
         $credentials = $request->only('email', 'password');
         $token = null;
+        $supervisor = null;
     
 
 
@@ -53,20 +56,22 @@ class LoginController extends Controller
             $user = Spark::user();
             $user->currentTeam;
 
+
             $user->projects = $this->getProjects($user, $module); 
 
             $referral = Referral::where('mhv',$user->id)->first();
            Log::info('user ' .$user->id );
       
            Log::info('Referral ' . $referral );
-       if($referral)
+          
+       if(!is_null($referral))
        {
-    
+          
          $supervisor = User::find($referral->supervisor);
-        
-        return response()->json(['token'=>$token, 'user'=>$user,'supervisor'=> $supervisor]);
+
               
-       }
+       }   
+
 
            if ($user->projects==null) {
                 return response()->json(['error' => 'No access to module'], 401);
@@ -90,7 +95,8 @@ class LoginController extends Controller
 
       
         
-        return response()->json(['token'=>$token, 'user'=>$user]);
+       // return response()->json(['token'=>$token, 'user'=>$user]);
+        return response()->json(['token'=>$token, 'user'=>$user,'supervisor'=> $supervisor]);
     }
 
     public function setCurrentContext(Request $request, $uid, $tid, $mid)
