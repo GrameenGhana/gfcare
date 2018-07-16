@@ -19,6 +19,7 @@ class ProjectUserController extends Controller
 {
     public function show(Request $request, $teamId=null)
     {
+     
         $users = ProjectUser::all();
         return response()->json($users);
     }
@@ -115,7 +116,7 @@ class ProjectUserController extends Controller
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: ' . strlen($data_string)));                                                                                                                   
                                                                                                                      
-            $result = curl_exec($ch);
+             $result = curl_exec($ch);
 
              Log::info("Response -> " . $result);
             return ProjectUser::find($u->id);
@@ -129,11 +130,13 @@ class ProjectUserController extends Controller
         }
     }
 
-    public function update(Request $request, $userId)
+    public function update(Request $request,$teamId,$userId)
     {
         $user = $request->user();
+
         $u= ProjectUser::findOrFail($userId);
-        
+
+         Log::info('user ' + $userId);
       //  $this->validate($request, ['email' => 'required|email',
                           // 'name' => 'required|max:255',
                        //   'current_password' => 'required_with:password|min:6',
@@ -146,17 +149,17 @@ class ProjectUserController extends Controller
                          //  'status'=> 'required',
                          // ]
                      //   );
-        
+      /*  
         if ($request->password<>'') {
             if (! Hash::check($request->current_password, $u->password)) {
                 return response()->json(
                     ['current_password' => ['The current password you provided is incorrect.']], 422);
             }
-        }
+        } */
         
         // update user
         $u->name = $request->name;
-        $u->email = $request->email;
+       // $u->email = $request->email;
         $u->password = Hash::make($request->password);
         $u->phone_number = $request->phone_number;
         $u->save();
@@ -165,12 +168,17 @@ class ProjectUserController extends Controller
 
         // user info
         $ui = $u->info;
-        $ui->gender = $request->gender;
-        $ui->title = $request->title;
-        $ui->ischn = $request->ischn;
-        $ui->status = $request->status;
-        $ui->modified_by = $user->id;
-        $ui->save();
+      // $ui = UserInfo::where('user_id',$u->id)->get();
+
+       Log::info($ui);
+
+       
+      //  $ui->gender = $request->gender;
+       $ui->title = $request->title;
+       $ui->ischn = $request->ischn;
+       $ui->status = $request->status;
+       $ui->modified_by = $user->id;
+       $ui->save();
         
         // Devices
         if ($request->device) {
@@ -186,7 +194,7 @@ class ProjectUserController extends Controller
             $device->save();
         }
         
-        $this->addUpdateFacilities($request, $user, $u);
+       $this->addUpdateFacilities($request, $user, $u);
         
         return $u; 
     }
@@ -224,10 +232,14 @@ class ProjectUserController extends Controller
     private function addUpdateFacilities(Request $request, $user, $u)
     {
         // TODO remove existing ones
-        /*
-        $uf = UserFacility::where('user_id',$u->id)->pluck('id');
-        if ($uf) { UserFacility::destroy($uf); }
+         Log::info('hello' .'facilities ' .$u->id);
+
+        //$uf = UserFacility::where('user_id',$u->id)->pluck('id');
+         $uf = UserFacility::where('user_id',$u->id)->first();
+         Log::info($uf);
+        if ($uf) { UserFacility::destroy($uf->id); }
         
+
         // add Primary
         $u->facility()->create([ 'team_id' => $user->current_team_id, 
                          'facility_id'=>$request->primary_facility, 
@@ -247,6 +259,6 @@ class ProjectUserController extends Controller
                                ]);
                 } 
             }
-        }*/
+        }
     }
 }

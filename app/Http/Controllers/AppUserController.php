@@ -58,6 +58,7 @@ class AppUserController extends Controller
         {
 
          Log::info('Program' .$request->program_id);
+         Log::info('Program' .$request->afya);
          $appuser->firstname = $request->firstname;
          $appuser->lastname = $request->lastname;
          $appuser->DOB = $request->dob;

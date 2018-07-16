@@ -25,18 +25,18 @@
                                         :input.sync="forms.updateUser.phone_number">
                                     </spark-text>
 
-                                    <spark-select :display="'Gender*'"
+                                   <!-- <spark-select :display="'Gender*'"
                                                    :form="forms.updateUser"
                                                    :name="'gender'"
                                                    :items="genderOptions"
                                                    :input.sync="forms.updateUser.gender">
-                                    </spark-select>  
+                                    </spark-select> --> 
 
-                                    <spark-email :display="'Email*'"
+                                    <!--<spark-email :display="'Email*'"
                                         :form="forms.updateUser"
                                         :name="'email'"
                                         :input.sync="forms.updateUser.email">
-                                    </spark-email>
+                                    </spark-email> -->
 
                                     <spark-password :display="'Password*'"
                                         :form="forms.updateUser"

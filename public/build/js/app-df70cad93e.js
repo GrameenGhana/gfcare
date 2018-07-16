@@ -38878,7 +38878,7 @@ Vue.component('spark-team-settings-membership-screen', {
         role: function role(value) {
             return _.find(this.roles, function (role) {
                 return role.value == value;
-            }).text;
+            }); //.text;
         }
     }
 });
@@ -39205,6 +39205,7 @@ Vue.component('spark-team-settings-user-screen', {
             facilities: null,
 
             editingUser: { 'name': 'none' },
+            editId: null,
 
             removingRoleId: null,
 
@@ -39212,7 +39213,7 @@ Vue.component('spark-team-settings-user-screen', {
             deviceOptions: [],
             yesNoOptions: [{ 'text': 'Yes', value: 1 }, { 'text': 'No', 'value': 0 }],
 
-            genderOptions: [{ 'text': 'Female', 'value': 'female' }, { 'text': 'Male', 'value': 'male' }, { 'text': 'Transgender', 'value': 'transgender' }, { 'text': 'Un Specified', 'value': 'unspecified' }],
+            genderOptions: [{ 'text': 'Female', 'value': 'female' }, { 'text': 'Male', 'value': 'male' }],
 
             statusOptions: [{ 'text': 'Active', 'value': 'ACTIVE' }, { 'text': 'In-Active', 'value': 'INACTIVE' }, { 'text': 'Test', 'value': 'TEST' }],
 
@@ -39233,12 +39234,12 @@ Vue.component('spark-team-settings-user-screen', {
 
                 updateUser: new SparkForm({
                     name: '',
-                    email: '',
+                    /// email: '',
                     password: '',
-                    current_password: '',
+                    //current_password: '',
                     device: '',
                     phone_number: '',
-                    gender: '',
+                    //gender: '',
                     title: '',
                     ischn: '',
                     status: '',
@@ -39309,12 +39310,15 @@ Vue.component('spark-team-settings-user-screen', {
         },
 
         editUser: function editUser(user) {
+
             this.editingUser = user;
+            console.log(user.id);
+            this.editId = user.id;
             this.forms.updateUser.name = user.name;
-            this.forms.updateUser.email = user.email;
+            // this.forms.updateUser.email = user.email;
             this.forms.updateUser.password = '';
             this.forms.updateUser.phone_number = user.phone_number;
-            this.forms.updateUser.gender = user.info.gender;
+            // this.forms.updateUser.gender = user.info.gender;
             this.forms.updateUser.title = user.info.title;
             this.forms.updateUser.ischn = user.info.ischn;
             this.forms.updateUser.status = user.info.status;
@@ -39335,6 +39339,7 @@ Vue.component('spark-team-settings-user-screen', {
         },
 
         moduleUsers: function moduleUsers() {
+
             return this.users == null ? [] : this.users.filter(function (u) {
                 return u.user_type === 'User';
             });
@@ -39387,7 +39392,8 @@ Vue.component('spark-team-settings-user-screen', {
 
         updateUser: function updateUser() {
             var self = this;
-            Spark.put('/gfcare/settings/teams' + this.team.id + '/users/' + this.editingUser.id, this.forms.updateUser).then(function () {
+            // Spark.put('/gfcare/settings/teams/'+this.team.id +'/users/' + this.editingUser.id, this.forms.updateUser)
+            Spark.put('/gfcare/settings/teams/' + this.team.id + '/users/' + this.editId, this.forms.updateUser).then(function () {
                 $('#modal-edit-user').modal('hide');
                 self.$dispatch('updateUsers');
                 self.$dispatch('updateDevices');
@@ -39398,7 +39404,7 @@ Vue.component('spark-team-settings-user-screen', {
             var self = this;
             self.removingUserId = user.id;
 
-            this.$http.delete('/gfcare/settings/teams' + this.team.id + '/users/' + user.id).success(function () {
+            this.$http.delete('/gfcare/settings/teams/' + this.team.id + '/users/' + user.id).success(function () {
                 self.removingUserId = 0;
                 self.users = self.removeFromList(this.users, user);
                 self.$dispatch('updateUsers');
@@ -39407,6 +39413,7 @@ Vue.component('spark-team-settings-user-screen', {
                 NotificationStore.addNotification({ text: resp.error[0], type: "btn-danger", timeout: 5000 });
             });
         }
+
     },
 
     filters: {

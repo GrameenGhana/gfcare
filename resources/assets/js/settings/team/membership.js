@@ -187,7 +187,7 @@ Vue.component('spark-team-settings-membership-screen', {
         role: function (value) {
             return _.find(this.roles, function (role) {
                 return role.value == value;
-            }).text;
+            });//.text;
         }
     }
 });

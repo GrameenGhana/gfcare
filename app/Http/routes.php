@@ -13,6 +13,7 @@ Route::group(['middleware' => 'web'], function ($router) {
 
     $router->get('settings/users',  'Settings\ProjectUserController@showCHV');
 
+      $router->get('settings/user',  'Settings\ProjectUserController@show');
     // Terms Routes...
     $router->get('terms', 'TermsController@show');
 
@@ -49,6 +50,7 @@ Route::group(['middleware' => 'web'], function ($router) {
         $router->delete('settings/teams/{id}/devices/{did}', 'Settings\DeviceController@destroy');
 
         $router->post('settings/teams/{id}/users',        'Settings\ProjectUserController@store');
+        $router->get('settings/teams/{id}/users',        'Settings\ProjectUserController@show');
         $router->put('settings/teams/{id}/users/{uid}',    'Settings\ProjectUserController@update');
         $router->delete('settings/teams/{id}/users/{uid}', 'Settings\ProjectUserController@destroy');
         
