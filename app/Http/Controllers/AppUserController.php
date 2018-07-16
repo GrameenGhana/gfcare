@@ -88,7 +88,7 @@ class AppUserController extends Controller
          $appuser->booklet_present = $request->booklet_present;
 
          $appuser->save();
-
+          Log::info('Is Pregnant Woman----------------' .$afya);
          if($afya=="yes")
          {
              Log::info('----------------- ' .$appuser);
