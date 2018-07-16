@@ -203,27 +203,28 @@ class AppUserController extends Controller
 
     public function storeMobileMidwifeClient(AppUser $mmclient,Request $request,$name)
     {
-        $mmclient= Subscriber::whereRaw('name=? and program_id=? and channel=?',array($name,$request->program_id,$request->afya_channel))->first();
+        //$mmclient= Subscriber::whereRaw('name=? and program_id=? and channel=?',array($name,$request->program_id,$request->afya_channel))->first();
 
-           if(!$mmclient)
-           {
+          // if(!$mmclient)
+          // {
+            $mclient = new Subscriber();
         
-            $mmclient->start_week = $request->start_week;
-            $mmclient->channel = $request->afya_channel;
-            $mmclient->team_id = 3;
-            $mmclient->module_id =1;
-            $mmclient->program_id = $request->program_id;
-            $mmclient->name = $name;
-            $mmclient->phone =  $request->phonenumber;
-            $mmclient->dob = $request->dob;
-            $mmclient->gender = $request->gender;
-            $mmclient->language = $request->language;
-            $mmclient->registered_by = $request->uuid;
-            $mmclient->modified_by = $request->uuid;
-            $mmclient->education = (isset($request->education)) ? $request->education : '';
-            $mmclient->location = (isset($request->location)) ? $request->location : '';
-            $mmclient->client_type = (isset($request->client_type)) ? $request->client_type : '';
-            $mmclient->save();
+            $mclient->start_week = $mmclient->start_week;
+            $mclient->channel = $request->afya_channel;
+            $mclient->team_id = 3;
+            $mclient->module_id =1;
+            $mclient->program_id = $mmclient->program_id;
+            $mclient->name = $name;
+            $mclient->phone =  $mmclient->phonenumber;
+            $mclient->dob = $request->dob;
+            $mclient->gender = $request->gender;
+            $mclient->language = $request->language;
+            $mclient->registered_by = $request->uuid;
+            $mclient->modified_by = $request->uuid;
+            $mclient->education = (isset($request->education)) ? $request->education : '';
+            $mclient->location = (isset($request->location)) ? $request->location : '';
+            $mclient->client_type = (isset($request->client_type)) ? $request->client_type : '';
+            $mclient->save();
         
 
 
@@ -232,8 +233,8 @@ class AppUserController extends Controller
               // Sign up for program
              Subscription::subscribe($mmclient);
 
-             return $mmclient;
-      }
+             return $mclient;
+     // }
    }
 
 
