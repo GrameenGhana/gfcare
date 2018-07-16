@@ -213,7 +213,7 @@ class AppUserController extends Controller
             $mclient->channel = $request->afya_channel;
             $mclient->team_id = 3;
             $mclient->module_id =1;
-            $mclient->program_id = $mmclient->program_id;
+            $mclient->program_id = $mmclient->program;
             $mclient->name = $name;
             $mclient->phone =  $mmclient->phonenumber;
             $mclient->dob = $request->dob;
