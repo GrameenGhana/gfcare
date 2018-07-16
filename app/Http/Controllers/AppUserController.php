@@ -218,7 +218,7 @@ class AppUserController extends Controller
             $mclient->phone =  $mmclient->phonenumber;
             $mclient->dob = $request->dob;
             $mclient->gender = $request->gender;
-            $mclient->language = $request->language;
+            $mclient->language = (isset($request->language)) ? $request->language : 'english';
             $mclient->registered_by = $request->uuid;
             $mclient->modified_by = $request->uuid;
             $mclient->education = (isset($request->education)) ? $request->education : '';
