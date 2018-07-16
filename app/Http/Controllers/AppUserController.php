@@ -89,7 +89,7 @@ class AppUserController extends Controller
 
          $appuser->save();
           Log::info('Is Pregnant Woman----------------' .$afya);
-         if($afya=="yes")
+         if($afya==="yes")
          {
              Log::info('----------------- ' .$appuser);
             if(!$this->storeMobileMidwifeClient($appuser,$request,$name))
