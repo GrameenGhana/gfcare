@@ -203,11 +203,11 @@ class AppUserController extends Controller
 
     public function storeMobileMidwifeClient(AppUser $mmclient,Request $request,$name)
     {
-       // $mmclient= Subscriber::whereRaw('name=? and program_id=? and channel=?',array($name,$request->program_id,$request->afya_channel))->first();
+        $mmclient= Subscriber::whereRaw('name=? and program_id=? and channel=?',array($name,$request->program_id,$request->afya_channel))->first();
 
-          // if(!$mmclient)
-           //{
-        /*
+           if(!$mmclient)
+           {
+        
             $mmclient->start_week = $request->start_week;
             $mmclient->channel = $request->afya_channel;
             $mmclient->team_id = 3;
@@ -217,7 +217,7 @@ class AppUserController extends Controller
             $mmclient->phone =  $request->phonenumber;
             $mmclient->dob = $request->dob;
             $mmclient->gender = $request->gender;
-             $mmclient->language = $request->language;
+            $mmclient->language = $request->language;
             $mmclient->registered_by = $request->uuid;
             $mmclient->modified_by = $request->uuid;
             $mmclient->education = (isset($request->education)) ? $request->education : '';
@@ -228,12 +228,12 @@ class AppUserController extends Controller
 
 
 
-        ****/
+        
               // Sign up for program
              Subscription::subscribe($mmclient);
 
              return $mmclient;
-    //}
+      }
    }
 
 

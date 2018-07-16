@@ -4,9 +4,9 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             Clients
-            <button class="btn btn-default pull-right" @click.prevent="addClient()">
+           <!-- <button class="btn btn-default pull-right" @click.prevent="addClient()">
                 <i class="fa fa-btn fa-plus"></i>Add Client
-            </button> 
+            </button> -->
         </div>
 
         <div class="panel-body" v-if="clients.length > 0">
@@ -14,7 +14,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Volunteer</th>
+                        <th>Start Week</th>
                         <th>Registered</th>
                         <th>Registration Date</th>
                         <th></th>
@@ -24,9 +24,9 @@
                     <tr v-for="client in clients">
 
                         <td class="spark-table-pad">@{{ client.name }}</td>
-                        <td class="spark-table-pad">@{{ client.volunteer_name }}</td>
-                        <td class="spark-table-pad">@{{ client.registered | registration_status }}</td>
-                        <td class="spark-table-pad">@{{ client | registration_date_status }}</td>
+                        <td class="spark-table-pad">@{{ client.start_week }}</td>
+                        <td class="spark-table-pad">Registered</td>
+                        <td class="spark-table-pad">@{{ client.created_at}}</td>
 
                         <td class="spark-table-pad">
 
