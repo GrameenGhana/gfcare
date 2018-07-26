@@ -21,6 +21,9 @@ Route::group(['middleware' => ['web','auth'], 'prefix'=>'mobile-midwife'], funct
     
     $router->get('campaigns',        $cpath.'\ServiceController@showCampaigns');
     $router->post('campaigns',       $cpath.'\ServiceController@storeCampaign');
+    $router->put('campaigns/{id}',       $cpath.'\ServiceController@updateCampaign');
+    $router->delete('campaigns/{id}', $cpath.'\ServiceController@deleteCampaign');
+
 
     $router->post('programs',       $cpath.'\ServiceController@storeProgram');
     $router->get('programs',        $cpath.'\ServiceController@showPrograms');

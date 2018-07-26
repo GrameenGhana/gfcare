@@ -74,6 +74,23 @@ class ServiceController extends Controller
          return response()->json($campaign);
     }
 
+  public function updateCampaign(Request $request,$campaignId)
+    {
+         $user = $request->user();
+         $campaign = Campaign::findOrFail($campaignId);
+         Log::info(" update campaign ");
+         
+         $campaign->team_id = $user->current_team_id;
+         $campaign->name = $request->name;
+         $campaign->description = $request->description;
+         $campaign->start_date = $request->start_date;
+         $campaign->end_date = $request->end_date;
+         $campaign->modified_by =$user->id;
+         
+         $campaign->save();
+
+         return response()->json($campaign);
+    }
     public function storeProgram(Request $request)
     {
          $user = $request->user();
@@ -108,4 +125,13 @@ class ServiceController extends Controller
         $cu = MobileMidwifeUser::findOrFail($userId); 
         $cu->modules()->newPivotStatementForId($user->current_module_id)->where('module_id', $user->current_module_id)->delete();
     }
+
+     public function deleteCampaign(Request $request, $campaignId)
+    {
+        $user = $request->user();
+        $campaign = Campaign::findOrFail($campaignId); 
+        $campaign->delete();
+       
+    }
+
 }

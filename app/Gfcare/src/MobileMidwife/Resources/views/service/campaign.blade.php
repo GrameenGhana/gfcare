@@ -54,6 +54,7 @@
     </div>
     
     @include('MobileMidwife::service.add-campaign')
+    @include('MobileMidwife::service.edit-campaign')
    
 
 </gfcare-mm-campaign-screen>
