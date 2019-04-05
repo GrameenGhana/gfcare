@@ -1,7 +1,7 @@
 # Spark-based Laravel installation
 
 Since `laravel/spark` is not free anymore and cannot be installed or updated with `composer`, you can use this basic
-installation of Laravel 5.2 with all Spark code integrated in it.
+installation of Laravel 5.2 with all Spark code integrated with VUEJS in it.
 
 ## Releases
 
